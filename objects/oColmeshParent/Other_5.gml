@@ -1,6 +1,3 @@
-/// @description
+/// @description Clear all data contained in the ColMesh
 
-/*
-	Clear all data contained in the ColMesh
-*/
 global.levelColmesh.clear();

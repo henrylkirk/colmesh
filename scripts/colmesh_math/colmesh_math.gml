@@ -1,9 +1,11 @@
 /*
 	Some math scripts that are used by the ColMesh system.
 */
-function colmesh_matrix_invert_fast(M, targetM) 
-{
-	//Returns the inverse of a 4x4 matrix. Assumes indices 3, 7 and 11 are 0, and index 15 is 1
+
+/// @function colmesh_matrix_invert_fast
+/// @description Returns the inverse of a 4x4 matrix. Assumes indices 3, 7 and 11 are 0, and index 15 is 1
+function colmesh_matrix_invert_fast(M, targetM) {
+
 	var m0 = M[0], m1 = M[1], m2 = M[2], m4 = M[4], m5 = M[5], m6 = M[6], m8 = M[8], m9 = M[9], m10 = M[10], m12 = M[12], m13 = M[13], m14 = M[14];
 	var inv = targetM;
 	inv[@ 0]  = m5 * m10 - m9 * m6;
@@ -23,22 +25,22 @@ function colmesh_matrix_invert_fast(M, targetM)
 	inv[@ 14] = -m0 * m5 * m14 + m0 * m6 * m13 + m4 * m1 * m14 - m4 * m2 * m13 - m12 * m1 * m6 + m12 * m2 * m5;
 	inv[@ 15] = 1;
 	var _det = m0 * inv[0] + m1 * inv[4] + m2 * inv[8];
-	if (_det == 0)
-	{
+	if (_det == 0){
 		show_debug_message( "The determinant is zero.");
 		return inv;
 	}
 	_det = 1 / _det;
-	for(var i = 0; i < 16; i++)
-	{
+	
+	for(var i = 0; i < 16; i++){
 		inv[@ i] *= _det;
 	}
 	return inv;
 }
 
-function colmesh_matrix_invert(M, targetM)
-{
-	//Proper matrix inversion
+/// @function colmesh_matrix_invert
+/// @description Proper matrix inversion
+function colmesh_matrix_invert(M, targetM){
+	
 	var m0 = M[0], m1 = M[1], m2 = M[2], m3 = M[3], m4 = M[4], m5 = M[5], m6 = M[6], m7 = M[7], m8 = M[8], m9 = M[9], m10 = M[10], m11 = M[11], m12 = M[12], m13 = M[13], m14 = M[14], m15 = M[15];
 	var inv = targetM;
 	inv[@ 0]  = m5 * m10 * m15 - m5 * m11 * m14 - m9 * m6 * m15 + m9 * m7 * m14 +m13 * m6 * m11 - m13 * m7 * m10;
@@ -58,22 +60,21 @@ function colmesh_matrix_invert(M, targetM)
 	inv[@ 14] = -m0 * m5 * m14 + m0 * m6 * m13 + m4 * m1 * m14 - m4 * m2 * m13 - m12 * m1 * m6 + m12 * m2 * m5;
 	inv[@ 15] = m0 * m5 * m10 - m0 * m6 * m9 - m4 * m1 * m10 + m4 * m2 * m9 + m8 * m1 * m6 - m8 * m2 * m5;
 	var _det = m0 * inv[0] + m1 * inv[4] + m2 * inv[8] + m3 * inv[12];
-	if (_det == 0)
-	{
+	if (_det == 0){
 		show_debug_message( "The determinant is zero.");
 		return inv;
 	}
 	_det = 1 / _det;
-	for(var i = 0; i < 16; i++)
-	{
+	for(var i = 0; i < 16; i++){
 		inv[@ i] *= _det;
 	}
 	return inv;
 }
 
-function colmesh_matrix_multiply(M, N, targetM) 
-{
-	//Multiplies two matrices and outputs the result to targetM
+/// @function colmesh_matrix_multiply
+/// @description Multiplies two matrices and outputs the result to targetM
+function colmesh_matrix_multiply(M, N, targetM) {
+
 	var m0 = M[0], m1 = M[1], m2 = M[2], m3 = M[3], m4 = M[4], m5 = M[5], m6 = M[6], m7 = M[7], m8 = M[8], m9 = M[9], m10 = M[10], m11 = M[11], m12 = M[12], m13 = M[13], m14 = M[14], m15 = M[15];
 	var n0 = N[0], n1 = N[1], n2 = N[2], n3 = N[3], n4 = N[4], n5 = N[5], n6 = N[6], n7 = N[7], n8 = N[8], n9 = N[9], n10 = N[10], n11 = N[11], n12 = N[12], n13 = N[13], n14 = N[14], n15 = N[15];
 	targetM[@ 0]  = m0 * n0 + m4 * n1 + m8 * n2 + m12 * n3;
@@ -95,9 +96,10 @@ function colmesh_matrix_multiply(M, N, targetM)
 	return targetM;
 }
 
-function colmesh_matrix_multiply_fast(M, N, targetM) 
-{
-	//Multiplies two matrices and outputs the result to targetM. Assumes indices 3, 7 and 11 are 0, and 15 is 1
+/// @function colmesh_matrix_multiply_fast
+/// @description Multiplies two matrices and outputs the result to targetM. Assumes indices 3, 7 and 11 are 0, and 15 is 1
+function colmesh_matrix_multiply_fast(M, N, targetM) {
+
 	var m0 = M[0], m1 = M[1], m2 = M[2], m4 = M[4], m5 = M[5], m6 = M[6], m8 = M[8], m9 = M[9], m10 = M[10], m12 = M[12], m13 = M[13], m14 = M[14];
 	var n0 = N[0], n1 = N[1], n2 = N[2], n4 = N[4], n5 = N[5], n6 = N[6], n8 = N[8], n9 = N[9], n10 = N[10], n12 = N[12], n13 = N[13], n14 = N[14];
 	targetM[@ 0]  = m0 * n0 + m4 * n1 + m8 * n2;
@@ -119,20 +121,16 @@ function colmesh_matrix_multiply_fast(M, N, targetM)
 	return targetM;
 }
 
-function colmesh_matrix_build(x, y, z, xrotation, yrotation, zrotation, xscale, yscale, zscale)
-{
-	/*
-		This is an alternative to the regular matrix_build.
-		The regular function will rotate first and then scale, which can result in weird shearing.
-		I have no idea why they did it this way.
-		This script does it properly so that no shearing is applied even if you both rotate and scale non-uniformly.
-	*/
+/// @function colmesh_matrix_build
+/// @description This is an alternative to the regular matrix_build properly so that no shearing is applied even if you both rotate and scale non-uniformly
+function colmesh_matrix_build(x, y, z, xrotation, yrotation, zrotation, xscale, yscale, zscale){
+
 	var M = matrix_build(x, y, z, xrotation, yrotation, zrotation, 1, 1, 1);
 	return colmesh_matrix_scale(M, xscale, yscale, zscale);
 }
 
-function colmesh_matrix_orthogonalize(M)
-{
+/// @function colmesh_matrix_orthogonalize
+function colmesh_matrix_orthogonalize(M){
 	/*
 		This makes sure the three vectors of the given matrix are all unit length
 		and perpendicular to each other, using the up direciton as master.
@@ -165,11 +163,10 @@ function colmesh_matrix_orthogonalize(M)
 	return M;
 }
 
-function colmesh_matrix_scale(M, toScale, siScale, upScale)
-{
-	/*
-		Scaled the given matrix along its own axes
-	*/
+/// @function colmesh_matrix_scale
+/// @description Scaled the given matrix along its own axes
+function colmesh_matrix_scale(M, toScale, siScale, upScale){
+
 	M[@ 0] *= toScale;
 	M[@ 1] *= toScale;
 	M[@ 2] *= toScale;
@@ -181,36 +178,34 @@ function colmesh_matrix_scale(M, toScale, siScale, upScale)
 	M[@ 10]*= upScale;
 	return M;
 }
-function colmesh_matrix_build_from_vector(X, Y, Z, vx, vy, vz, toScale, siScale, upScale)
-{
-	/*
-		Creates a matrix based on the vector (vx, vy, vz).
-		The vector will be used as basis for the up-vector of the matrix, ie. indices 8, 9, 10.
-	*/
+
+/// @function colmesh_matrix_build_from_vector
+/// @description Creates a matrix based on the vector (vx, vy, vz). The vector will be used as basis for the up-vector of the matrix, ie. indices 8, 9, 10
+function colmesh_matrix_build_from_vector(X, Y, Z, vx, vy, vz, toScale, siScale, upScale){
+
 	var M = [0, 1, 1, 0, 0, 0, 0, 0, vx, vy, vz, 0, X, Y, Z, 1];
-	if abs(vx) < abs(vy)
-	{
+	if abs(vx) < abs(vy){
 		M[0] = 1;
 	}
 	colmesh_matrix_orthogonalize(M);
 	return colmesh_matrix_scale(M, toScale, siScale, upScale);
 }
-function colmesh_matrix_transform_vertex(M, x, y, z)
-{
-	/*
-		Transforms a vertex using the given matrix
-	*/
+
+/// @function colmesh_matrix_transform_vertex
+/// @description Transforms a vertex using the given matrix
+function colmesh_matrix_transform_vertex(M, x, y, z){
+
 	static ret = array_create(3);
 	ret[@ 0] = M[0] * x + M[4] * y + M[8] * z + M[12];
 	ret[@ 1] = M[1] * x + M[5] * y + M[9] * z + M[13];
 	ret[@ 2] = M[2] * x + M[6] * y + M[10]* z + M[14];
 	return ret;
 }
-function colmesh_matrix_transform_vector(M, x, y, z)
-{
-	/*
-		Transforms a vector using the given matrix
-	*/
+
+/// @function colmesh_matrix_transform_vector
+/// @description Transforms a vector using the given matrix
+function colmesh_matrix_transform_vector(M, x, y, z){
+
 	static ret = array_create(3);
 	ret[@ 0] = M[0] * x + M[4] * y + M[8] * z;
 	ret[@ 1] = M[1] * x + M[5] * y + M[9] * z;
@@ -218,8 +213,8 @@ function colmesh_matrix_transform_vector(M, x, y, z)
 	return ret;
 }
 
-function colmesh_cast_ray_sphere(sx, sy, sz, r, x1, y1, z1, x2, y2, z2) 
-{	
+/// @function colmesh_cast_ray_sphere
+function colmesh_cast_ray_sphere(sx, sy, sz, r, x1, y1, z1, x2, y2, z2) {	
 	/*	
 		Finds the intersection between a line segment going from [x1, y1, z1] to [x2, y2, z2], and a sphere centered at (sx,sy,sz) with radius r.
 		Returns false if the ray hits the sphere but the line segment is too short,
@@ -244,34 +239,28 @@ function colmesh_cast_ray_sphere(sx, sy, sz, r, x1, y1, z1, x2, y2, z2)
 	var u = t * t + v * (r * r - d);
 
 	//If u is less than 0, there is no intersection
-	if (u < 0)
-	{
+	if (u < 0){
 		return true;
 	}
 	
 	u = sqrt(u);
-	if (t < u)
-	{
-		//Project to the inside of the sphere
+	if (t < u) {
+		// Project to the inside of the sphere
 		t += u; 
-		if (t < 0)
-		{
-			//The sphere is behind the ray
+		if (t < 0) {
+			// The sphere is behind the ray
 			return true;
 		}
-	}
-	else
-	{
-		//Project to the outside of the sphere
+	} else {
+		// Project to the outside of the sphere
 		t -= u;
-		if (t > v)
-		{
-			//The sphere is too far away
+		if (t > v) {
+			// The sphere is too far away
 			return false;
 		}
 	}
 
-	//Find the point of intersection
+	// Find the point of intersection
 	static ret = array_create(3);
 	t /= v;
 	ret[0] = x1 + vx * t;

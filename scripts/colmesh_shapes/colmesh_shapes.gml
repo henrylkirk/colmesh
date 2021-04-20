@@ -44,7 +44,7 @@ function colmesh_shapes() constructor
 	type = eColMeshShape.Mesh;
 	solid = true;
 	
-	/// @func setSolid(solid)
+	/// @function setSolid(solid)
 	static setSolid = function(_solid)
 	{
 		/*
@@ -54,7 +54,7 @@ function colmesh_shapes() constructor
 		solid = _solid;
 	}
 	
-	/// @func setCollisionFunction(colFunc)
+	/// @function setCollisionFunction(colFunc)
 	static setCollisionFunction = function(_colFunc)
 	{
 		/*
@@ -70,7 +70,7 @@ function colmesh_shapes() constructor
 		colFunc = _colFunc;
 	}
 	
-	/// @func setRayFunction(rayFunc)
+	/// @function setRayFunction(rayFunc)
 	static setRayFunction = function(_rayFunc)
 	{
 		/*
@@ -87,7 +87,7 @@ function colmesh_shapes() constructor
 	
 	#region Shared functions
 	
-	/// @func capsuleCollision(x, y, z, xup, yup, zup, radius, height)
+	/// @function capsuleCollision(x, y, z, xup, yup, zup, radius, height)
 	static capsuleCollision = function(x, y, z, xup, yup, zup, radius, height)
 	{
 		/*
@@ -101,7 +101,7 @@ function colmesh_shapes() constructor
 		return (_getPriority(x, y, z, radius) >= 0);
 	}
 	
-	/// @func _displace(nx, ny, nz, xup, yup, zup, _r, slope)
+	/// @function _displace(nx, ny, nz, xup, yup, zup, _r, slope)
 	static _displace = function(nx, ny, nz, xup, yup, zup, _r, slope)
 	{
 		/*
@@ -133,7 +133,7 @@ function colmesh_shapes() constructor
 		}
 	}
 	
-	/// @func _addToSubdiv(colMesh)
+	/// @function _addToSubdiv(colMesh)
 	static _addToSubdiv = function(colMesh)
 	{
 		/*
@@ -185,7 +185,7 @@ function colmesh_shapes() constructor
 		return regionNum;
 	}
 	
-	/// @func _removeFromSubdiv(colMesh)
+	/// @function _removeFromSubdiv(colMesh)
 	static _removeFromSubdiv = function(colMesh)
 	{
 		/*
@@ -232,7 +232,7 @@ function colmesh_shapes() constructor
 		}
 	}
 	
-	/// @func _updateSubdiv(colMesh, oldMinMax)
+	/// @function _updateSubdiv(colMesh, oldMinMax)
 	static _updateSubdiv = function(colMesh, oldMinMax)
 	{
 		var spHash = colMesh.spHash;
@@ -314,7 +314,7 @@ function colmesh_shapes() constructor
 	
 	#region Shape-specific functions
 	
-	/// @func getMinMax()
+	/// @function getMinMax()
 	static getMinMax = function()
 	{
 		/*
@@ -330,7 +330,7 @@ function colmesh_shapes() constructor
 		return ret;
 	}
 	
-	/// @func _capsuleGetRef(x, y, z, xup, yup, zup, height)
+	/// @function _capsuleGetRef(x, y, z, xup, yup, zup, height)
 	static _capsuleGetRef = function(_x, _y, _z, xup, yup, zup, height)
 	{
 		/*
@@ -362,7 +362,7 @@ function colmesh_shapes() constructor
 		return ret;
 	}
 	
-	/// @func _castRay(ox, oy, oz)
+	/// @function _castRay(ox, oy, oz)
 	static _castRay = function(ox, oy, oz)
 	{
 		/*
@@ -430,7 +430,7 @@ function colmesh_shapes() constructor
 		return true;
 	}	
 	
-	/// @func _displaceSphere(x, y, z, xup, yup, zup, height, radius, slope, fast)
+	/// @function _displaceSphere(x, y, z, xup, yup, zup, height, radius, slope, fast)
 	static _displaceSphere = function(x, y, z, xup, yup, zup, height, radius, slope, fast)
 	{
 		/*
@@ -503,7 +503,7 @@ function colmesh_shapes() constructor
 		return true;
 	}
 	
-	/// @func _getPriority(x, y, z, maxR)
+	/// @function _getPriority(x, y, z, maxR)
 	static _getPriority = function(x, y, z, maxR)
 	{
 		/*
@@ -558,7 +558,7 @@ function colmesh_shapes() constructor
 		return abs(D);
 	}
 	
-	/// @func _getClosestPoint(x, y, z)
+	/// @function _getClosestPoint(x, y, z)
 	static _getClosestPoint = function(x, y, z)
 	{
 		/*
@@ -613,7 +613,7 @@ function colmesh_shapes() constructor
 		return ret;
 	}
 	
-	/// @func _intersectsCube(cubeHalfSize, cubeCenterX, cubeCenterY, cubeCenterZ)
+	/// @function _intersectsCube(cubeHalfSize, cubeCenterX, cubeCenterY, cubeCenterZ)
 	static _intersectsCube = function(hsize, bX, bY, bZ)
 	{
 		/*
@@ -748,7 +748,7 @@ function colmesh_shapes() constructor
 		return true;
 	}
 	
-	/// @func debugDraw(region, [texture])
+	/// @function debugDraw(region, [texture])
 	static debugDraw = function() 
 	{
 		/*
@@ -933,7 +933,7 @@ function colmesh_shapes() constructor
 		matrix_set(matrix_world, matrix_build_identity());
 	}
 	
-	/// @func move(x, y, z)
+	/// @function move(x, y, z)
 	static move = function(_x, _y, _z)
 	{
 		//This does not make sense for a triangle, so we can just return false here and now
@@ -943,7 +943,7 @@ function colmesh_shapes() constructor
 	#endregion
 }
 
-/// @func colmesh_sphere(x, y, z, radius)
+/// @function colmesh_sphere(x, y, z, radius)
 function colmesh_sphere(_x, _y, _z, radius) : colmesh_shapes() constructor
 {
 	type = eColMeshShape.Sphere;
@@ -954,7 +954,7 @@ function colmesh_sphere(_x, _y, _z, radius) : colmesh_shapes() constructor
 	
 	#region functions
 	
-	/// @func getMinMax()
+	/// @function getMinMax()
 	static getMinMax = function()
 	{
 		/*
@@ -970,7 +970,7 @@ function colmesh_sphere(_x, _y, _z, radius) : colmesh_shapes() constructor
 		return ret;
 	}
 	
-	/// @func _capsuleGetRef(x, y, z, xup, yup, zup, height)
+	/// @function _capsuleGetRef(x, y, z, xup, yup, zup, height)
 	static _capsuleGetRef = function(_x, _y, _z, xup, yup, zup, height)
 	{
 		/*
@@ -987,7 +987,7 @@ function colmesh_sphere(_x, _y, _z, radius) : colmesh_shapes() constructor
 		return ret;
 	}
 	
-	/// @func _castRay(ox, oy, oz)
+	/// @function _castRay(ox, oy, oz)
 	static _castRay = function(ox, oy, oz)
 	{
 		/*
@@ -1016,7 +1016,7 @@ function colmesh_sphere(_x, _y, _z, radius) : colmesh_shapes() constructor
 		return false;
 	}
 	
-	/// @func _getClosestPoint(x, y, z)
+	/// @function _getClosestPoint(x, y, z)
 	static _getClosestPoint = function(_x, _y, _z)
 	{
 		/*
@@ -1042,7 +1042,7 @@ function colmesh_sphere(_x, _y, _z, radius) : colmesh_shapes() constructor
 		return ret;
 	}
 	
-	/// @func _displaceSphere(x, y, z, xup, yup, zup, height, radius, slope, fast)
+	/// @function _displaceSphere(x, y, z, xup, yup, zup, height, radius, slope, fast)
 	static _displaceSphere = function(_x, _y, _z, xup, yup, zup, height, radius, slope, fast)
 	{
 		/*
@@ -1066,7 +1066,7 @@ function colmesh_sphere(_x, _y, _z, radius) : colmesh_shapes() constructor
 		return true;
 	}
 	
-	/// @func _getPriority(x, y, z, maxR)
+	/// @function _getPriority(x, y, z, maxR)
 	static _getPriority = function(_x, _y, _z, maxR)
 	{
 		/*
@@ -1081,7 +1081,7 @@ function colmesh_sphere(_x, _y, _z, radius) : colmesh_shapes() constructor
 		return sqr(max(sqrt(d) - R, 0));
 	}
 	
-	/// @func _intersectsCube(cubeHalfSize, cubeCenterX, cubeCenterY, cubeCenterZ)
+	/// @function _intersectsCube(cubeHalfSize, cubeCenterX, cubeCenterY, cubeCenterZ)
 	static _intersectsCube = function(hsize, bX, bY, bZ) 
 	{
 		/*
@@ -1131,7 +1131,7 @@ function colmesh_sphere(_x, _y, _z, radius) : colmesh_shapes() constructor
 		return (distSqr > 0);
 	}
 	
-	/// @func move(colMesh, x, y, z)
+	/// @function move(colMesh, x, y, z)
 	static move = function(colMesh, _x, _y, _z)
 	{
 		var oldMM = getMinMax();
@@ -1144,7 +1144,7 @@ function colmesh_sphere(_x, _y, _z, radius) : colmesh_shapes() constructor
 	#endregion
 }
 
-/// @func colmesh_capsule(x, y, z, xup, yup, zup, radius, height)
+/// @function colmesh_capsule(x, y, z, xup, yup, zup, radius, height)
 function colmesh_capsule(_x, _y, _z, _xup, _yup, _zup, radius, height) : colmesh_shapes() constructor
 {
 	type = eColMeshShape.Capsule;
@@ -1165,7 +1165,7 @@ function colmesh_capsule(_x, _y, _z, _xup, _yup, _zup, radius, height) : colmesh
 	
 	#region functions
 	
-	/// @func getMinMax()
+	/// @function getMinMax()
 	static getMinMax = function()
 	{
 		/*
@@ -1181,7 +1181,7 @@ function colmesh_capsule(_x, _y, _z, _xup, _yup, _zup, radius, height) : colmesh
 		return ret;
 	}
 	
-	/// @func _capsuleGetRef(x, y, z, xup, yup, zup, height)
+	/// @function _capsuleGetRef(x, y, z, xup, yup, zup, height)
 	static _capsuleGetRef = function(_x, _y, _z, _xup, _yup, _zup, height)
 	{	
 		/*
@@ -1213,7 +1213,7 @@ function colmesh_capsule(_x, _y, _z, _xup, _yup, _zup, radius, height) : colmesh
 		return ret;
 	}
 	
-	/// @func _castRay(ox, oy, oz)
+	/// @function _castRay(ox, oy, oz)
 	static _castRay = function(ox, oy, oz)
 	{
 		/*
@@ -1270,7 +1270,7 @@ function colmesh_capsule(_x, _y, _z, _xup, _yup, _zup, radius, height) : colmesh
 		return true;
 	}
 	
-	/// @func _getClosestPoint(x, y, z)
+	/// @function _getClosestPoint(x, y, z)
 	static _getClosestPoint = function(_x, _y, _z)
 	{
 		/*
@@ -1304,7 +1304,7 @@ function colmesh_capsule(_x, _y, _z, _xup, _yup, _zup, radius, height) : colmesh
 		return ret;
 	}
 	
-	/// @func _displaceSphere(x, y, z, xup, yup, zup, height, radius, slope, fast)
+	/// @function _displaceSphere(x, y, z, xup, yup, zup, height, radius, slope, fast)
 	static _displaceSphere = function(_x, _y, _z, _xup, _yup, _zup, height, radius, slope, fast)
 	{
 		/*
@@ -1331,7 +1331,7 @@ function colmesh_capsule(_x, _y, _z, _xup, _yup, _zup, radius, height) : colmesh
 		return true;
 	}
 
-	/// @func _getPriority(x, y, z, maxR)
+	/// @function _getPriority(x, y, z, maxR)
 	static _getPriority = function(_x, _y, _z, maxR)
 	{
 		/*
@@ -1350,7 +1350,7 @@ function colmesh_capsule(_x, _y, _z, _xup, _yup, _zup, radius, height) : colmesh
 		return sqr(max(sqrt(d) - R, 0));
 	}
 	
-	/// @func _intersectsCube(cubeHalfSize, cubeCenterX, cubeCenterY, cubeCenterZ)
+	/// @function _intersectsCube(cubeHalfSize, cubeCenterX, cubeCenterY, cubeCenterZ)
 	static _intersectsCube = function(hsize, bX, bY, bZ) 
 	{
 		/*
@@ -1363,7 +1363,7 @@ function colmesh_capsule(_x, _y, _z, _xup, _yup, _zup, radius, height) : colmesh
 		return true;
 	}
 	
-	/// @func move(colMesh, x, y, z)
+	/// @function move(colMesh, x, y, z)
 	static move = function(colMesh, _x, _y, _z)
 	{
 		var oldMM = getMinMax();
@@ -1376,7 +1376,7 @@ function colmesh_capsule(_x, _y, _z, _xup, _yup, _zup, radius, height) : colmesh
 	#endregion
 }
 
-/// @func colmesh_cylinder(x, y, z, xup, yup, zup, radius, height)
+/// @function colmesh_cylinder(x, y, z, xup, yup, zup, radius, height)
 function colmesh_cylinder(_x, _y, _z, _xup, _yup, _zup, radius, height) : colmesh_shapes() constructor
 {
 	type = eColMeshShape.Cylinder;
@@ -1397,7 +1397,7 @@ function colmesh_cylinder(_x, _y, _z, _xup, _yup, _zup, radius, height) : colmes
 	
 	#region functions
 	
-	/// @func getMinMax()
+	/// @function getMinMax()
 	static getMinMax = function()
 	{
 		/*
@@ -1413,7 +1413,7 @@ function colmesh_cylinder(_x, _y, _z, _xup, _yup, _zup, radius, height) : colmes
 		return ret;
 	}
 	
-	/// @func _capsuleGetRef(x, y, z, xup, yup, zup, height)
+	/// @function _capsuleGetRef(x, y, z, xup, yup, zup, height)
 	static _capsuleGetRef = function(_x, _y, _z, _xup, _yup, _zup, height)
 	{
 		/*
@@ -1473,7 +1473,7 @@ function colmesh_cylinder(_x, _y, _z, _xup, _yup, _zup, radius, height) : colmes
 		return ret;
 	}
 	
-	/// @func _castRay(ox, oy, oz)
+	/// @function _castRay(ox, oy, oz)
 	static _castRay = function(ox, oy, oz)
 	{
 		/*
@@ -1557,7 +1557,7 @@ function colmesh_cylinder(_x, _y, _z, _xup, _yup, _zup, radius, height) : colmes
 		return true;
 	}
 	
-	/// @func _getClosestPoint(x, y, z)
+	/// @function _getClosestPoint(x, y, z)
 	static _getClosestPoint = function(_x, _y, _z)
 	{
 		/*
@@ -1601,7 +1601,7 @@ function colmesh_cylinder(_x, _y, _z, _xup, _yup, _zup, radius, height) : colmes
 		return ret;
 	}
 	
-	/// @func _displaceSphere(x, y, z, xup, yup, zup, height, radius, slope, fast)
+	/// @function _displaceSphere(x, y, z, xup, yup, zup, height, radius, slope, fast)
 	static _displaceSphere = function(_x, _y, _z, _xup, _yup, _zup, height, radius, slope, fast)
 	{
 		/*
@@ -1643,7 +1643,7 @@ function colmesh_cylinder(_x, _y, _z, _xup, _yup, _zup, radius, height) : colmes
 		return true;
 	}
 
-	/// @func _getPriority(x, y, z, maxR)
+	/// @function _getPriority(x, y, z, maxR)
 	static _getPriority = function(_x, _y, _z, maxR)
 	{
 		/*
@@ -1684,7 +1684,7 @@ function colmesh_cylinder(_x, _y, _z, _xup, _yup, _zup, radius, height) : colmes
 		return d * d;
 	}
 	
-	/// @func _intersectsCube(cubeHalfSize, cubeCenterX, cubeCenterY, cubeCenterZ)
+	/// @function _intersectsCube(cubeHalfSize, cubeCenterX, cubeCenterY, cubeCenterZ)
 	static _intersectsCube = function(hsize, bX, bY, bZ) 
 	{
 		/*
@@ -1697,7 +1697,7 @@ function colmesh_cylinder(_x, _y, _z, _xup, _yup, _zup, radius, height) : colmes
 		return true;
 	}
 	
-	/// @func move(colMesh, x, y, z)
+	/// @function move(colMesh, x, y, z)
 	static move = function(colMesh, _x, _y, _z)
 	{
 		var oldMM = getMinMax();
@@ -1710,7 +1710,7 @@ function colmesh_cylinder(_x, _y, _z, _xup, _yup, _zup, radius, height) : colmes
 	#endregion
 }
 
-/// @func colmesh_cone(x, y, z, xup, yup, zup, radius, height)
+/// @function colmesh_cone(x, y, z, xup, yup, zup, radius, height)
 function colmesh_unfinished_cone(_x, _y, _z, _xup, _yup, _zup, radius, height) : colmesh_shapes() constructor
 {
 	type = eColMeshShape.Cone;
@@ -1726,7 +1726,7 @@ function colmesh_unfinished_cone(_x, _y, _z, _xup, _yup, _zup, radius, height) :
 	
 	#region functions
 	
-	/// @func getMinMax()
+	/// @function getMinMax()
 	static getMinMax = function()
 	{
 		/*
@@ -1742,7 +1742,7 @@ function colmesh_unfinished_cone(_x, _y, _z, _xup, _yup, _zup, radius, height) :
 		return ret;
 	}
 	
-	/// @func _capsuleGetRef(x, y, z, xup, yup, zup, height)
+	/// @function _capsuleGetRef(x, y, z, xup, yup, zup, height)
 	static _capsuleGetRef = function(_x, _y, _z, _xup, _yup, _zup, height)
 	{
 		//A supplementary function, not meant to be used by itself.
@@ -1800,7 +1800,7 @@ function colmesh_unfinished_cone(_x, _y, _z, _xup, _yup, _zup, radius, height) :
 		return ret;
 	}
 	
-	/// @func _castRay(ox, oy, oz)
+	/// @function _castRay(ox, oy, oz)
 	static _castRay = function(ox, oy, oz)
 	{
 		/*
@@ -1884,7 +1884,7 @@ function colmesh_unfinished_cone(_x, _y, _z, _xup, _yup, _zup, radius, height) :
 		return true;
 	}
 	
-	/// @func _getClosestPoint(x, y, z)
+	/// @function _getClosestPoint(x, y, z)
 	static _getClosestPoint = function(_x, _y, _z)
 	{
 		/*
@@ -1928,7 +1928,7 @@ function colmesh_unfinished_cone(_x, _y, _z, _xup, _yup, _zup, radius, height) :
 		return ret;
 	}
 	
-	/// @func _displaceSphere(x, y, z, xup, yup, zup, height, radius, slope, fast)
+	/// @function _displaceSphere(x, y, z, xup, yup, zup, height, radius, slope, fast)
 	static _displaceSphere = function(_x, _y, _z, _xup, _yup, _zup, height, radius, slope, fast)
 	{
 		/*
@@ -1970,7 +1970,7 @@ function colmesh_unfinished_cone(_x, _y, _z, _xup, _yup, _zup, radius, height) :
 		return true;
 	}
 
-	/// @func _getPriority(x, y, z, maxR)
+	/// @function _getPriority(x, y, z, maxR)
 	static _getPriority = function(_x, _y, _z, maxR)
 	{
 		/*
@@ -2011,7 +2011,7 @@ function colmesh_unfinished_cone(_x, _y, _z, _xup, _yup, _zup, radius, height) :
 		return d * d;
 	}
 	
-	/// @func _intersectsCube(cubeHalfSize, cubeCenterX, cubeCenterY, cubeCenterZ)
+	/// @function _intersectsCube(cubeHalfSize, cubeCenterX, cubeCenterY, cubeCenterZ)
 	static _intersectsCube = function(hsize, bX, bY, bZ) 
 	{
 		/*
@@ -2024,7 +2024,7 @@ function colmesh_unfinished_cone(_x, _y, _z, _xup, _yup, _zup, radius, height) :
 		return true;
 	}
 	
-	/// @func move(colMesh, x, y, z)
+	/// @function move(colMesh, x, y, z)
 	static move = function(colMesh, _x, _y, _z)
 	{
 		var oldMM = getMinMax();
@@ -2037,7 +2037,7 @@ function colmesh_unfinished_cone(_x, _y, _z, _xup, _yup, _zup, radius, height) :
 	#endregion
 }
 
-/// @func colmesh_torus(x, y, z, xup, yup, zup, R, r)
+/// @function colmesh_torus(x, y, z, xup, yup, zup, R, r)
 function colmesh_torus(_x, _y, _z, _xup, _yup, _zup, _R, _r) : colmesh_shapes() constructor
 {
 	type = eColMeshShape.Torus;
@@ -2058,7 +2058,7 @@ function colmesh_torus(_x, _y, _z, _xup, _yup, _zup, _R, _r) : colmesh_shapes() 
 	
 	#region functions
 	
-	/// @func getMinMax()
+	/// @function getMinMax()
 	static getMinMax = function()
 	{
 		/*
@@ -2075,7 +2075,7 @@ function colmesh_torus(_x, _y, _z, _xup, _yup, _zup, _R, _r) : colmesh_shapes() 
 		return ret;
 	}
 	
-	/// @func _capsuleGetRef(x, y, z, xup, yup, zup, height)
+	/// @function _capsuleGetRef(x, y, z, xup, yup, zup, height)
 	static _capsuleGetRef = function(_x, _y, _z, _xup, _yup, _zup, height)
 	{
 		/*
@@ -2104,7 +2104,7 @@ function colmesh_torus(_x, _y, _z, _xup, _yup, _zup, _R, _r) : colmesh_shapes() 
 		return ret;
 	}
 	
-	/// @func _getRingCoord(x, y, z)
+	/// @function _getRingCoord(x, y, z)
 	static _getRingCoord = function(_x, _y, _z)
 	{
 		gml_pragma("forceinline");
@@ -2131,7 +2131,7 @@ function colmesh_torus(_x, _y, _z, _xup, _yup, _zup, _R, _r) : colmesh_shapes() 
 		return ret;
 	}
 	
-	/// @func _castRay(ox, oy, oz)
+	/// @function _castRay(ox, oy, oz)
 	static _castRay = function(ox, oy, oz)
 	{
 		/*
@@ -2188,7 +2188,7 @@ function colmesh_torus(_x, _y, _z, _xup, _yup, _zup, _R, _r) : colmesh_shapes() 
 		return true;
 	}
 	
-	/// @func _getClosestPoint(x, y, z)
+	/// @function _getClosestPoint(x, y, z)
 	static _getClosestPoint = function(_x, _y, _z)
 	{
 		/*
@@ -2219,7 +2219,7 @@ function colmesh_torus(_x, _y, _z, _xup, _yup, _zup, _R, _r) : colmesh_shapes() 
 		return ret;
 	}
 	
-	/// @func _displaceSphere(x, y, z, xup, yup, zup, height, radius, slope, fast)
+	/// @function _displaceSphere(x, y, z, xup, yup, zup, height, radius, slope, fast)
 	static _displaceSphere = function(_x, _y, _z, _xup, _yup, _zup, height, radius, slope, fast)
 	{
 		/*
@@ -2245,7 +2245,7 @@ function colmesh_torus(_x, _y, _z, _xup, _yup, _zup, _R, _r) : colmesh_shapes() 
 		return true;
 	}
 
-	/// @func _getPriority(x, y, z, maxR)
+	/// @function _getPriority(x, y, z, maxR)
 	static _getPriority = function(_x, _y, _z, maxR)
 	{
 		/*
@@ -2261,7 +2261,7 @@ function colmesh_torus(_x, _y, _z, _xup, _yup, _zup, _R, _r) : colmesh_shapes() 
 		return d * d;
 	}
 	
-	/// @func _intersectsCube(cubeHalfSize, cubeCenterX, cubeCenterY, cubeCenterZ)
+	/// @function _intersectsCube(cubeHalfSize, cubeCenterX, cubeCenterY, cubeCenterZ)
 	static _intersectsCube = function(hsize, bX, bY, bZ) 
 	{
 		/*
@@ -2274,7 +2274,7 @@ function colmesh_torus(_x, _y, _z, _xup, _yup, _zup, _R, _r) : colmesh_shapes() 
 		return true;
 	}
 	
-	/// @func move(colMesh, x, y, z)
+	/// @function move(colMesh, x, y, z)
 	static move = function(colMesh, _x, _y, _z)
 	{
 		var oldMM = getMinMax();
@@ -2287,7 +2287,7 @@ function colmesh_torus(_x, _y, _z, _xup, _yup, _zup, _R, _r) : colmesh_shapes() 
 	#endregion
 }
 
-/// @func colmesh_disk(x, y, z, xup, yup, zup, R, r)
+/// @function colmesh_disk(x, y, z, xup, yup, zup, R, r)
 function colmesh_disk(_x, _y, _z, _xup, _yup, _zup, _R, _r) : colmesh_shapes() constructor
 {
 	type = eColMeshShape.Disk;
@@ -2308,7 +2308,7 @@ function colmesh_disk(_x, _y, _z, _xup, _yup, _zup, _R, _r) : colmesh_shapes() c
 	
 	#region functions
 	
-	/// @func getMinMax()
+	/// @function getMinMax()
 	static getMinMax = function()
 	{
 		/*
@@ -2325,7 +2325,7 @@ function colmesh_disk(_x, _y, _z, _xup, _yup, _zup, _R, _r) : colmesh_shapes() c
 		return ret;
 	}
 	
-	/// @func _capsuleGetRef(x, y, z, xup, yup, zup, height)
+	/// @function _capsuleGetRef(x, y, z, xup, yup, zup, height)
 	static _capsuleGetRef = function(_x, _y, _z, _xup, _yup, _zup, height)
 	{
 		/*
@@ -2351,7 +2351,7 @@ function colmesh_disk(_x, _y, _z, _xup, _yup, _zup, _R, _r) : colmesh_shapes() c
 		return ret;
 	}
 	
-	/// @func _getDiskCoord(x, y, z)
+	/// @function _getDiskCoord(x, y, z)
 	static _getDiskCoord = function(_x, _y, _z)
 	{
 		gml_pragma("forceinline");
@@ -2378,7 +2378,7 @@ function colmesh_disk(_x, _y, _z, _xup, _yup, _zup, _R, _r) : colmesh_shapes() c
 		return ret;
 	}
 	
-	/// @func _castRay(ox, oy, oz)
+	/// @function _castRay(ox, oy, oz)
 	static _castRay = function(ox, oy, oz)
 	{
 		/*
@@ -2435,7 +2435,7 @@ function colmesh_disk(_x, _y, _z, _xup, _yup, _zup, _R, _r) : colmesh_shapes() c
 		return true;
 	}
 	
-	/// @func _getClosestPoint(x, y, z)
+	/// @function _getClosestPoint(x, y, z)
 	static _getClosestPoint = function(_x, _y, _z)
 	{
 		/*
@@ -2466,7 +2466,7 @@ function colmesh_disk(_x, _y, _z, _xup, _yup, _zup, _R, _r) : colmesh_shapes() c
 		return ret;
 	}
 	
-	/// @func _displaceSphere(x, y, z, xup, yup, zup, height, radius, slope, fast)
+	/// @function _displaceSphere(x, y, z, xup, yup, zup, height, radius, slope, fast)
 	static _displaceSphere = function(_x, _y, _z, _xup, _yup, _zup, height, radius, slope, fast)
 	{
 		/*
@@ -2492,7 +2492,7 @@ function colmesh_disk(_x, _y, _z, _xup, _yup, _zup, _R, _r) : colmesh_shapes() c
 		return true;
 	}
 
-	/// @func _getPriority(x, y, z, maxR)
+	/// @function _getPriority(x, y, z, maxR)
 	static _getPriority = function(_x, _y, _z, maxR)
 	{
 		/*
@@ -2508,7 +2508,7 @@ function colmesh_disk(_x, _y, _z, _xup, _yup, _zup, _R, _r) : colmesh_shapes() c
 		return d * d;
 	}
 	
-	/// @func _intersectsCube(cubeHalfSize, cubeCenterX, cubeCenterY, cubeCenterZ)
+	/// @function _intersectsCube(cubeHalfSize, cubeCenterX, cubeCenterY, cubeCenterZ)
 	static _intersectsCube = function(hsize, bX, bY, bZ) 
 	{
 		/*
@@ -2521,7 +2521,7 @@ function colmesh_disk(_x, _y, _z, _xup, _yup, _zup, _R, _r) : colmesh_shapes() c
 		return true;
 	}
 	
-	/// @func move(colMesh, x, y, z)
+	/// @function move(colMesh, x, y, z)
 	static move = function(colMesh, _x, _y, _z)
 	{
 		var oldMM = getMinMax();
@@ -2534,7 +2534,7 @@ function colmesh_disk(_x, _y, _z, _xup, _yup, _zup, _R, _r) : colmesh_shapes() c
 	#endregion
 }
 
-/// @func colmesh_cube(x, y, z, width, length, height)
+/// @function colmesh_cube(x, y, z, width, length, height)
 function colmesh_cube(_x, _y, _z, width, length, height) : colmesh_shapes() constructor
 {
 	type = eColMeshShape.Cube;
@@ -2547,7 +2547,7 @@ function colmesh_cube(_x, _y, _z, width, length, height) : colmesh_shapes() cons
 	
 	#region functions
 	
-	/// @func getMinMax()
+	/// @function getMinMax()
 	static getMinMax = function()
 	{
 		/*
@@ -2563,7 +2563,7 @@ function colmesh_cube(_x, _y, _z, width, length, height) : colmesh_shapes() cons
 		return ret;
 	}
 	
-	/// @func _capsuleGetRef(x, y, z, xup, yup, zup, height)
+	/// @function _capsuleGetRef(x, y, z, xup, yup, zup, height)
 	static _capsuleGetRef = function(_x, _y, _z, xup, yup, zup, height)
 	{
 		/*
@@ -2616,7 +2616,7 @@ function colmesh_cube(_x, _y, _z, width, length, height) : colmesh_shapes() cons
 		return ret;
 	}
 	
-	/// @func _castRay(ox, oy, oz)
+	/// @function _castRay(ox, oy, oz)
 	static _castRay = function(ox, oy, oz)
 	{
 		/*
@@ -2728,7 +2728,7 @@ function colmesh_cube(_x, _y, _z, width, length, height) : colmesh_shapes() cons
 		return true;
 	}
 		
-	/// @func _getClosestPoint(x, y, z)
+	/// @function _getClosestPoint(x, y, z)
 	static _getClosestPoint = function(_x, _y, _z)
 	{
 		/*
@@ -2771,7 +2771,7 @@ function colmesh_cube(_x, _y, _z, width, length, height) : colmesh_shapes() cons
 		return ret;
 	}
 	
-	/// @func _displaceSphere(x, y, z, xup, yup, zup, height, radius, slope, fast)
+	/// @function _displaceSphere(x, y, z, xup, yup, zup, height, radius, slope, fast)
 	static _displaceSphere = function(_x, _y, _z, _xup, _yup, _zup, height, radius, slope, fast)
 	{
 		/*
@@ -2836,7 +2836,7 @@ function colmesh_cube(_x, _y, _z, width, length, height) : colmesh_shapes() cons
 		return true;
 	}
 	
-	/// @func _getPriority(x, y, z, maxR)
+	/// @function _getPriority(x, y, z, maxR)
 	static _getPriority = function(_x, _y, _z, maxR)
 	{
 		/*
@@ -2868,7 +2868,7 @@ function colmesh_cube(_x, _y, _z, width, length, height) : colmesh_shapes() cons
 		return d;
 	}
 	
-	/// @func _intersectsCube(cubeHalfSize, cubeCenterX, cubeCenterY, cubeCenterZ)
+	/// @function _intersectsCube(cubeHalfSize, cubeCenterX, cubeCenterY, cubeCenterZ)
 	static _intersectsCube = function(hsize, bX, bY, bZ) 
 	{
 		/*
@@ -2881,7 +2881,7 @@ function colmesh_cube(_x, _y, _z, width, length, height) : colmesh_shapes() cons
 		return true;
 	}
 	
-	/// @func move(colMesh, x, y, z)
+	/// @function move(colMesh, x, y, z)
 	static move = function(colMesh, _x, _y, _z)
 	{
 		var oldMM = getMinMax();
@@ -2894,7 +2894,7 @@ function colmesh_cube(_x, _y, _z, width, length, height) : colmesh_shapes() cons
 	#endregion
 }
 
-/// @func colmesh_block(blockMatrix)
+/// @function colmesh_block(blockMatrix)
 function colmesh_block(_M) : colmesh_shapes() constructor
 {
 	type = eColMeshShape.Block;
@@ -2916,7 +2916,7 @@ function colmesh_block(_M) : colmesh_shapes() constructor
 	
 	#region functions
 	
-	/// @func getMinMax()
+	/// @function getMinMax()
 	static getMinMax = function()
 	{
 		/*
@@ -2935,7 +2935,7 @@ function colmesh_block(_M) : colmesh_shapes() constructor
 		return ret;
 	}
 	
-	/// @func _capsuleGetRef(x, y, z, xup, yup, zup, height)
+	/// @function _capsuleGetRef(x, y, z, xup, yup, zup, height)
 	static _capsuleGetRef = function(_x, _y, _z, xup, yup, zup, height)
 	{
 		/*
@@ -2984,7 +2984,7 @@ function colmesh_block(_M) : colmesh_shapes() constructor
 		return ret;
 	}
 	
-	/// @func _castRay(ox, oy, oz)
+	/// @function _castRay(ox, oy, oz)
 	static _castRay = function(ox, oy, oz)
 	{
 		/*
@@ -3100,7 +3100,7 @@ function colmesh_block(_M) : colmesh_shapes() constructor
 		return true;
 	}
 		
-	/// @func _getClosestPoint(x, y, z)
+	/// @function _getClosestPoint(x, y, z)
 	static _getClosestPoint = function(_x, _y, _z)
 	{
 		/*
@@ -3144,7 +3144,7 @@ function colmesh_block(_M) : colmesh_shapes() constructor
 		return ret;
 	}
 	
-	/// @func _displaceSphere(x, y, z, xup, yup, zup, height, radius, slope, fast)
+	/// @function _displaceSphere(x, y, z, xup, yup, zup, height, radius, slope, fast)
 	static _displaceSphere = function(_x, _y, _z, _xup, _yup, _zup, height, radius, slope, fast)
 	{
 		/*
@@ -3207,7 +3207,7 @@ function colmesh_block(_M) : colmesh_shapes() constructor
 		return true;
 	}
 	
-	/// @func _getPriority(x, y, z, maxR)
+	/// @function _getPriority(x, y, z, maxR)
 	static _getPriority = function(_x, _y, _z, maxR)
 	{
 		/*
@@ -3240,7 +3240,7 @@ function colmesh_block(_M) : colmesh_shapes() constructor
 		return d;
 	}
 	
-	/// @func _intersectsCube(cubeHalfSize, cubeCenterX, cubeCenterY, cubeCenterZ)
+	/// @function _intersectsCube(cubeHalfSize, cubeCenterX, cubeCenterY, cubeCenterZ)
 	static _intersectsCube = function(hsize, bX, bY, bZ) 
 	{
 		/*
@@ -3273,7 +3273,7 @@ function colmesh_block(_M) : colmesh_shapes() constructor
 		return false;
 	}
 	
-	/// @func move(colMesh, x, y, z)
+	/// @function move(colMesh, x, y, z)
 	static move = function(colMesh, _x, _y, _z)
 	{
 		var oldMM = getMinMax();
@@ -3286,7 +3286,7 @@ function colmesh_block(_M) : colmesh_shapes() constructor
 	#endregion
 }
 
-/// @func colmesh_dynamic(shape, colMesh, M, shapeInd)
+/// @function colmesh_dynamic(shape, colMesh, M, shapeInd)
 function colmesh_dynamic(_shape, _colMesh, _M, _shapeInd) : colmesh_shapes() constructor
 {
 	type = eColMeshShape.Dynamic;
@@ -3301,7 +3301,7 @@ function colmesh_dynamic(_shape, _colMesh, _M, _shapeInd) : colmesh_shapes() con
 	
 	#region Shared functions (this is only overwritten for the dynamic
 	
-	/// @func capsuleCollision(x, y, z, xup, yup, zup, radius, height)
+	/// @function capsuleCollision(x, y, z, xup, yup, zup, radius, height)
 	static capsuleCollision = function(x, y, z, xup, yup, zup, radius, height)
 	{
 		//Returns true if the given capsule collides with the shape
@@ -3318,7 +3318,7 @@ function colmesh_dynamic(_shape, _colMesh, _M, _shapeInd) : colmesh_shapes() con
 	
 	#region Shape-specific functions
 	
-	/// @func setMatrix(M, moving)
+	/// @function setMatrix(M, moving)
 	static setMatrix = function(_M, _moving) 
 	{	
 		/*	
@@ -3364,7 +3364,7 @@ function colmesh_dynamic(_shape, _colMesh, _M, _shapeInd) : colmesh_shapes() con
 		_updateSubdiv(colMesh, oldMM);
 	}
 	
-	/// @func move(colMesh, x, y, z)
+	/// @function move(colMesh, x, y, z)
 	static move = function(colMesh, _x, _y, _z)
 	{
 		static temp = matrix_build_identity();
@@ -3379,7 +3379,7 @@ function colmesh_dynamic(_shape, _colMesh, _M, _shapeInd) : colmesh_shapes() con
 	
 	#region functions
 	
-	/// @func getMinMax()
+	/// @function getMinMax()
 	static getMinMax = function()
 	{
 		/*
@@ -3417,7 +3417,7 @@ function colmesh_dynamic(_shape, _colMesh, _M, _shapeInd) : colmesh_shapes() con
 		return ret;
 	}
 	
-	/// @func _castRay(ox, oy, oz)
+	/// @function _castRay(ox, oy, oz)
 	static _castRay = function(ox, oy, oz)
 	{
 		/*
@@ -3465,7 +3465,7 @@ function colmesh_dynamic(_shape, _colMesh, _M, _shapeInd) : colmesh_shapes() con
 		return true;
 	}
 	
-	/// @func _getClosestPoint(x, y, z)
+	/// @function _getClosestPoint(x, y, z)
 	static _getClosestPoint = function(_x, _y, _z)
 	{
 		/*
@@ -3512,7 +3512,7 @@ function colmesh_dynamic(_shape, _colMesh, _M, _shapeInd) : colmesh_shapes() con
 		return colmesh_matrix_transform_vertex(M, _x, _y, _z);
 	}
 	
-	/// @func _capsuleGetRef(x, y, z, xup, yup, zup, height)
+	/// @function _capsuleGetRef(x, y, z, xup, yup, zup, height)
 	static _capsuleGetRef = function(_x, _y, _z, xup, yup, zup, height)
 	{
 		/*
@@ -3535,7 +3535,7 @@ function colmesh_dynamic(_shape, _colMesh, _M, _shapeInd) : colmesh_shapes() con
 		return colmesh_matrix_transform_vertex(M, r[0], r[1], r[2]);
 	}
 	
-	/// @func _intersectsCube(cubeHalfSize, cubeCenterX, cubeCenterY, cubeCenterZ)
+	/// @function _intersectsCube(cubeHalfSize, cubeCenterX, cubeCenterY, cubeCenterZ)
 	static _intersectsCube = function(hsize, bX, bY, bZ)
 	{
 		/*
@@ -3545,7 +3545,7 @@ function colmesh_dynamic(_shape, _colMesh, _M, _shapeInd) : colmesh_shapes() con
 		return true;
 	}
 	
-	/// @func _displaceSphere(x, y, z, xup, yup, zup, height, radius, slope, fast)
+	/// @function _displaceSphere(x, y, z, xup, yup, zup, height, radius, slope, fast)
 	static _displaceSphere = function(x, y, z, xup, yup, zup, height, radius, slope, fast)
 	{
 		/*
@@ -3626,7 +3626,7 @@ function colmesh_dynamic(_shape, _colMesh, _M, _shapeInd) : colmesh_shapes() con
 		return false;
 	}
 	
-	/// @func _getPriority(x, y, z, maxR)
+	/// @function _getPriority(x, y, z, maxR)
 	static _getPriority = function(_x, _y, _z, maxR)
 	{
 		/*

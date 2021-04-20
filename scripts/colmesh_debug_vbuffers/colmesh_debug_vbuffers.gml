@@ -2,6 +2,7 @@
 	This script will generate primitives with a custom format that allows for dynamic non-uniform scaling scaling.
 	These are mostly used for debugging the collision system.
 */
+
 vertex_format_begin();
 vertex_format_add_position_3d();
 vertex_format_add_normal();
@@ -9,12 +10,11 @@ vertex_format_add_texcoord();
 vertex_format_add_color();
 global.ColMeshFormat = vertex_format_end();
 
-function colmesh_debug_draw_capsule(x, y, z, xup, yup, zup, radius, height, colour)
-{
+/// @function colmesh_debug_draw_capsule
+function colmesh_debug_draw_capsule(x, y, z, xup, yup, zup, radius, height, colour){
 	var type = eColMeshShape.Capsule;
 	var vbuff = global.ColMeshDebugShapes[type];
-	if (vbuff < 0)
-	{
+	if (vbuff < 0){
 		global.ColMeshDebugShapes[type] = colmesh_create_capsule(20, 10, 1, 1);
 		vbuff = global.ColMeshDebugShapes[type];
 	}
@@ -26,12 +26,12 @@ function colmesh_debug_draw_capsule(x, y, z, xup, yup, zup, radius, height, colo
 	shader_reset();
 	matrix_set(matrix_world, matrix_build_identity());
 }
-function colmesh_debug_draw_cylinder(x, y, z, xup, yup, zup, radius, height, colour)
-{
+
+/// @function colmesh_debug_draw_cylinder
+function colmesh_debug_draw_cylinder(x, y, z, xup, yup, zup, radius, height, colour){
 	var type = eColMeshShape.Cylinder;
 	var vbuff = global.ColMeshDebugShapes[type];
-	if (vbuff < 0)
-	{
+	if (vbuff < 0) {
 		global.ColMeshDebugShapes[type] = colmesh_create_cylinder(20, 1, 1);
 		vbuff = global.ColMeshDebugShapes[type];
 	}
@@ -43,12 +43,12 @@ function colmesh_debug_draw_cylinder(x, y, z, xup, yup, zup, radius, height, col
 	shader_reset();
 	matrix_set(matrix_world, matrix_build_identity());
 }
-function colmesh_debug_draw_sphere(x, y, z, radius, colour)
-{
+
+/// @function colmesh_debug_draw_sphere
+function colmesh_debug_draw_sphere(x, y, z, radius, colour){
 	var type = eColMeshShape.Sphere;
 	var vbuff = global.ColMeshDebugShapes[type];
-	if (vbuff < 0)
-	{
+	if (vbuff < 0) {
 		global.ColMeshDebugShapes[type] = colmesh_create_sphere(20, 10, 1, 1);
 		vbuff = global.ColMeshDebugShapes[type];
 	}
@@ -61,21 +61,19 @@ function colmesh_debug_draw_sphere(x, y, z, radius, colour)
 	matrix_set(matrix_world, matrix_build_identity());
 }
 
-//Function for creating a sphere as a pr_trianglelist vertex buffer
-function colmesh_create_sphere(hVerts, vVerts, hRep, vRep)
-{
+/// @function colmesh_create_sphere 
+/// @description Function for creating a sphere as a pr_trianglelist vertex buffer
+function colmesh_create_sphere(hVerts, vVerts, hRep, vRep){
 	var vbuff = vertex_create_buffer();
 	vertex_begin(vbuff, global.ColMeshFormat);
-	for (var xx = 0; xx < hVerts; xx ++)
-	{
+	for (var xx = 0; xx < hVerts; xx++){
 		var xa1 = xx / hVerts * 2 * pi;
 		var xa2 = (xx+1) / hVerts * 2 * pi;
 		var xc1 = cos(xa1);
 		var xs1 = sin(xa1);
 		var xc2 = cos(xa2);
 		var xs2 = sin(xa2);
-		for (var yy = 0; yy < vVerts; yy ++)
-		{
+		for (var yy = 0; yy < vVerts; yy++){
 			var ya1 = yy / vVerts * pi;
 			var ya2 = (yy+1) / vVerts * pi;
 			var yc1 = cos(ya1);
@@ -115,9 +113,9 @@ function colmesh_create_sphere(hVerts, vVerts, hRep, vRep)
 	return vbuff;
 }
 
-//Function for creating a block as a pr_trianglelist vertex buffer
-function colmesh_create_block(hRep, vRep)
-{
+/// @function colmesh_create_block
+/// @description Function for creating a block as a pr_trianglelist vertex buffer
+function colmesh_create_block(hRep, vRep){
 	var vbuff = vertex_create_buffer();
 	vertex_begin(vbuff, global.ColMeshFormat);
 	
@@ -288,21 +286,19 @@ function colmesh_create_block(hRep, vRep)
 	return vbuff;
 }
 
-//Function for creating a torus as a pr_trianglelist vertex buffer
-function colmesh_create_torus(hVerts, vVerts, hRep, vRep)
-{
+/// @function colmesh_create_torus
+/// @description Function for creating a torus as a pr_trianglelist vertex buffer
+function colmesh_create_torus(hVerts, vVerts, hRep, vRep){
 	var vbuff = vertex_create_buffer();
 	vertex_begin(vbuff, global.ColMeshFormat);
-	for (var xx = 0; xx < hVerts; xx ++)
-	{
+	for (var xx = 0; xx < hVerts; xx++){
 		var xa1 = xx / hVerts * 2 * pi;
 		var xa2 = (xx+1) / hVerts * 2 * pi;
 		var xc1 = cos(xa1);
 		var xs1 = sin(xa1);
 		var xc2 = cos(xa2);
 		var xs2 = sin(xa2);
-		for (var yy = 0; yy < vVerts; yy ++)
-		{
+		for (var yy = 0; yy < vVerts; yy ++){
 			var ya1 = yy / vVerts * 2 * pi;
 			var ya2 = (yy+1) / vVerts * 2 * pi;
 			var yc1 = cos(ya1);
@@ -342,13 +338,12 @@ function colmesh_create_torus(hVerts, vVerts, hRep, vRep)
 	return vbuff;
 }
 
-//Function for creating a disk as a pr_trianglelist vertex buffer
-function colmesh_create_disk(hVerts, vVerts, hRep, vRep)
-{
+/// @function colmesh_create_disk
+/// @description Function for creating a disk as a pr_trianglelist vertex buffer
+function colmesh_create_disk(hVerts, vVerts, hRep, vRep){
 	var vbuff = vertex_create_buffer();
 	vertex_begin(vbuff, global.ColMeshFormat);
-	for (var xx = 0; xx < hVerts; xx ++)
-	{
+	for (var xx = 0; xx < hVerts; xx++){
 		var xa1 = xx / hVerts * 2 * pi;
 		var xa2 = (xx+1) / hVerts * 2 * pi;
 		var xc1 = cos(xa1);
@@ -382,8 +377,7 @@ function colmesh_create_disk(hVerts, vVerts, hRep, vRep)
 		vertex_texcoord(vbuff, xc1 * hRep, xs1 * vRep);
 		vertex_color(vbuff, c_white, 1);
 		
-		for (var yy = 0; yy < vVerts; yy ++)
-		{
+		for (var yy = 0; yy < vVerts; yy++){
 			var ya1 = yy / vVerts * pi;
 			var ya2 = (yy+1) / vVerts * pi;
 			var yc1 = cos(ya1);
@@ -423,13 +417,12 @@ function colmesh_create_disk(hVerts, vVerts, hRep, vRep)
 	return vbuff;
 }
 
-//Function for creating a capsule as a pr_trianglelist vertex buffer
-function colmesh_create_capsule(hVerts, vVerts, hRep, vRep)
-{
+/// @function colmesh_create_capsule
+/// @description Function for creating a capsule as a pr_trianglelist vertex buffer
+function colmesh_create_capsule(hVerts, vVerts, hRep, vRep){
 	var vbuff = vertex_create_buffer();
 	vertex_begin(vbuff, global.ColMeshFormat);
-	for (var xx = 0; xx < hVerts; xx ++)
-	{
+	for (var xx = 0; xx < hVerts; xx++){
 		var xa1 = xx / hVerts * 2 * pi;
 		var xa2 = (xx+1) / hVerts * 2 * pi;
 		var xc1 = cos(xa1);
@@ -463,8 +456,7 @@ function colmesh_create_capsule(hVerts, vVerts, hRep, vRep)
 		vertex_texcoord(vbuff, xx / hVerts * hRep, vRep);
 		vertex_color(vbuff, c_white, 1);
 		
-		for (var yy = 0; yy < vVerts; yy ++)
-		{
+		for (var yy = 0; yy < vVerts; yy++){
 			var ya1 = yy / vVerts * pi / 2;
 			var ya2 = (yy+1) / vVerts * pi / 2;
 			var yc1 = cos(ya1);
@@ -532,13 +524,12 @@ function colmesh_create_capsule(hVerts, vVerts, hRep, vRep)
 	return vbuff;
 }
 
-//Function for creating a cylinder as a pr_trianglelist vertex buffer
-function colmesh_create_cylinder(steps, hRep, vRep)
-{
+/// @function colmesh_create_cylinder
+/// @description Function for creating a cylinder as a pr_trianglelist vertex buffer
+function colmesh_create_cylinder(steps, hRep, vRep){
 	var vbuff = vertex_create_buffer();
 	vertex_begin(vbuff, global.ColMeshFormat);
-	for (var xx = 0; xx < steps; xx ++)
-	{
+	for (var xx = 0; xx < steps; xx++){
 		var xa1 = xx / steps * 2 * pi;
 		var xa2 = (xx+1) / steps * 2 * pi;
 		var xc1 = cos(xa1);
