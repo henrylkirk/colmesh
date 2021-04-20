@@ -32,7 +32,7 @@ if (sqr(x - prevX) + sqr(y - prevY) + sqr(z - prevZ) > radius * radius) //Only c
 	var dx = xup * d;
 	var dy = yup * d;
 	var dz = zup * d;
-	ray = levelColmesh.castRay(prevX + dx, prevY + dy, prevZ + dz, x + dx, y + dy, z + dz);
+	ray = global.levelColmesh.castRay(prevX + dx, prevY + dy, prevZ + dz, x + dx, y + dy, z + dz);
 	if is_array(ray)
 	{
 		x = ray[0] - dx - (x - prevX) * .1;
@@ -45,7 +45,7 @@ if (sqr(x - prevX) + sqr(y - prevY) + sqr(z - prevZ) > radius * radius) //Only c
 ground = false;
 fast = false;			//Fast collisions should usually not be used for important objects like the player
 executeColfunc = true;	//We want to execute the collision function of the coins
-col = levelColmesh.displaceCapsule(x, y, z, 0, 0, 1, radius, height, 40, fast, executeColfunc);
+col = global.levelColmesh.displaceCapsule(x, y, z, 0, 0, 1, radius, height, 40, fast, executeColfunc);
 if (col[6]) //If we're touching ground
 {
 	x = col[0];

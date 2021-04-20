@@ -12,20 +12,20 @@ modLevel = vertex_create_buffer_from_buffer(mbuffLevel, global.ColMeshFormat);
 buffer_delete(mbuffLevel);
 
 /*
-	levelColmesh is a global variable in these demos.
-	Instead of deleting and creating it over and over, the levelColmesh is simply cleared
+	global.levelColmesh is a global variable in these demos.
+	Instead of deleting and creating it over and over, the global.levelColmesh is simply cleared
 	whenever you switch rooms.
-	oColmeshSystem controls the levelColmesh, and makes sure it's cleared.
+	oColmeshSystem controls the global.levelColmesh, and makes sure it's cleared.
 */
 
 //First check if a cached ColMesh exists
-if (!levelColmesh.load("Demo3Cache.cm"))
+if (!global.levelColmesh.load("Demo3Cache.cm"))
 {
 	//If a cache does not exist, generate a colmesh from an OBJ file, subdivide it, and save a cache
-	levelColmesh.addMesh("ColMesh Demo/CoronaColmesh.obj"); //Notice how I supply a path to an OBJ file. I could have instead used the mbuffLevel that I created earlier in this event
-	levelColmesh.addShape(new colmesh_sphere(0, 0, 0, 400));
-	levelColmesh.subdivide(100);
-	levelColmesh.save("Demo3Cache.cm"); //Save a cache, so that loading it the next time will be quicker
+	global.levelColmesh.addMesh("ColMesh Demo/CoronaColmesh.obj"); //Notice how I supply a path to an OBJ file. I could have instead used the mbuffLevel that I created earlier in this event
+	global.levelColmesh.addShape(new colmesh_sphere(0, 0, 0, 400));
+	global.levelColmesh.subdivide(100);
+	global.levelColmesh.save("Demo3Cache.cm"); //Save a cache, so that loading it the next time will be quicker
 }
 
 //Player variables

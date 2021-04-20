@@ -6,7 +6,7 @@ spdX = (x - prevX) * fric;
 spdY = (y - prevY) * fric;
 spdZ = (z - prevZ) * (1 - 0.01);
 
-var D = levelColmesh.getDeltaMatrix();
+var D = global.levelColmesh.getDeltaMatrix();
 if (is_array(D))
 {
 	colmesh_matrix_multiply_fast(D, charMat, charMat);
@@ -43,7 +43,7 @@ if (sqr(x - prevX) + sqr(y - prevY) + sqr(z - prevZ) > radius * radius) //Only c
 	var dx = xup * d;
 	var dy = yup * d;
 	var dz = zup * d;
-	ray = levelColmesh.castRay(prevX + dx, prevY + dy, prevZ + dz, x + dx, y + dy, z + dz);
+	ray = global.levelColmesh.castRay(prevX + dx, prevY + dy, prevZ + dz, x + dx, y + dy, z + dz);
 	if is_array(ray)
 	{
 		x = ray[0] - dx - (x - prevX) * .1;
@@ -54,7 +54,7 @@ if (sqr(x - prevX) + sqr(y - prevY) + sqr(z - prevZ) > radius * radius) //Only c
 
 //Avoid ground
 ground = false;
-col = levelColmesh.displaceCapsule(x, y, z, xup, yup, zup, radius, height, 46, false);
+col = global.levelColmesh.displaceCapsule(x, y, z, xup, yup, zup, radius, height, 46, false);
 if (col[6]) //If we're touching ground
 {
 	x = col[0];

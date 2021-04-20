@@ -9,10 +9,10 @@ global.demoText = "There is one more type of shape you can add - the \"dynamic\"
 	+ "\naround in the level ColMesh. In short - we've got some pretty complex movement going on!";
 
 /*
-	levelColmesh is a global variable in these demos.
-	Instead of deleting and creating it over and over, the levelColmesh is simply cleared
+	global.levelColmesh is a global variable in these demos.
+	Instead of deleting and creating it over and over, the global.levelColmesh is simply cleared
 	whenever you switch rooms.
-	oColmeshParent controls the levelColmesh, and makes sure it's cleared.
+	oColmeshParent controls the global.levelColmesh, and makes sure it's cleared.
 */
 
 //I want to wait one step with subdividing the colmesh, since we need to be sure all the objects

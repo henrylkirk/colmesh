@@ -1,6 +1,6 @@
-/// @description
-if (variable_global_exists("levelColmesh"))
-{
+/// @description Setup colmesh system
+
+if variable_global_exists("global.levelColmesh") {
 	exit;
 }
 
@@ -16,8 +16,7 @@ global.disableDraw = false;
 global.drawText = true;
 global.demoText = "";
 
-globalvar levelColmesh;
-levelColmesh = new colmesh();
+global.levelColmesh = new colmesh();
 
 global.lightDir = [0, 0, -1];
 global.camX = 0;
@@ -26,19 +25,15 @@ global.camZ = 0;
 
 global.coins = 0;
 
-globalvar shader_set_lightdir;
-shader_set_lightdir = function(shader)
-{
+/// @function global.shader_set_lightdir
+global.shader_set_lightdir = function(shader){
 	shader_set_uniform_f(shader_get_uniform(shader, "u_lightDir"), global.lightDir[0], global.lightDir[1], global.lightDir[2]);
 }
 
-globalvar colmeshdemo_draw_circular_shadow;
-colmeshdemo_draw_circular_shadow = function(x, y, z, xup, yup, zup, radius, length, alpha)
-{	/*
-		This function will draw a circular shadow onto terrain beneath the given coordinates
-		See this video for an explanation on how this works:
-			https://www.youtube.com/watch?v=s0w85FvdPAs
-	*/
+/// @function global.colmeshdemo_draw_circular_shadow
+/// @description This function will draw a circular shadow onto terrain beneath the given coordinates
+global.colmeshdemo_draw_circular_shadow = function(x, y, z, xup, yup, zup, radius, length, alpha){	
+
 	var M = colmesh_matrix_build_from_vector(x, y, z, xup, yup, zup, 1, 1, 1);
 	
 	gpu_set_zwriteenable(false);
@@ -50,7 +45,7 @@ colmeshdemo_draw_circular_shadow = function(x, y, z, xup, yup, zup, radius, leng
 	shader_set_uniform_f(shader_get_uniform(sh_colmesh_shadow, "u_color"), 0, 0, 0, 1 - alpha);
 	vertex_submit(global.modCylinder, pr_trianglelist, -1);
 
-	//Draw cylinder with a special blend mode that filters away the parts of the cylinder that are drawn above the inverted cylinder, resulting in a projected circle
+	// Draw cylinder with a special blend mode that filters away the parts of the cylinder that are drawn above the inverted cylinder, resulting in a projected circle
 	gpu_set_blendmode_ext_sepalpha(bm_dest_color, bm_inv_dest_alpha, bm_one, bm_zero);
 	shader_set_uniform_f(shader_get_uniform(sh_colmesh_shadow, "u_color"), 1 - alpha, 1 - alpha, 1 - alpha, 1);
 	gpu_set_cullmode(cull_counterclockwise);

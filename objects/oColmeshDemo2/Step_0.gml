@@ -5,7 +5,7 @@ spdX = (x - prevX) * fric;
 spdY = (y - prevY) * fric;
 spdZ = (z - prevZ) * (1 - 0.01);
 
-var D = levelColmesh.getDeltaMatrix();
+var D = global.levelColmesh.getDeltaMatrix();
 if (is_array(D))
 {
 	colmesh_matrix_multiply_fast(D, charMat, charMat);
@@ -38,7 +38,7 @@ z += spdZ - 1 + jump * ground * 15; //Apply gravity in z-direction
 
 //Avoid ground
 ground = false;
-col = levelColmesh.displaceCapsule(x, y, z, xup, yup, zup, radius, height, 46, false);
+col = global.levelColmesh.displaceCapsule(x, y, z, xup, yup, zup, radius, height, 46, false);
 if (col[6]) //If we're touching ground
 {
 	x = col[0];

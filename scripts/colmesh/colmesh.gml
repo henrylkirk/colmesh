@@ -219,7 +219,7 @@ function colmesh() : colmesh_shapes() constructor
 			Adds the given shape to the ColMesh.
 			Look in colmesh_shapes for a list of all the shapes that can be added.
 			Typical usage:
-				levelColmesh.addShape(new colmesh_sphere(x, y, z, radius));
+				global.levelColmesh.addShape(new colmesh_sphere(x, y, z, radius));
 		*/
 		var _shape = _getShape(shape);
 		var mm = _shape.getMinMax();
@@ -242,7 +242,7 @@ function colmesh() : colmesh_shapes() constructor
 			colFunc is executed when the player collides with the object
 			rayFunc is executed when a ray hits the object
 		*/
-		levelColmesh.addShape(shape);
+		global.levelColmesh.addShape(shape);
 		shape.setSolid(false);
 		if (!is_undefined(colFunc)){shape.setCollisionFunction(colFunc);}
 		if (!is_undefined(rayFunc)){shape.setRayFunction(rayFunc);}
@@ -265,7 +265,7 @@ function colmesh() : colmesh_shapes() constructor
 			Typical usage:
 				//Create event
 				M = matrix_build(x, y, z, xangle, yangle, zangle, size, size, size); //Create a matrix
-				dynamic = levelColmesh.addDynamic(new colmesh_sphere(0, 0, 0, radius), M); //Add a dynamic sphere to the colmesh, and save it to a variable called "dynamic"
+				dynamic = global.levelColmesh.addDynamic(new colmesh_sphere(0, 0, 0, radius), M); //Add a dynamic sphere to the colmesh, and save it to a variable called "dynamic"
 				
 				//Step event
 				M = matrix_build(x, y, z, xangle, yangle, zangle, size, size, size); //Update the matrix
@@ -658,7 +658,7 @@ function colmesh() : colmesh_shapes() constructor
 			Since matrices are arrays, and arrays are stored by their handle, any changes to the arrays from the previous frame will also be applied to the delta matrix!
 			
 			Typical usage for making the player move:
-				var D = levelColmesh.getDeltaMatrix();
+				var D = global.levelColmesh.getDeltaMatrix();
 				if (is_array(D))
 				{
 					var p = matrix_transform_vertex(D, x, y, z);
@@ -668,7 +668,7 @@ function colmesh() : colmesh_shapes() constructor
 				}
 				
 			And for transforming a vector:
-				var D = levelColmesh.getDeltaMatrix();
+				var D = global.levelColmesh.getDeltaMatrix();
 				if (is_array(D))
 				{
 					var p = matrix_transform_vector(D, xto, yto, zto);
@@ -678,7 +678,7 @@ function colmesh() : colmesh_shapes() constructor
 				}
 			
 			And for transforming a matrix:
-				var D = levelColmesh.getDeltaMatrix();
+				var D = global.levelColmesh.getDeltaMatrix();
 				if (is_array(D))
 				{
 					colmesh_matrix_multiply_fast(D, targetMatrix, targetMatrix);

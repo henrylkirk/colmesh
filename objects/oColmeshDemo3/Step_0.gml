@@ -35,7 +35,7 @@ z += spdZ;
 
 //Avoid ground
 ground = false;
-col = levelColmesh.displaceCapsule(x, y, z, xup, yup, zup, radius, height, 40, false);
+col = global.levelColmesh.displaceCapsule(x, y, z, xup, yup, zup, radius, height, 40, false);
 if (col[6]) //If we're touching ground
 {
 	x = col[0];
