@@ -24,14 +24,13 @@
 		www.TheSnidr.com
 */
 
-enum eColMeshShape
-{
+enum eColMeshShape {
 	//Do not change the order of these. Changing the order will break saving and loading. Add new entries before "Num".
 	Mesh, Sphere, Capsule, Cylinder, Torus, Cube, Block, Dynamic, None, Disk, Cone, Heightmap, Num
 }
 
-function colmesh_shapes() constructor
-{
+/// @function colmesh_shapes
+function colmesh_shapes() constructor {
 	/*
 		This is the parent struct for all the other possible collision shapes!
 		This is also the parent struct for the ColMesh itself. Weird, huh?
@@ -45,8 +44,7 @@ function colmesh_shapes() constructor
 	solid = true;
 	
 	/// @function setSolid(solid)
-	static setSolid = function(_solid)
-	{
+	static setSolid = function(_solid) {
 		/*
 			Toggle solid for this shape. Non-solid objects will not displace other objects.
 			Typically useful for collectible objects like coins, or trigger objects

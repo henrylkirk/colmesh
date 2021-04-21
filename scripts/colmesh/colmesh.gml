@@ -853,8 +853,7 @@ function colmesh() : colmesh_shapes() constructor {
 	#region Supplementaries
 	
 	/// @function _expandBoundaries(AABB[6])
-	static _expandBoundaries = function(AABB)
-	{
+	static _expandBoundaries = function(AABB) {
 		/*
 			Expands the boundaries of the ColMesh. This will only come into effect once the ColMesh is subdivided.
 		*/
@@ -867,25 +866,20 @@ function colmesh() : colmesh_shapes() constructor {
 	}
 	
 	/// @function _addUnique(target, source)
+	/// @description Adds the unique list entries from source to target list
 	static _addUnique = function(r1, r2) {
-		/*
-			Adds the unique list entries from source to target list
-		*/
-		if (r2 < 0)
-		{
+
+		if (r2 < 0) {
 			return false;
 		}
-		if (ds_list_size(r1) == 0)
-		{	//The target list is empty. Copy over the contents of r2 and call it a day
+		if (ds_list_size(r1) == 0) {	//The target list is empty. Copy over the contents of r2 and call it a day
 			ds_list_copy(r1, r2);
 			return true;
 		}
 		var i = ds_list_size(r2);
-		repeat i
-		{
+		repeat i {
 			var shapeInd = r2[| --i];
-			if (ds_list_find_index(r1, shapeInd) < 0)
-			{
+			if (ds_list_find_index(r1, shapeInd) < 0) {
 				ds_list_add(r1, shapeInd);
 			}
 		}
@@ -893,16 +887,14 @@ function colmesh() : colmesh_shapes() constructor {
 	}
 	
 	/// @function _getShape(shape)
-	static _getShape = function(shape)
-	{
+	static _getShape = function(shape) {
 		/*
 			A supplementary function.
 			If the given shape is a real value, it must contain a triangle index. 
 			It will then load that triangle into the colmesh, and return the index of the colmesh.
 			If it does not contain a real, the given shape is returned.
 		*/
-		if (is_array(shape))
-		{	
+		if (is_array(shape)) {	
 			triangle = shape; 
 			return self;
 		}
@@ -910,8 +902,7 @@ function colmesh() : colmesh_shapes() constructor {
 	}
 	
 	/// @function _constrain_ray(x1, y1, z1, x2, y2, z2)
-	static _constrain_ray = function(x1, y1, z1, x2, y2, z2) 
-	{
+	static _constrain_ray = function(x1, y1, z1, x2, y2, z2) {
 		/*
 			This script will truncate the ray from (x1, y1, z1) to (x2, y2, z2) so that it fits inside the bounding box of the colmesh.
 			Returns false if the ray is fully outside the bounding box.
@@ -931,41 +922,35 @@ function colmesh() : colmesh_shapes() constructor {
 		y2 = (y2 - my) / sy;
 		z2 = (z2 - mz) / sz;
 	
-		if ((x1 < -1 && x2 < -1) || (y1 < -1 && y2 < -1) || (z1 < -1 && z2 < -1) || (x1 > 1 && x2 > 1) || (y1 > 1 && y2 > 1) || (z1 > 1 && z2 > 1))
-		{	//The ray is fully outside the bounding box, and we can end the algorithm here
+		if ((x1 < -1 && x2 < -1) || (y1 < -1 && y2 < -1) || (z1 < -1 && z2 < -1) || (x1 > 1 && x2 > 1) || (y1 > 1 && y2 > 1) || (z1 > 1 && z2 > 1)){	//The ray is fully outside the bounding box, and we can end the algorithm here
 			return false;
 		}
 	
 		var intersection = true;
-		if (x1 < -1 || x2 < -1 || y1 < -1 || y2 < -1 || z1 < -1 || z2 < -1 || x1 > 1 || x2 > 1 || y1 > 1 || y2 > 1 || z1 > 1 || z2 > 1)
-		{
+		if (x1 < -1 || x2 < -1 || y1 < -1 || y2 < -1 || z1 < -1 || z2 < -1 || x1 > 1 || x2 > 1 || y1 > 1 || y2 > 1 || z1 > 1 || z2 > 1){
 			intersection = false;
 		}
 	
 		///////////////////////////////////////////////////////////////////
 		//Check X dimension
 		var d = x2 - x1;
-		if (d != 0)
-		{
+		if (d != 0) {
 			//Check outside
 			var s = sign(d);
 			var t = (- s - x1) / d;
-			if (abs(x1) > 1 && t >= 0 && t <= 1)
-			{
+			if (abs(x1) > 1 && t >= 0 && t <= 1) {
 				var itsY = lerp(y1, y2, t);
 				var itsZ = lerp(z1, z2, t);
-				if (abs(itsY) <= 1 && abs(itsZ) <= 1)
-				{
+				if (abs(itsY) <= 1 && abs(itsZ) <= 1) {
 					x1 = - s;
 					y1 = itsY;
 					z1 = itsZ;
 					intersection = true;
 				}
 			}
-			//Check inside
+			// Check inside
 			var t = (s - x1) / d;
-			if (t >= 0 && t <= 1)
-			{
+			if (t >= 0 && t <= 1) {
 				var itsY = lerp(y1, y2, t);
 				var itsZ = lerp(z1, z2, t);
 				if (abs(itsY) <= 1 && abs(itsZ) <= 1)
@@ -980,13 +965,11 @@ function colmesh() : colmesh_shapes() constructor {
 		///////////////////////////////////////////////////////////////////
 		//Check Y dimension
 		var d = y2 - y1;
-		if (d != 0)
-		{
+		if (d != 0) {
 			//Check outside
 			var s = sign(d);
 			var t = (- s - y1) / d;
-			if (abs(y1) > 1 && t >= 0 && t <= 1)
-			{
+			if (abs(y1) > 1 && t >= 0 && t <= 1) {
 				var itsX = lerp(x1, x2, t);
 				var itsZ = lerp(z1, z2, t);
 				if (abs(itsX) <= 1 && abs(itsZ) <= 1)
@@ -999,8 +982,7 @@ function colmesh() : colmesh_shapes() constructor {
 			}
 			//Check inside
 			var t = (s - y1) / d;
-			if (t >= 0 && t <= 1)
-			{
+			if (t >= 0 && t <= 1) {
 				var itsX = lerp(x1, x2, t);
 				var itsZ = lerp(z1, z2, t);
 				if (abs(itsX) <= 1 && abs(itsZ) <= 1)
@@ -1015,27 +997,23 @@ function colmesh() : colmesh_shapes() constructor {
 		///////////////////////////////////////////////////////////////////
 		//Check Z dimension
 		var d = z2 - z1;
-		if (d != 0)
-		{
+		if (d != 0) {
 			//Check outside
 			var s = sign(d);
 			var t = (- s - z1) / d;
-			if (abs(z1) > 1 && t >= 0 && t <= 1)
-			{
+			if (abs(z1) > 1 && t >= 0 && t <= 1) {
 				var itsX = lerp(x1, x2, t);
 				var itsY = lerp(y1, y2, t);
-				if (abs(itsX) <= 1 && abs(itsY) <= 1)
-				{
+				if (abs(itsX) <= 1 && abs(itsY) <= 1) {
 					x1 = itsX;
 					y1 = itsY;
 					z1 = - s;
 					intersection = true;
 				}
 			}
-			//Check inside
+			// Check inside
 			var t = (s - z1) / d;
-			if (t >= 0 && t <= 1)
-			{
+			if (t >= 0 && t <= 1) {
 				var itsX = lerp(x1, x2, t);
 				var itsY = lerp(y1, y2, t);
 				if (abs(itsY) <= 1 && abs(itsY) <= 1)
@@ -1047,8 +1025,7 @@ function colmesh() : colmesh_shapes() constructor {
 				}
 			}
 		}
-		if !intersection
-		{
+		if !intersection {
 			return false;
 		}
 
@@ -1068,8 +1045,7 @@ function colmesh() : colmesh_shapes() constructor {
 	#region Saving and loading
 	
 	/// @function save(path)
-	static save = function(path)
-	{
+	static save = function(path) {
 		/*
 			Saves the colmesh to a file.
 			This function will not work in HTML5.
@@ -1083,16 +1059,11 @@ function colmesh() : colmesh_shapes() constructor {
 	}
 	
 	/// @function load(path)
-	static load = function(path)
-	{
-		/*
-			Loads the colmesh from a file.
-			This function will not work in HTML5.
-			For HTML5 you need to load a buffer asynchronously, and read from that using colmesh.readFromBuffer.
-		*/
+	/// @description Loads the colmesh from a file. This function will not work in HTML5. For HTML5 you need to load a buffer asynchronously, and read from that using colmesh.readFromBuffer
+	static load = function(path) {
+
 		var buff = buffer_load(path);
-		if (buff < 0)
-		{
+		if (buff < 0) {
 			colmesh_debug_message("colmesh.load: Could not find file " + string(path));
 			return false;
 		}
@@ -1102,35 +1073,27 @@ function colmesh() : colmesh_shapes() constructor {
 	}
 	
 	/// @function writeToBuffer(saveBuff)
-	static writeToBuffer = function(saveBuff)
-	{
-		/*
-			Writes the colmesh to a buffer.
-			This will not save dynamic shapes!
-		*/
+	/// @description Writes the colmesh to a buffer. This will not save dynamic shapes
+	static writeToBuffer = function(saveBuff) {
+
 		var debugTime = current_time;
 		var tempBuff = buffer_create(1, buffer_grow, 1);
 		var shapeNum = ds_list_size(shapeList);
 		
-		//Write shape list
+		// Write shape list
 		buffer_write(tempBuff, buffer_u32, shapeNum);
 		buffer_write(tempBuff, buffer_u32, array_length(triangles));
-		for (var i = 0; i < shapeNum; i ++)
-		{
-			with _getShape(shapeList[| i])
-			{
-				if (!solid)
-				{
-					//Do not write non-solid objects
+		for (var i = 0; i < shapeNum; i++) {
+			with _getShape(shapeList[| i]) {
+				if (!solid) {
+					// Do not write non-solid objects
 					buffer_write(tempBuff, buffer_u8, eColMeshShape.None);
 					continue;
 				}
 				buffer_write(tempBuff, buffer_u8, type);
-				switch type
-				{
+				switch type {
 					case eColMeshShape.Mesh:
-						for (var j = 0; j < 9; j ++)
-						{
+						for (var j = 0; j < 9; j++){
 							buffer_write(tempBuff, buffer_f32, triangle[j]);
 						}
 						break;
@@ -1196,9 +1159,8 @@ function colmesh() : colmesh_shapes() constructor {
 			}
 		}
 
-		//Write subdivision to buffer
-		if (spHash >= 0)
-		{
+		// Write subdivision to buffer
+		if (spHash >= 0) {
 			buffer_write(tempBuff, buffer_u32, ds_map_size(spHash));
 			buffer_write(tempBuff, buffer_f32, regionSize);
 			buffer_write(tempBuff, buffer_f32, originX);
@@ -1206,29 +1168,25 @@ function colmesh() : colmesh_shapes() constructor {
 			buffer_write(tempBuff, buffer_f32, originZ);
 			
 			var key = ds_map_find_first(spHash);
-			while (!is_undefined(key))
-			{
+			while (!is_undefined(key)) {
 				var region = spHash[? key];
 				var num = ds_list_size(region);
 				var n = num;
 				buffer_write(tempBuff, buffer_u64, key);
 				var numPos = buffer_tell(tempBuff);
 				buffer_write(tempBuff, buffer_u32, num);
-				repeat n
-				{
+				repeat n {
 					var shapeInd = region[| --n];
 					buffer_write(tempBuff, buffer_u32, ds_list_find_index(shapeList, shapeInd));
 				}
 				buffer_poke(tempBuff, numPos, buffer_u32, num);
 				key = ds_map_find_next(spHash, key);
 			}
-		}
-		else
-		{
+		} else {
 			buffer_write(tempBuff, buffer_u32, 0);
 		}
 
-		//Write to savebuff
+		// Write to savebuff
 		var buffSize = buffer_tell(tempBuff);
 		buffer_write(saveBuff, buffer_string, "ColMesh v3");
 		buffer_write(saveBuff, buffer_u64, buffSize);
@@ -1241,15 +1199,13 @@ function colmesh() : colmesh_shapes() constructor {
 	}
 		
 	/// @function readFromBuffer(loadBuff)
-	static readFromBuffer = function(loadBuff) 
-	{
-		/*
-			Reads a collision mesh from the given buffer.
-		*/
+	/// @description Reads a collision mesh from the given buffer
+	static readFromBuffer = function(loadBuff) {
+
 		var debugTime = current_time;
 		clear();
 		
-		//Make sure this is a colmesh
+		// Make sure this is a colmesh
 		var version = 3;
 		var headerText = buffer_read(loadBuff, buffer_string);
 		var buffSize = buffer_read(loadBuff, buffer_u64);
@@ -1257,8 +1213,7 @@ function colmesh() : colmesh_shapes() constructor {
 		buffer_copy(loadBuff, buffer_tell(loadBuff), buffSize, tempBuff, 0);
 		buffer_seek(loadBuff, buffer_seek_relative, buffSize);
 		
-		switch headerText
-		{
+		switch headerText {
 			case "ColMesh v3":
 				version = 3;
 				break;
@@ -1279,20 +1234,17 @@ function colmesh() : colmesh_shapes() constructor {
 				return false;
 		}
 		
-		//Read shape list
+		// Read shape list
 		static M = array_create(16);
 		static V = array_create(9);
 		var shapeNum = buffer_read(tempBuff, buffer_u32);
 		var triNum = buffer_read(tempBuff, buffer_u32);
 		array_resize(triangles, triNum);
-		for (var i = 0; i < shapeNum; i ++)
-		{
+		for (var i = 0; i < shapeNum; i++){
 			var type = buffer_read(tempBuff, buffer_u8);
-			switch (type)
-			{
+			switch (type) {
 				case eColMeshShape.Mesh:
-					for (var j = 0; j < 9; j ++)
-					{
+					for (var j = 0; j < 9; j++) {
 						V[j] = buffer_read(tempBuff, buffer_f32);
 					}
 					addTriangle(V);
@@ -1375,24 +1327,19 @@ function colmesh() : colmesh_shapes() constructor {
 
 		//Read subdivision
 		var num = buffer_read(tempBuff, buffer_u32);
-		if (num >= 0 && version == 3)
-		{
+		if (num >= 0 && version == 3) {
 			regionSize = buffer_read(tempBuff, buffer_f32);
 			originX	= buffer_read(tempBuff, buffer_f32);
 			originY	= buffer_read(tempBuff, buffer_f32);
 			originZ	= buffer_read(tempBuff, buffer_f32);
 			spHash = ds_map_create();
-			repeat num
-			{
+			repeat num {
 				var region = ds_list_create();
 				var key = buffer_read(tempBuff, buffer_u64);
-				repeat buffer_read(tempBuff, buffer_u32)
-				{
+				repeat buffer_read(tempBuff, buffer_u32) {
 					var shape = shapeList[| buffer_read(tempBuff, buffer_u32)];
-					if (is_struct(shape))
-					{
-						if (shape.type == eColMeshShape.Dynamic || shape.type == eColMeshShape.None)
-						{
+					if (is_struct(shape)) {
+						if (shape.type == eColMeshShape.Dynamic || shape.type == eColMeshShape.None) {
 							continue;
 						}
 					}
@@ -1402,7 +1349,7 @@ function colmesh() : colmesh_shapes() constructor {
 			}
 		}
 
-		//Clean up and return result
+		// Clean up and return result
 		colmesh_debug_message("Script colmesh.readFromBuffer: Read colmesh from buffer in " + string(current_time - debugTime) + " milliseconds");
 		buffer_delete(tempBuff);
 		return true;
@@ -1411,21 +1358,17 @@ function colmesh() : colmesh_shapes() constructor {
 	#endregion
 }
 
-function colmesh_debug_message(str)
-{
-	/*
-		Only show debug messages if cmDebug is set to true
-	*/
-	if cmDebug
-	{
+/// @function colmesh_debug_message
+/// @description Only show debug messages if cmDebug is set to true
+function colmesh_debug_message(str) {
+	if cmDebug {
 		show_debug_message(str);
 	}
 }
 
-function colmesh_load_obj_to_buffer(filename) 
-{
-	static read_face = function(faceList, str) 
-	{
+/// @function colmesh_load_obj_to_buffer
+function colmesh_load_obj_to_buffer(filename) {
+	static read_face = function(faceList, str) {
 		gml_pragma("forceinline");
 		str = string_delete(str, 1, string_pos(" ", str))
 		if (string_char_at(str, string_length(str)) == " ")
@@ -1442,23 +1385,19 @@ function colmesh_load_obj_to_buffer(filename)
 			str = string_delete(str, 1, string_pos(" ", str));
 		}
 		vertString[i--] = str;
-		while i--
-		{
-			for (var j = 2; j >= 0; j --)
-			{
+		while i-- {
+			for (var j = 2; j >= 0; j--) {
 				var vstr = vertString[(i + j) * (j > 0)];
 				var v = 0, n = 0, t = 0;
 				//If the vertex contains a position, texture coordinate and normal
-				if string_count("/", vstr) == 2 and string_count("//", vstr) == 0
-				{
+				if string_count("/", vstr) == 2 and string_count("//", vstr) == 0 {
 					v = abs(real(string_copy(vstr, 1, string_pos("/", vstr) - 1)));
 					vstr = string_delete(vstr, 1, string_pos("/", vstr));
 					t = abs(real(string_copy(vstr, 1, string_pos("/", vstr) - 1)));
 					n = abs(real(string_delete(vstr, 1, string_pos("/", vstr))));
 				}
 				//If the vertex contains a position and a texture coordinate
-				else if string_count("/", vstr) == 1
-				{
+				else if string_count("/", vstr) == 1 {
 					v = abs(real(string_copy(vstr, 1, string_pos("/", vstr) - 1)));
 					t = abs(real(string_delete(vstr, 1, string_pos("/", vstr))));
 				}
@@ -1478,17 +1417,16 @@ function colmesh_load_obj_to_buffer(filename)
 			}
 		}
 	}
-	static read_line = function(str) 
-	{
+	
+	/// @function read_line
+	static read_line = function(str) {
 		gml_pragma("forceinline");
 		str = string_delete(str, 1, string_pos(" ", str));
 		var retNum = string_count(" ", str) + 1;
 		var ret = array_create(retNum);
-		for (var i = 0; i < retNum; i ++)
-		{
+		for (var i = 0; i < retNum; i++){
 			var pos = string_pos(" ", str);
-			if (pos == 0)
-			{
+			if (pos == 0){
 				pos = string_length(str);
 				ret[i] = real(string_copy(str, 1, pos)); 
 				break;
@@ -1510,12 +1448,10 @@ function colmesh_load_obj_to_buffer(filename)
 
 	//Read .obj as textfile
 	var str, type;
-	while !file_text_eof(file)
-	{
+	while !file_text_eof(file) {
 		str = string_replace_all(file_text_read_string(file),"  "," ");
 		//Different types of information in the .obj starts with different headers
-		switch string_copy(str, 1, string_pos(" ", str)-1)
-		{
+		switch string_copy(str, 1, string_pos(" ", str)-1) {
 			//Load vertex positions
 			case "v":
 				ds_list_add(V, read_line(str));
@@ -1537,16 +1473,15 @@ function colmesh_load_obj_to_buffer(filename)
 	}
 	file_text_close(file);
 
-	//Loop through the loaded information and generate a model
+	// Loop through the loaded information and generate a model
 	var vnt, vertNum, mbuff, vbuff, v, n, t;
 	var bytesPerVert = 3 * 4 + 3 * 4 + 2 * 4 + 4 * 1;
 	vertNum = ds_list_size(F);
 	mbuff = buffer_create(vertNum * bytesPerVert, buffer_fixed, 1);
-	for (var f = 0; f < vertNum; f ++)
-	{
+	for (var f = 0; f < vertNum; f++){
 		vnt = F[| f];
 		
-		//Add the vertex to the model buffer
+		// Add the vertex to the model buffer
 		v = V[| vnt[0]];
 		if !is_array(v){v = [0, 0, 0];}
 		buffer_write(mbuff, buffer_f32, v[0]);
@@ -1574,13 +1509,10 @@ function colmesh_load_obj_to_buffer(filename)
 	return mbuff
 }
 
-function colmesh_convert_smf(model)
-{
-	/*
-		This script was requested by somebody on the forums.
-		Creates a ColMesh-compatible buffer from an SMF model.
-		Remember to destroy the buffer after you're done using it!
-	*/
+/// @function colmesh_convert_smf
+/// @description Creates a ColMesh-compatible buffer from an SMF model
+function colmesh_convert_smf(model) {
+
 	var mBuff = model.mBuff;
 	var num = array_length(mBuff);
 	
@@ -1591,13 +1523,11 @@ function colmesh_convert_smf(model)
 	var num = array_length(mBuff);
 	var SMFbytesPerVert = 44;
 	var targetBytesPerVert = 36;
-	for (var m = 0; m < num; m ++)
-	{
+	for (var m = 0; m < num; m++){
 		var buff = mBuff[m];
 		var buffSize = buffer_get_size(buff);
 		var vertNum = buffSize div SMFbytesPerVert;
-		for (var i = 0; i < vertNum; i ++)
-		{
+		for (var i = 0; i < vertNum; i++){
 			//Copy position and normal
 			buffer_copy(buff, i * SMFbytesPerVert, targetBytesPerVert, newBuff, size + i * targetBytesPerVert);
 		}
@@ -1608,31 +1538,24 @@ function colmesh_convert_smf(model)
 	return newBuff;
 }
 
-function colmesh_get_key(x, y, z)
-{
-	/*
-		Returns a unique hash for any 3D integer position
-		Based on the algorithm described here:
-			https://dmauro.com/post/77011214305/a-hashing-function-for-x-y-z-coordinates
-	*/
+/// @function colmesh_get_key
+/// @description Returns a unique hash for any 3D integer position Based on the algorithm described here: https://dmauro.com/post/77011214305/a-hashing-function-for-x-y-z-coordinates
+function colmesh_get_key(x, y, z){
+
     x = (x >= 0) ? 2 * x : - 2 * x - 1;
     y = (y >= 0) ? 2 * y : - 2 * y - 1;
     z = (z >= 0) ? 2 * z : - 2 * z - 1;
 	
-	if (z > x)
-	{
-		if (x > y)
-		{
+	if (z > x) {
+		if (x > y) {
 			return z * z * z + 2 * z * z + z + y + x * x;
 		}
-		if (z > y)
-		{
+		if (z > y) {
 			return z * z * z + 2 * z * z + z + y + y * y + x;
 		}
 		return y * y * y + 2 * y * z + z + y + x;
 	}
-	if (x > y)
-	{
+	if (x > y) {
 		return x * x * x + 2 * x * z + z + y;
 	}
 	return y * y * y + 2 * y * z + z + y + x;
