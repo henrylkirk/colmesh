@@ -29,6 +29,12 @@ var hh = room_height * 0.5;
 //	global.levelColmesh.save("Demo5Cache.cm"); //Save a cache, so that loading it the next time will be quicker
 //}
 
+// Add test cube - TODO add tile conversion here
+var tile_size = 64;
+var h_tile_size = tile_size * 0.5;
+global.levelColmesh.addShape(
+	new colmesh_cube(h_tile_size, h_tile_size, h_tile_size, tile_size, tile_size, tile_size)
+);
 
 //Player variables
 x = hw;
@@ -50,6 +56,6 @@ view_visible[0] = true;
 view_camera[0] = camera_create();
 gpu_set_ztestenable(true);
 gpu_set_zwriteenable(true);
-camera_set_proj_mat(view_camera[0], matrix_build_projection_perspective_fov(-80, -window_get_width() / window_get_height(), 1, 32000));
-yaw = 0;
-pitch = 45;
+camera_set_proj_mat(view_camera[0], matrix_build_projection_perspective_fov(-120, -window_get_width() / window_get_height(), 1, 32000));
+yaw = 90;
+pitch = 67;

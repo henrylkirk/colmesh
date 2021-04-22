@@ -7,10 +7,10 @@ prevX = x;
 prevY = y;
 prevZ = z;
 
-// Controls
+// Controls (rotated 90 degrees to match camera)
 jump = keyboard_check_pressed(vk_space);
-var h = keyboard_check(ord("D")) - keyboard_check(ord("A"));
-var v = keyboard_check(ord("W")) - keyboard_check(ord("S"));
+var h = keyboard_check(ord("W")) - keyboard_check(ord("S"));
+var v = keyboard_check(ord("A")) - keyboard_check(ord("D"));
 if (h != 0 && v != 0){	// If walking diagonally, divide the input vector by its own length
 	var s = 1 / sqrt(2);
 	h *= s;
@@ -21,7 +21,7 @@ if (h != 0 && v != 0){	// If walking diagonally, divide the input vector by its 
 acc = 5;
 x += spdX - acc * v;
 y += spdY - acc * h;
-z += spdZ - 1 + jump * ground * 15; //Apply gravity in z-direction
+z += spdZ - 1 + jump * ground * 15; // Apply gravity in z-direction
 
 // Cast a short-range ray from the previous position to the current position to avoid going through geometry
 if (sqr(x - prevX) + sqr(y - prevY) + sqr(z - prevZ) > radius * radius) //Only cast ray if there's a risk that we've gone through geometry

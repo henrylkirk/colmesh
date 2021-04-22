@@ -53,8 +53,7 @@ function colmesh_shapes() constructor {
 	}
 	
 	/// @function setCollisionFunction(colFunc)
-	static setCollisionFunction = function(_colFunc)
-	{
+	static setCollisionFunction = function(_colFunc) {
 		/*
 			This function lets you give the shape a custom collision function.
 			This is useful for example for collisions with collectible objects like coins and powerups.
@@ -69,8 +68,7 @@ function colmesh_shapes() constructor {
 	}
 	
 	/// @function setRayFunction(rayFunc)
-	static setRayFunction = function(_rayFunc)
-	{
+	static setRayFunction = function(_rayFunc) {
 		/*
 			This function lets you give the shape a custom function that is executed if a ray hits the shape.
 			
@@ -86,13 +84,9 @@ function colmesh_shapes() constructor {
 	#region Shared functions
 	
 	/// @function capsuleCollision(x, y, z, xup, yup, zup, radius, height)
-	static capsuleCollision = function(x, y, z, xup, yup, zup, radius, height)
-	{
-		/*
-			Returns true if the given capsule collides with the shape
-		*/
-		if (height != 0)
-		{
+	/// @description Returns true if the given capsule collides with the shape
+	static capsuleCollision = function(x, y, z, xup, yup, zup, radius, height){
+		if (height != 0){
 			var p = _capsuleGetRef(x, y, z, xup, yup, zup, height);
 			return (_getPriority(p[0], p[1], p[2], radius) >= 0);
 		}
@@ -100,31 +94,24 @@ function colmesh_shapes() constructor {
 	}
 	
 	/// @function _displace(nx, ny, nz, xup, yup, zup, _r, slope)
-	static _displace = function(nx, ny, nz, xup, yup, zup, _r, slope)
-	{
-		/*
-			A supplementary function, not meant to be used by itself.
-			Displaces a sphere.
-		*/
+	/// @description A supplementary function, not meant to be used by itself. Displaces a sphere
+	static _displace = function(nx, ny, nz, xup, yup, zup, _r, slope){
+
 		gml_pragma("forceinline");
 		var dp = nx * xup + ny * yup + nz * zup;
-		if (dp > cmCol[6])
-		{
+		if (dp > cmCol[6]) {
 			cmCol[@ 3] = nx;
 			cmCol[@ 4] = ny;
 			cmCol[@ 5] = nz;
 			cmCol[@ 6] = dp;
 		}
-		if (dp >= slope)
-		{ 
+		if (dp >= slope) { 
 			//Prevent sliding
 			_r /= dp;
 			cmCol[@ 0] += xup * _r;
 			cmCol[@ 1] += yup * _r;
 			cmCol[@ 2] += zup * _r;
-		}
-		else
-		{
+		} else {
 			cmCol[@ 0] += nx * _r;
 			cmCol[@ 1] += ny * _r;
 			cmCol[@ 2] += nz * _r;
@@ -132,8 +119,7 @@ function colmesh_shapes() constructor {
 	}
 	
 	/// @function _addToSubdiv(colMesh)
-	static _addToSubdiv = function(colMesh)
-	{
+	static _addToSubdiv = function(colMesh) {
 		/*
 			A supplementary function, not meant to be used by itself.
 			Adds the shape to the ColMesh's spatial hash
@@ -156,8 +142,7 @@ function colmesh_shapes() constructor {
 		var z2 = floor((mm[5] - originZ) * invRegionSize);
 		var struct = ((type == eColMeshShape.Mesh) ? triangle : self);
 		
-		for (var xx = x1; xx <= x2; ++xx)
-		{
+		for (var xx = x1; xx <= x2; ++xx){
 			var _x = (xx + .5) * regionSize + originX;
 			for (var yy = y1; yy <= y2; ++yy)
 			{
@@ -184,12 +169,9 @@ function colmesh_shapes() constructor {
 	}
 	
 	/// @function _removeFromSubdiv(colMesh)
-	static _removeFromSubdiv = function(colMesh)
-	{
-		/*
-			A supplementary function, not meant to be used by itself.
-			Removes the shape from the colmesh's subdivision
-		*/
+	/// @description A supplementary function, not meant to be used by itself. Removes the shape from the colmesh's subdivision
+	static _removeFromSubdiv = function(colMesh) {
+
 		var spHash = colMesh.spHash;
 		if (spHash < 0){return false;}
 		var originX = colMesh.originX;
@@ -231,11 +213,9 @@ function colmesh_shapes() constructor {
 	}
 	
 	/// @function _updateSubdiv(colMesh, oldMinMax)
-	static _updateSubdiv = function(colMesh, oldMinMax)
-	{
+	static _updateSubdiv = function(colMesh, oldMinMax){
 		var spHash = colMesh.spHash;
-		if (spHash < 0)
-		{
+		if (spHash < 0) {
 			colMesh._expandBoundaries(getMinMax());
 			return true;
 		}
@@ -747,8 +727,7 @@ function colmesh_shapes() constructor {
 	}
 	
 	/// @function debugDraw(region, [texture])
-	static debugDraw = function() 
-	{
+	static debugDraw = function() {
 		/*
 			A crude way of drawing the collision shapes in the given region.
 			Useful for debugging.
