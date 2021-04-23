@@ -43,6 +43,10 @@ global.levelColmesh.addMesh("ColMesh Demo/wedge.obj", matrix_build(h_tile_size +
 // Add wedge with flat bit
 global.levelColmesh.addMesh("ColMesh Demo/wedge-flat.obj", matrix_build(h_tile_size + grid_size*2, h_tile_size, h_tile_size, 90, 0, 0, grid_size, grid_size, grid_size));
 
+// Add small wedge
+global.levelColmesh.addMesh("ColMesh Demo/wedge.obj", matrix_build(h_tile_size * 0.5 + grid_size*3, h_tile_size * 0.5, h_tile_size, 180, 90, 90, h_tile_size, h_tile_size, grid_size));
+
+
 //Player variables
 x = hw;
 y = hh;
