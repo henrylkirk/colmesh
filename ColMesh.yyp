@@ -108,6 +108,8 @@
     {"CopyToMask":-1,"filePath":"datafiles/ColMesh Demo","resourceVersion":"1.0","name":".DS_Store","resourceType":"GMIncludedFile",},
     {"CopyToMask":-1,"filePath":"datafiles/ColMesh Demo","resourceVersion":"1.0","name":"wedge.obj","resourceType":"GMIncludedFile",},
     {"CopyToMask":-1,"filePath":"datafiles/ColMesh Demo","resourceVersion":"1.0","name":"wedge.obj","resourceType":"GMIncludedFile",},
+    {"CopyToMask":-1,"filePath":"datafiles/ColMesh Demo","resourceVersion":"1.0","name":"wedge-flat.obj","resourceType":"GMIncludedFile",},
+    {"CopyToMask":-1,"filePath":"datafiles/ColMesh Demo","resourceVersion":"1.0","name":"wedge-flat.mtl","resourceType":"GMIncludedFile",},
   ],
   "MetaData": {
     "IDEVersion": "2.3.2.560",
