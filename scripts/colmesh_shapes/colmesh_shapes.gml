@@ -1687,7 +1687,7 @@ function colmesh_cylinder(_x, _y, _z, _xup, _yup, _zup, radius, height) : colmes
 	#endregion
 }
 
-/// @function colmesh_cone(x, y, z, xup, yup, zup, radius, height)
+/// @function colmesh_unfinished_cone(x, y, z, xup, yup, zup, radius, height)
 function colmesh_unfinished_cone(_x, _y, _z, _xup, _yup, _zup, radius, height) : colmesh_shapes() constructor
 {
 	type = eColMeshShape.Cone;

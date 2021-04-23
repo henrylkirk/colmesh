@@ -30,11 +30,15 @@ var hh = room_height * 0.5;
 //}
 
 // Add test cube - TODO add tile conversion here
-var tile_size = 64;
-var h_tile_size = tile_size * 0.5;
+var grid_size = 64;
+var h_tile_size = grid_size * 0.5;
 global.levelColmesh.addShape(
-	new colmesh_cube(h_tile_size, h_tile_size, h_tile_size, tile_size, tile_size, tile_size)
+	new colmesh_cube(h_tile_size, h_tile_size, h_tile_size, grid_size, grid_size, grid_size)
 );
+
+
+// Add wedge
+global.levelColmesh.addMesh("ColMesh Demo/wedge.obj", matrix_build(h_tile_size + grid_size, h_tile_size, h_tile_size, 0, 0, 0, grid_size, grid_size, grid_size));
 
 //Player variables
 x = hw;
@@ -56,6 +60,6 @@ view_visible[0] = true;
 view_camera[0] = camera_create();
 gpu_set_ztestenable(true);
 gpu_set_zwriteenable(true);
-camera_set_proj_mat(view_camera[0], matrix_build_projection_perspective_fov(-120, -window_get_width() / window_get_height(), 1, 32000));
+camera_set_proj_mat(view_camera[0], matrix_build_projection_perspective_fov(-90, -window_get_width() / window_get_height(), 1, 32000));
 yaw = 90;
-pitch = 67;
+pitch = 45;
