@@ -39,6 +39,31 @@ function TileManager(_tile_size) constructor {
 		block_vert_l
 	}
 	
+	/// @function tile_layer_to_colmesh
+	/// @param colmesh
+	/// @param {string} tile_layer_name
+	static tile_layer_to_colmesh = function(_colmesh, _tile_layer_name){
+		var lay_id = layer_get_id(_tile_layer_name);
+		var _tiles  = layer_tilemap_get_id(lay_id);
+		var _z = floor(layer_get_depth(lay_id) div TILE_SIZE);
+		var _width  = room_width div TILE_SIZE;
+		var _height = room_height div TILE_SIZE;
+		var _tileX = 0;
+		var _tileY = -TILE_SIZE;
+
+		for (var _x = 0; _x < _width; _x++) {
+			for (var _y = 0; _y < _height; _y++) {
+				_tileY += TILE_SIZE;
+				var _index = tilemap_get(_tiles, _x, _y) & tile_index_mask;
+				add_colmesh_at_grid(_colmesh, _index, _x, _y, _z);
+			}
+			_tileX += TILE_SIZE;
+			_tileY = -TILE_SIZE;
+		}
+		
+		//layer_destroy(lay_id);
+	}
+	
 	/// @function add_colmesh_at_grid
 	/// @param colmesh
 	/// @param tile_type - enum describing the tile type

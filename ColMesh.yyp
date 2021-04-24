@@ -33,6 +33,7 @@
     {"id":{"name":"sSpinningRectangle","path":"sprites/sSpinningRectangle/sSpinningRectangle.yy",},"order":17,},
     {"id":{"name":"sh_colmesh_shadow","path":"shaders/sh_colmesh_shadow/sh_colmesh_shadow.yy",},"order":1,},
     {"id":{"name":"oCoin","path":"objects/oCoin/oCoin.yy",},"order":2,},
+    {"id":{"name":"tiles_collision","path":"tilesets/tiles_collision/tiles_collision.yy",},"order":6,},
     {"id":{"name":"tiles_demo5","path":"tilesets/tiles_demo5/tiles_demo5.yy",},"order":3,},
     {"id":{"name":"oColmeshDemoSpinningColMesh","path":"objects/oColmeshDemoSpinningColMesh/oColmeshDemoSpinningColMesh.yy",},"order":12,},
     {"id":{"name":"sSpinningCube","path":"sprites/sSpinningCube/sSpinningCube.yy",},"order":16,},
