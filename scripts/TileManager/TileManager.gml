@@ -47,46 +47,12 @@ function TileManager(_tile_size) constructor {
 	/// @param cell_z
 	/// @description Add a given mesh or shape to the level colmesh
 	static add_colmesh_at_grid = function(_colmesh, _tile_type, cx, cy, cz) {
-		var tx = cx*tile_size + h_tile_size;
-		var ty = cy*tile_size + h_tile_size;
+		var tx = cx * tile_size + h_tile_size;
+		var ty = cy * tile_size + h_tile_size;
 		var tz = cz * tile_size + h_tile_size;
-		
-		var mesh_or_shape = undefined;
-		
-		// Get mesh/shape
-		switch(_tile_type){
-			case eTileType.wedge_tl:
-			case eTileType.wedge_tr:
-			case eTileType.wedge_bl:
-			case eTileType.wedge_br:
-			case eTileType.wedge_skinny_hor_tl:
-			case eTileType.wedge_skinny_hor_tr:
-			case eTileType.wedge_skinny_hor_bl:
-			case eTileType.wedge_skinny_hor_br:
-			case eTileType.wedge_skinny_vert_tl:
-			case eTileType.wedge_skinny_vert_tr:
-			case eTileType.wedge_skinny_vert_bl:
-			case eTileType.wedge_skinny_vert_br:
-			case eTileType.wedge_small_tl:
-			case eTileType.wedge_small_tr:
-			case eTileType.wedge_small_bl:
-			case eTileType.wedge_small_br:
-				mesh_or_shape = "wedge.obj";
-				break;
-			case eTileType.wedge_flat_hor_tl:
-			case eTileType.wedge_flat_hor_tr:
-			case eTileType.wedge_flat_hor_bl:
-			case eTileType.wedge_flat_hor_br:
-			case eTileType.wedge_flat_vert_tl:
-			case eTileType.wedge_flat_vert_tr:
-			case eTileType.wedge_flat_vert_bl:
-			case eTileType.wedge_flat_vert_br:
-				mesh_or_shape = "wedge-flat.obj";
-				break;
-			case eTileType.cube:
-				mesh_or_shape = new colmesh_cube(tx, ty, tz, xscale, yscale, zscale);
-				break;
-		}
+		var xscale = tile_size;
+		var yscale = tile_size;
+		var zscale = tile_size;
 		
 		// Get orientation
 		var orientation_array = array_create(3, 0);
@@ -130,9 +96,6 @@ function TileManager(_tile_size) constructor {
 		}
 		
 		// Find scale
-		var xscale = tile_size;
-		var yscale = tile_size;
-		var zscale = tile_size;
 		switch(_tile_type){
 			case eTileType.wedge_skinny_hor_tl:
 			case eTileType.wedge_skinny_hor_tr:
@@ -146,6 +109,103 @@ function TileManager(_tile_size) constructor {
 			case eTileType.wedge_skinny_vert_br:
 				xscale *= 0.5;
 				break;
+			case eTileType.wedge_small_tl:
+			case eTileType.wedge_small_tr:
+			case eTileType.wedge_small_bl:
+			case eTileType.wedge_small_br:
+				xscale *= 0.5;
+				yscale *= 0.5;
+				break;
+			case eTileType.block_vert_l:
+			case eTileType.block_vert_r:
+			case eTileType.block_vert_m:
+				xscale *= 0.25;
+				yscale *= 0.5;
+				zscale *= 0.5;
+				break;
+			case eTileType.block_hor_bm:
+			case eTileType.block_hor_m:
+			case eTileType.block_hor_tm:
+				xscale *= 0.5;
+				yscale *= 0.25;
+				zscale *= 0.5;
+				break;
+		}
+		
+		// Translate y
+		switch(_tile_type){
+			case eTileType.wedge_skinny_hor_bl:
+			case eTileType.wedge_skinny_hor_br:
+			case eTileType.wedge_small_bl:
+			case eTileType.wedge_small_br:
+				ty -= h_tile_size * 0.5;
+				break;
+			case eTileType.wedge_skinny_hor_tl:
+			case eTileType.wedge_skinny_hor_tr:
+			case eTileType.wedge_small_tl:
+			case eTileType.wedge_small_tr:
+				ty += h_tile_size * 0.5;
+				break;
+		}
+		
+		// Translate x
+		switch(_tile_type){
+			case eTileType.wedge_small_bl:
+			case eTileType.wedge_small_tl:
+			case eTileType.wedge_skinny_vert_tl:
+			case eTileType.wedge_skinny_vert_bl:
+				tx += h_tile_size * 0.5;
+				break;
+			case eTileType.wedge_small_br:
+			case eTileType.wedge_small_tr:
+			case eTileType.wedge_skinny_vert_tr:
+			case eTileType.wedge_skinny_vert_br:
+				tx -= h_tile_size * 0.5;
+				break;
+		}
+		
+		// Get mesh/shape
+		var mesh_or_shape = undefined;
+		switch(_tile_type){
+			case eTileType.wedge_tl:
+			case eTileType.wedge_tr:
+			case eTileType.wedge_bl:
+			case eTileType.wedge_br:
+			case eTileType.wedge_skinny_hor_tl:
+			case eTileType.wedge_skinny_hor_tr:
+			case eTileType.wedge_skinny_hor_bl:
+			case eTileType.wedge_skinny_hor_br:
+			case eTileType.wedge_skinny_vert_tl:
+			case eTileType.wedge_skinny_vert_tr:
+			case eTileType.wedge_skinny_vert_bl:
+			case eTileType.wedge_skinny_vert_br:
+			case eTileType.wedge_small_tl:
+			case eTileType.wedge_small_tr:
+			case eTileType.wedge_small_bl:
+			case eTileType.wedge_small_br:
+				mesh_or_shape = "wedge.obj";
+				break;
+			case eTileType.wedge_flat_hor_tl:
+			case eTileType.wedge_flat_hor_tr:
+			case eTileType.wedge_flat_hor_bl:
+			case eTileType.wedge_flat_hor_br:
+			case eTileType.wedge_flat_vert_tl:
+			case eTileType.wedge_flat_vert_tr:
+			case eTileType.wedge_flat_vert_bl:
+			case eTileType.wedge_flat_vert_br:
+				mesh_or_shape = "wedge-flat.obj";
+				break;
+			case eTileType.cube:
+				mesh_or_shape = new colmesh_cube(tx, ty, tz, xscale, yscale, zscale);
+				break;
+			case eTileType.block_vert_l:
+			case eTileType.block_vert_r:
+			case eTileType.block_vert_m:
+			case eTileType.block_hor_bm:
+			case eTileType.block_hor_m:
+			case eTileType.block_hor_tm:
+				mesh_or_shape = new colmesh_block(matrix_build(tx, ty, tz, orientation_array[0], orientation_array[1], orientation_array[2], xscale, yscale, zscale));
+				break;
 		}
 		
 		// Add it to level's colmesh
@@ -154,26 +214,5 @@ function TileManager(_tile_size) constructor {
 		} else if is_struct(mesh_or_shape) { // shape
 			_colmesh.addShape(mesh_or_shape);
 		}
-		
-		//switch(_tile_type){
-		//	case eTileType.wedge_tl:
-		//		_colmesh.addMesh("wedge.obj", matrix_build(tx, ty, tz, 180, 90, -90, tile_size, tile_size, tile_size));
-		//		break;
-		//	case eTileType.wedge_tr:
-		//		_colmesh.addMesh("wedge.obj", matrix_build(tx, ty, tz, 180, 90, 180, tile_size, tile_size, tile_size));
-		//		break;
-		//	case eTileType.wedge_bl:
-		//		_colmesh.addMesh("wedge.obj", matrix_build(tx, ty, tz, 180, -90, -90, tile_size, tile_size, tile_size));
-		//		break;
-		//	case eTileType.wedge_br:
-		//		_colmesh.addMesh("wedge.obj", matrix_build(tx, ty, tz, 180, 90, 90, tile_size, tile_size, tile_size));
-		//		break;
-		//	case eTileType.cube:
-		//		_colmesh.addShape(new colmesh_cube(tx, ty, tz, tile_size, tile_size, tile_size));
-		//		break;
-		//	case eTileType.wedge_flat_hor_tl:
-		//		_colmesh.addMesh("wedge-flat.obj", matrix_build(tx, ty, tz, 180, 90, -90, tile_size, tile_size, tile_size));
-		//		break;
-		//}
 	}
 }

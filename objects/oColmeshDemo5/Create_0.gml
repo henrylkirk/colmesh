@@ -31,29 +31,16 @@ var hh = room_height * 0.5;
 //}
 
 tile_manager = new TileManager(TILE_SIZE);
-tile_manager.add_colmesh_at_grid(global.levelColmesh, eTileType.wedge_skinny_hor_tl, 0, 0, 0);
-tile_manager.add_colmesh_at_grid(global.levelColmesh, eTileType.wedge_skinny_hor_tr, 1, 0, 0);
-tile_manager.add_colmesh_at_grid(global.levelColmesh, eTileType.wedge_skinny_hor_bl, 0, 1, 0);
-tile_manager.add_colmesh_at_grid(global.levelColmesh, eTileType.wedge_skinny_hor_br, 1, 1, 0);
+//tile_manager.add_colmesh_at_grid(global.levelColmesh, eTileType.wedge_skinny_hor_tl, 0, 0, 0);
+//tile_manager.add_colmesh_at_grid(global.levelColmesh, eTileType.wedge_skinny_hor_tr, 1, 0, 0);
+//tile_manager.add_colmesh_at_grid(global.levelColmesh, eTileType.wedge_skinny_hor_bl, 0, 1, 0);
+//tile_manager.add_colmesh_at_grid(global.levelColmesh, eTileType.wedge_skinny_hor_br, 1, 1, 0);
 
-// Add test cube - TODO add tile conversion here
-//var h_tile_size = TILE_SIZE * 0.5; // half a tile
-//global.levelColmesh.addShape(
-//	new colmesh_cube(h_tile_size, h_tile_size, h_tile_size, TILE_SIZE, TILE_SIZE, TILE_SIZE)
-//);
+tile_manager.add_colmesh_at_grid(global.levelColmesh, eTileType.cube, 9, 10, 0);
+tile_manager.add_colmesh_at_grid(global.levelColmesh, eTileType.block_vert_l, 10, 10, 0);
+tile_manager.add_colmesh_at_grid(global.levelColmesh, eTileType.cube, 11, 10, 0);
 
-
-//// Add wedge
-//global.levelColmesh.addMesh("wedge.obj", matrix_build(h_tile_size + TILE_SIZE, h_tile_size, h_tile_size, 0, 0, 0, TILE_SIZE, TILE_SIZE, TILE_SIZE));
-
-//// Add wedge with flat bit
-//global.levelColmesh.addMesh("wedge-flat.obj", matrix_build(h_tile_size + TILE_SIZE*2, h_tile_size, h_tile_size, 90, 0, 0, TILE_SIZE, TILE_SIZE, TILE_SIZE));
-
-//// Add small wedge
-//global.levelColmesh.addMesh("wedge.obj", matrix_build(h_tile_size * 0.5 + TILE_SIZE*3, h_tile_size * 0.5, h_tile_size, 180, 90, 90, h_tile_size, h_tile_size, TILE_SIZE));
-
-
-//Player variables
+// Player variables
 x = hw;
 y = hh;
 z = 300;
