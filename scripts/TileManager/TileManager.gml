@@ -61,7 +61,7 @@ function TileManager(_tile_size) constructor {
 			_tileY = -TILE_SIZE;
 		}
 		
-		//layer_destroy(lay_id);
+		layer_destroy(lay_id);
 	}
 	
 	/// @function add_colmesh_at_grid
@@ -98,7 +98,7 @@ function TileManager(_tile_size) constructor {
 			case eTileType.wedge_skinny_hor_tr:
 			case eTileType.wedge_skinny_vert_tr:
 			case eTileType.wedge_small_tr:
-				orientation_array = [180, 90, 180];
+				orientation_array = [0, 90, -90];
 				break;
 			// Bottom left
 			case eTileType.wedge_bl:
