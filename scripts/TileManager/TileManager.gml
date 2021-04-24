@@ -45,20 +45,20 @@ function TileManager(_tile_size) constructor {
 	static tile_layer_to_colmesh = function(_colmesh, _tile_layer_name){
 		var lay_id = layer_get_id(_tile_layer_name);
 		var _tiles  = layer_tilemap_get_id(lay_id);
-		var _z = floor(layer_get_depth(lay_id) div TILE_SIZE);
-		var _width  = room_width div TILE_SIZE;
-		var _height = room_height div TILE_SIZE;
+		var _z = floor(layer_get_depth(lay_id) div tile_size);
+		var _width  = room_width div tile_size;
+		var _height = room_height div tile_size;
 		var _tileX = 0;
-		var _tileY = -TILE_SIZE;
+		var _tileY = -tile_size;
 
 		for (var _x = 0; _x < _width; _x++) {
 			for (var _y = 0; _y < _height; _y++) {
-				_tileY += TILE_SIZE;
+				_tileY += tile_size;
 				var _index = tilemap_get(_tiles, _x, _y) & tile_index_mask;
 				add_colmesh_at_grid(_colmesh, _index, _x, _y, _z);
 			}
-			_tileX += TILE_SIZE;
-			_tileY = -TILE_SIZE;
+			_tileX += tile_size;
+			_tileY = -tile_size;
 		}
 		
 		layer_destroy(lay_id);
@@ -185,19 +185,15 @@ function TileManager(_tile_size) constructor {
 			case eTileType.wedge_small_tl:
 			case eTileType.wedge_skinny_vert_tl:
 			case eTileType.wedge_skinny_vert_bl:
+			case eTileType.block_vert_r:
 				tx += h_tile_size * 0.5;
 				break;
 			case eTileType.wedge_small_br:
 			case eTileType.wedge_small_tr:
 			case eTileType.wedge_skinny_vert_tr:
 			case eTileType.wedge_skinny_vert_br:
-				tx -= h_tile_size * 0.5;
-				break;
 			case eTileType.block_vert_l:
-				tx -= h_tile_size;
-				break;
-			case eTileType.block_vert_r:
-				tx += h_tile_size;
+				tx -= h_tile_size * 0.5;
 				break;
 		}
 		

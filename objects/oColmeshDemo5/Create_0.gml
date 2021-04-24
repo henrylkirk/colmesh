@@ -30,15 +30,9 @@ var hh = room_height * 0.5;
 //	global.levelColmesh.save("Demo5Cache.cm"); //Save a cache, so that loading it the next time will be quicker
 //}
 
+// Add tile shapes to colmesh
 tile_manager = new TileManager(TILE_SIZE);
-//tile_manager.add_colmesh_at_grid(global.levelColmesh, eTileType.wedge_skinny_hor_tl, 0, 0, 0);
-//tile_manager.add_colmesh_at_grid(global.levelColmesh, eTileType.wedge_skinny_hor_tr, 1, 0, 0);
-//tile_manager.add_colmesh_at_grid(global.levelColmesh, eTileType.wedge_skinny_hor_bl, 0, 1, 0);
-//tile_manager.add_colmesh_at_grid(global.levelColmesh, eTileType.wedge_skinny_hor_br, 1, 1, 0);
 tile_manager.tile_layer_to_colmesh(global.levelColmesh, "tiles_collision");
-//tile_manager.add_colmesh_at_grid(global.levelColmesh, eTileType.cube, 9, 10, 0);
-//tile_manager.add_colmesh_at_grid(global.levelColmesh, eTileType.block_hor_m, 10, 10, 0);
-//tile_manager.add_colmesh_at_grid(global.levelColmesh, eTileType.cube, 11, 10, 0);
 
 // Player variables
 x = hw;
