@@ -37,7 +37,7 @@ tile_manager = new TileManager(TILE_SIZE);
 //tile_manager.add_colmesh_at_grid(global.levelColmesh, eTileType.wedge_skinny_hor_br, 1, 1, 0);
 
 tile_manager.add_colmesh_at_grid(global.levelColmesh, eTileType.cube, 9, 10, 0);
-tile_manager.add_colmesh_at_grid(global.levelColmesh, eTileType.block_vert_l, 10, 10, 0);
+tile_manager.add_colmesh_at_grid(global.levelColmesh, eTileType.block_hor_m, 10, 10, 0);
 tile_manager.add_colmesh_at_grid(global.levelColmesh, eTileType.cube, 11, 10, 0);
 
 // Player variables

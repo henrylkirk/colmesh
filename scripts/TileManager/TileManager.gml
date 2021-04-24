@@ -27,8 +27,8 @@ function TileManager(_tile_size) constructor {
 		wedge_skinny_vert_tr,
 		wedge_small_tl,
 		wedge_small_tr,
-		block_hor_bm,
-		block_hor_tm,
+		block_hor_b,
+		block_hor_t,
 		wedge_skinny_hor_bl,
 		wedge_skinny_hor_br,
 		wedge_skinny_vert_bl,
@@ -123,9 +123,9 @@ function TileManager(_tile_size) constructor {
 				yscale *= 0.5;
 				zscale *= 0.5;
 				break;
-			case eTileType.block_hor_bm:
+			case eTileType.block_hor_b:
 			case eTileType.block_hor_m:
-			case eTileType.block_hor_tm:
+			case eTileType.block_hor_t:
 				xscale *= 0.5;
 				yscale *= 0.25;
 				zscale *= 0.5;
@@ -146,6 +146,12 @@ function TileManager(_tile_size) constructor {
 			case eTileType.wedge_small_tr:
 				ty += h_tile_size * 0.5;
 				break;
+			case eTileType.block_hor_t:
+				ty -= h_tile_size * 0.5;
+				break;
+			case eTileType.block_hor_b:
+				ty += h_tile_size * 0.5;
+				break;
 		}
 		
 		// Translate x
@@ -161,6 +167,12 @@ function TileManager(_tile_size) constructor {
 			case eTileType.wedge_skinny_vert_tr:
 			case eTileType.wedge_skinny_vert_br:
 				tx -= h_tile_size * 0.5;
+				break;
+			case eTileType.block_vert_l:
+				tx -= h_tile_size;
+				break;
+			case eTileType.block_vert_r:
+				tx += h_tile_size;
 				break;
 		}
 		
@@ -199,11 +211,11 @@ function TileManager(_tile_size) constructor {
 				mesh_or_shape = new colmesh_cube(tx, ty, tz, xscale, yscale, zscale);
 				break;
 			case eTileType.block_vert_l:
-			case eTileType.block_vert_r:
 			case eTileType.block_vert_m:
-			case eTileType.block_hor_bm:
+			case eTileType.block_vert_r:
+			case eTileType.block_hor_t:
 			case eTileType.block_hor_m:
-			case eTileType.block_hor_tm:
+			case eTileType.block_hor_b:
 				mesh_or_shape = new colmesh_block(matrix_build(tx, ty, tz, orientation_array[0], orientation_array[1], orientation_array[2], xscale, yscale, zscale));
 				break;
 		}
