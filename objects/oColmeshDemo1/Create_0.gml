@@ -6,7 +6,7 @@ global.demoText = "This demo shows how you can create a ColMesh from an OBJ file
 	+ "\nand how you can use the collision system to collect coins";
 	
 //Load the level model to a vertex buffer
-var mbuffLevel = colmesh_load_obj_to_buffer("ColMesh Demo/Demo1Level.obj");
+var mbuffLevel = colmesh_load_obj_to_buffer("Demo1Level.obj");
 modLevel = vertex_create_buffer_from_buffer(mbuffLevel, global.ColMeshFormat);
 buffer_delete(mbuffLevel);
 
@@ -20,7 +20,7 @@ buffer_delete(mbuffLevel);
 if (!global.levelColmesh.load("Demo1Cache.cm"))
 {
 	//If a cache does not exist, generate a colmesh from an OBJ file, subdivide it, and save a cache
-	global.levelColmesh.addMesh("ColMesh Demo/Demo1Level.obj"); //Notice how I supply a path to an OBJ file. I could have instead used the mbuffLevel that I created earlier in this event
+	global.levelColmesh.addMesh("Demo1Level.obj"); //Notice how I supply a path to an OBJ file. I could have instead used the mbuffLevel that I created earlier in this event
 	global.levelColmesh.subdivide(100); //<-- You need to define the size of the subdivision regions. Play around with it and see what value fits your model best. This is a list that stores all the triangles in a region in space. A larger value makes colmesh generation faster, but slows down collision detection. A too low value increases memory usage and generation time.
 	global.levelColmesh.save("Demo1Cache.cm"); //Save a cache, so that loading it the next time will be quicker
 }

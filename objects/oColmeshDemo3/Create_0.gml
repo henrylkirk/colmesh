@@ -7,7 +7,7 @@ global.demoText = "You can combine triangle meshes and primitives into one ColMe
 	+ "\nCollision checking against a primitive is much faster than against a triangle mesh!";
 
 //Load the level model as a buffer, and convert it to a vertex buffer
-var mbuffLevel = colmesh_load_obj_to_buffer("ColMesh Demo/Corona.obj");
+var mbuffLevel = colmesh_load_obj_to_buffer("Corona.obj");
 modLevel = vertex_create_buffer_from_buffer(mbuffLevel, global.ColMeshFormat);
 buffer_delete(mbuffLevel);
 
@@ -22,7 +22,7 @@ buffer_delete(mbuffLevel);
 if (!global.levelColmesh.load("Demo3Cache.cm"))
 {
 	//If a cache does not exist, generate a colmesh from an OBJ file, subdivide it, and save a cache
-	global.levelColmesh.addMesh("ColMesh Demo/CoronaColmesh.obj"); //Notice how I supply a path to an OBJ file. I could have instead used the mbuffLevel that I created earlier in this event
+	global.levelColmesh.addMesh("CoronaColmesh.obj"); //Notice how I supply a path to an OBJ file. I could have instead used the mbuffLevel that I created earlier in this event
 	global.levelColmesh.addShape(new colmesh_sphere(0, 0, 0, 400));
 	global.levelColmesh.subdivide(100);
 	global.levelColmesh.save("Demo3Cache.cm"); //Save a cache, so that loading it the next time will be quicker

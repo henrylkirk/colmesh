@@ -18,7 +18,7 @@ if (h != 0 && v != 0){	// If walking diagonally, divide the input vector by its 
 }
 
 // Move
-acc = 5;
+acc = 2;
 x += spdX - acc * v;
 y += spdY - acc * h;
 z += spdZ - 1 + jump * ground * 15; // Apply gravity in z-direction
@@ -65,7 +65,7 @@ if (z < -400) {
 	prevZ = z;
 }
 
-var d = 150;
+var d = 100;
 global.camX = x + d * dcos(yaw) * dcos(pitch);
 global.camY = y + d * dsin(yaw) * dcos(pitch);
 global.camZ = z + d * dsin(pitch);

@@ -6,7 +6,7 @@ global.demoText = "This demo shows how you can create a ColMesh from an OBJ file
 	+ "\nand how you can use the collision system to collect coins";
 	
 //Load the level model to a vertex buffer
-//var mbuffLevel = colmesh_load_obj_to_buffer("ColMesh Demo/Demo1Level.obj");
+//var mbuffLevel = colmesh_load_obj_to_buffer("Demo1Level.obj");
 //modLevel = vertex_create_buffer_from_buffer(mbuffLevel, global.ColMeshFormat);
 //buffer_delete(mbuffLevel);
 
@@ -17,6 +17,7 @@ global.demoText = "This demo shows how you can create a ColMesh from an OBJ file
 	oColmeshSystem controls the global.levelColmesh, and makes sure it's cleared.
 */
 
+#macro TILE_SIZE 16
 var hw = room_width * 0.5;
 var hh = room_height * 0.5;
 
@@ -29,22 +30,27 @@ var hh = room_height * 0.5;
 //	global.levelColmesh.save("Demo5Cache.cm"); //Save a cache, so that loading it the next time will be quicker
 //}
 
+tile_manager = new TileManager(TILE_SIZE);
+tile_manager.add_colmesh_at_grid(global.levelColmesh, eTileType.wedge_skinny_hor_tl, 0, 0, 0);
+tile_manager.add_colmesh_at_grid(global.levelColmesh, eTileType.wedge_skinny_hor_tr, 1, 0, 0);
+tile_manager.add_colmesh_at_grid(global.levelColmesh, eTileType.wedge_skinny_hor_bl, 0, 1, 0);
+tile_manager.add_colmesh_at_grid(global.levelColmesh, eTileType.wedge_skinny_hor_br, 1, 1, 0);
+
 // Add test cube - TODO add tile conversion here
-var grid_size = 64;
-var h_tile_size = grid_size * 0.5;
-global.levelColmesh.addShape(
-	new colmesh_cube(h_tile_size, h_tile_size, h_tile_size, grid_size, grid_size, grid_size)
-);
+//var h_tile_size = TILE_SIZE * 0.5; // half a tile
+//global.levelColmesh.addShape(
+//	new colmesh_cube(h_tile_size, h_tile_size, h_tile_size, TILE_SIZE, TILE_SIZE, TILE_SIZE)
+//);
 
 
-// Add wedge
-global.levelColmesh.addMesh("ColMesh Demo/wedge.obj", matrix_build(h_tile_size + grid_size, h_tile_size, h_tile_size, 0, 0, 0, grid_size, grid_size, grid_size));
+//// Add wedge
+//global.levelColmesh.addMesh("wedge.obj", matrix_build(h_tile_size + TILE_SIZE, h_tile_size, h_tile_size, 0, 0, 0, TILE_SIZE, TILE_SIZE, TILE_SIZE));
 
-// Add wedge with flat bit
-global.levelColmesh.addMesh("ColMesh Demo/wedge-flat.obj", matrix_build(h_tile_size + grid_size*2, h_tile_size, h_tile_size, 90, 0, 0, grid_size, grid_size, grid_size));
+//// Add wedge with flat bit
+//global.levelColmesh.addMesh("wedge-flat.obj", matrix_build(h_tile_size + TILE_SIZE*2, h_tile_size, h_tile_size, 90, 0, 0, TILE_SIZE, TILE_SIZE, TILE_SIZE));
 
-// Add small wedge
-global.levelColmesh.addMesh("ColMesh Demo/wedge.obj", matrix_build(h_tile_size * 0.5 + grid_size*3, h_tile_size * 0.5, h_tile_size, 180, 90, 90, h_tile_size, h_tile_size, grid_size));
+//// Add small wedge
+//global.levelColmesh.addMesh("wedge.obj", matrix_build(h_tile_size * 0.5 + TILE_SIZE*3, h_tile_size * 0.5, h_tile_size, 180, 90, 90, h_tile_size, h_tile_size, TILE_SIZE));
 
 
 //Player variables

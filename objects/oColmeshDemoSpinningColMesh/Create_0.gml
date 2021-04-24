@@ -12,6 +12,6 @@ cube = subMesh.addDynamic(new colmesh_cube(45, 0, 100, 100, 100, 100), matrix_bu
 subMesh.subdivide(150);
 
 //Load the level model as a buffer, and convert it to a vertex buffer
-var mbuffLevel = colmesh_load_obj_to_buffer("ColMesh Demo/Corona.obj");
+var mbuffLevel = colmesh_load_obj_to_buffer("Corona.obj");
 model = vertex_create_buffer_from_buffer(mbuffLevel, global.ColMeshFormat);
 buffer_delete(mbuffLevel);
