@@ -763,9 +763,7 @@ function colmesh() : colmesh_shapes() constructor {
 					currZ = round((oz + ldz * _t));
 					key = colmesh_get_key(floor(currX), floor(currY), currZ - (ldz < 0));
 				}
-			}
-			else
-			{
+			} else {
 				if (tMaxY < tMaxZ)
 				{
 					_t += tMaxY;
@@ -786,15 +784,21 @@ function colmesh() : colmesh_shapes() constructor {
 			//Check for ray mesh intersections in the current region
 			t = min(1, _t * regionSize);
 			var region = spHash[? prevKey];
-			if (!is_undefined(region))
-			{
-				if (is_array(regionCastRay(region, x1, y1, z1, x1 + ldx * t, y1 + ldy * t, z1 + ldz * t, executeRayFunc)))
-				{
-					if (cmRecursion == 0)
-					{
+			if (!is_undefined(region)){
+				if (is_array(regionCastRay(region, x1, y1, z1, x1 + ldx * t, y1 + ldy * t, z1 + ldz * t, executeRayFunc))){
+					if (cmRecursion == 0){
 						cmCallingObject = -1;
 					}
-					return cmRay;
+					// Transform array into struct
+					return {
+						x : cmRay[0],
+						y : cmRay[1],
+						z : cmRay[2],
+						nx : cmRay[3],
+						ny : cmRay[4],
+						nz : cmRay[5],
+						is_collision : cmRay[6]
+					};
 				}
 			}
 			prevKey = key;
@@ -803,8 +807,7 @@ function colmesh() : colmesh_shapes() constructor {
 	}
 	
 	/// @function regionCastRay(region, x1, y1, z1, x2, y2, z2, executeRayFunc*)
-	static regionCastRay = function(region, x1, y1, z1, x2, y2, z2, _executeRayFunc) 
-	{	
+	static regionCastRay = function(region, x1, y1, z1, x2, y2, z2, _executeRayFunc) {	
 		/*	
 			This ray casting script is faster than the regular colmesh raycasting script.
 			However, it will only cast a ray onto the shapes in the current region, and is as such a "short-range" ray.
