@@ -353,8 +353,8 @@ function colmesh() : colmesh_shapes() constructor {
 	
 	#endregion
 	
-	/// @function displaceCapsule(x, y, z, xup, yup, zup, radius, height, slopeAngle, fast*, executeColFunc*)
-	static displaceCapsule = function(x, y, z, xup, yup, zup, radius, height, slopeAngle, fast, executeColFunc){	
+	/// @function displace_capsule(x, y, z, radius, height, slopeAngle, fast*, executeColFunc*, [xup], [yup], [zup])
+	static displace_capsule = function(x, y, z, radius, height, slopeAngle, fast, executeColFunc, xup, yup, zup){
 		/*	
 			Pushes a capsule out of a collision mesh.
 			This will first use getRegion to get a list containing all shapes the capsule potentially could collide with.
@@ -369,12 +369,29 @@ function colmesh() : colmesh_shapes() constructor {
 			Returns an array of the following format:
 			[x, y, z, Nx, Ny, Nz, collision (true or false)]
 		*/
+		
+		xup = is_real(xup) ? xup : 0;
+		yup = is_real(yup) ? yup : 0;
+		zup = is_real(zup) ? zup : 1;
+		
 		if (cmRecursion == 0) {
 			cmCallingObject = other;
 		}
 		
 		var region = getRegion(x, y, z, xup, yup, zup, radius, height);
-		return regionDisplaceCapsule(region, x, y, z, xup, yup, zup, radius, height, slopeAngle, fast, executeColFunc);
+		var coll_array = regionDisplaceCapsule(region, x, y, z, xup, yup, zup, radius, height, slopeAngle, fast, executeColFunc);
+	
+		// Transform array into struct
+		return {
+			x : coll_array[0],
+			y : coll_array[1],
+			z : coll_array[2],
+			nx : coll_array[3],
+			ny : coll_array[4],
+			nz : coll_array[5],
+			is_collision : coll_array[6],
+			is_on_ground : (xup * coll_array[3] + yup * coll_array[4] + zup * coll_array[5] > 0.7)
+		}
 	}
 	
 	/// @function regionDisplaceCapsule(region, x, y, z, xup, yup, zup, radius, height, slopeAngle, fast*, executeColFunc*)

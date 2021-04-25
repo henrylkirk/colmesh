@@ -54,7 +54,7 @@ if (sqr(x - prevX) + sqr(y - prevY) + sqr(z - prevZ) > radius * radius) //Only c
 
 //Avoid ground
 ground = false;
-col = global.levelColmesh.displaceCapsule(x, y, z, xup, yup, zup, radius, height, 46, false);
+col = global.levelColmesh.displace_capsule(x, y, z, radius, height, 46, false);
 if (col[6]) //If we're touching ground
 {
 	x = col[0];

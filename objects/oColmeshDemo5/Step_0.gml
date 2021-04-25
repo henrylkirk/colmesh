@@ -39,23 +39,16 @@ if (sqr(x - prevX) + sqr(y - prevY) + sqr(z - prevZ) > radius * radius) //Only c
 }
 
 // Avoid ground
-ground = false;
-fast = false;			//Fast collisions should usually not be used for important objects like the player
-executeColfunc = true;	//We want to execute the collision function of the coins
-col = global.levelColmesh.displaceCapsule(x, y, z, 0, 0, 1, radius, height, 40, fast, executeColfunc);
-if (col[6]) {
+col = global.levelColmesh.displace_capsule(x, y, z, radius, height, 40, false, true);
+if (col.is_collision) {
 	// If we're touching ground...
-	x = col[0];
-	y = col[1];
-	z = col[2];
-	
-	// We're touching ground if the dot product between the returned vector 
-	if (xup * col[3] + yup * col[4] + zup * col[5] > 0.7){
-		ground = true;
-	}
+	x = col.x;
+	y = col.y;
+	z = col.z;
+	ground = col.is_on_ground;
 }
 
-//Put player in the middle of the map if he falls off
+// Put player in the middle of the map if he falls off
 if (z < -400) {
 	x = xstart;
 	y = ystart;

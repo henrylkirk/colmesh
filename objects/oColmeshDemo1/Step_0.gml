@@ -1,5 +1,4 @@
-/// @description
-//Verlet integration
+// Verlet integration
 fric = 1 - .4;
 spdX = (x - prevX) * fric;
 spdY = (y - prevY) * fric;
@@ -26,37 +25,33 @@ y += spdY - acc * h;
 z += spdZ - 1 + jump * ground * 15; //Apply gravity in z-direction
 
 //Cast a short-range ray from the previous position to the current position to avoid going through geometry
-if (sqr(x - prevX) + sqr(y - prevY) + sqr(z - prevZ) > radius * radius) //Only cast ray if there's a risk that we've gone through geometry
-{
+//Only cast ray if there's a risk that we've gone through geometry
+if (sqr(x - prevX) + sqr(y - prevY) + sqr(z - prevZ) > radius * radius){
 	var d = height * (.5 + .5 * sign(xup * (x - prevX) + yup * (y - prevY) + zup * (z - prevZ)));
 	var dx = xup * d;
 	var dy = yup * d;
 	var dz = zup * d;
 	ray = global.levelColmesh.castRay(prevX + dx, prevY + dy, prevZ + dz, x + dx, y + dy, z + dz);
-	if is_array(ray)
-	{
+	if is_array(ray) {
 		x = ray[0] - dx - (x - prevX) * .1;
 		y = ray[1] - dy - (y - prevY) * .1;
 		z = ray[2] - dz - (z - prevZ) * .1;
 	}
 }
 
-//Avoid ground
-ground = false;
-fast = false;			//Fast collisions should usually not be used for important objects like the player
-executeColfunc = true;	//We want to execute the collision function of the coins
-col = global.levelColmesh.displaceCapsule(x, y, z, 0, 0, 1, radius, height, 40, fast, executeColfunc);
-if (col[6]) //If we're touching ground
-{
+// Avoid ground
+col = global.levelColmesh.displace_capsule(x, y, z, radius, height, 40, false, true, 0, 0, 1);
+if (col[6]){
 	x = col[0];
 	y = col[1];
 	z = col[2];
 	
-	//We're touching ground if the dot product between the returned vector 
-	if (xup * col[3] + yup * col[4] + zup * col[5] > 0.7)
-	{
+	// We're touching ground if the dot product between the returned vector 
+	if (xup * col[3] + yup * col[4] + zup * col[5] > 0.7){
 		ground = true;
 	}
+} else {
+	ground = false;
 }
 
 //Put player in the middle of the map if he falls off
