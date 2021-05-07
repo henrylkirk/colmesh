@@ -25,7 +25,7 @@ var hh = room_height * 0.5;
 //if (!global.levelColmesh.load("Demo5Cache.cm")){
 	// No cache found, add flat ground to colmesh
 	global.levelColmesh.addShape(
-		new colmesh_block(colmesh_matrix_build(hw, hh, 0, 0, 0, 0, hw, hh, 1))
+		new colmesh_block(colmesh_matrix_build(hw, hh, -1, 0, 0, 0, hw, hh, 1))
 	);
 //	global.levelColmesh.save("Demo5Cache.cm"); //Save a cache, so that loading it the next time will be quicker
 //}
@@ -38,8 +38,8 @@ tile_manager.tile_layer_to_colmesh(global.levelColmesh, "tiles_collision");
 x = hw;
 y = hh;
 z = 300;
-radius = 15;
-height = 20;
+radius = 10;
+height = 16;
 prevX = x;
 prevY = y;
 prevZ = z;

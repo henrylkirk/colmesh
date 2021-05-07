@@ -13,6 +13,7 @@ function TileManager(_tile_size) constructor {
 		wedge_flat_vert_tl,
 		wedge_flat_vert_tr,
 		block_vert_m,
+		slope_t,
 		cube,
 		wedge_bl,
 		wedge_br,
@@ -21,6 +22,7 @@ function TileManager(_tile_size) constructor {
 		wedge_flat_vert_bl,
 		wedge_flat_vert_br,
 		block_hor_m,
+		slope_r,
 		wedge_skinny_hor_tl,
 		wedge_skinny_hor_tr,
 		wedge_skinny_vert_tl,
@@ -29,6 +31,7 @@ function TileManager(_tile_size) constructor {
 		wedge_small_tr,
 		block_hor_b,
 		block_hor_t,
+		slope_l,
 		wedge_skinny_hor_bl,
 		wedge_skinny_hor_br,
 		wedge_skinny_vert_bl,
@@ -36,7 +39,8 @@ function TileManager(_tile_size) constructor {
 		wedge_small_bl,
 		wedge_small_br,
 		block_vert_r,
-		block_vert_l
+		block_vert_l,
+		slope_b
 	}
 	
 	/// @function tile_layer_to_colmesh
@@ -117,6 +121,15 @@ function TileManager(_tile_size) constructor {
 			case eTileType.wedge_skinny_vert_br:
 			case eTileType.wedge_small_br:
 				orientation_array = [180, 90, 90];
+				break;
+			case eTileType.slope_b:
+				orientation_array = [180, 180, 0];
+				break;
+			case eTileType.slope_l:
+				orientation_array = [0, 0, -90];
+				break;
+			case eTileType.slope_r:
+				orientation_array = [0, 0, 90];
 				break;
 		}
 		
@@ -216,6 +229,10 @@ function TileManager(_tile_size) constructor {
 			case eTileType.wedge_small_tr:
 			case eTileType.wedge_small_bl:
 			case eTileType.wedge_small_br:
+			case eTileType.slope_t:
+			case eTileType.slope_r:
+			case eTileType.slope_l:
+			case eTileType.slope_b:
 				mesh_or_shape = "wedge.obj";
 				break;
 			case eTileType.wedge_flat_hor_tl:

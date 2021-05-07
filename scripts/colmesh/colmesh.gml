@@ -292,20 +292,20 @@ function colmesh() : colmesh_shapes() constructor {
 			var triNum = mBuffSize div bytesPerTri;
 			array_resize(triangles, array_length(triangles) + triNum);
 			for (var i = 0; i < mBuffSize; i += bytesPerTri){
-				static V = array_create(9);
+				static _V = array_create(9);
 				for (var j = 0; j < 3; j++){
 					for (var k = 0; k < 3; k++)
 					{
 						//Read vert position
-					    V[j * 3 + k] = buffer_peek(mesh, i + j * bytesPerVert + k * 4, buffer_f32);
+					    _V[j * 3 + k] = buffer_peek(mesh, i + j * bytesPerVert + k * 4, buffer_f32);
 					}
 				}
 				if (is_array(M)){
-					array_copy(V, 0, colmesh_matrix_transform_vertex(M, V[0], V[1], V[2]), 0, 3);
-					array_copy(V, 3, colmesh_matrix_transform_vertex(M, V[3], V[4], V[5]), 0, 3);
-					array_copy(V, 6, colmesh_matrix_transform_vertex(M, V[6], V[7], V[8]), 0, 3);
+					array_copy(_V, 0, colmesh_matrix_transform_vertex(M, _V[0], _V[1], _V[2]), 0, 3);
+					array_copy(_V, 3, colmesh_matrix_transform_vertex(M, _V[3], _V[4], _V[5]), 0, 3);
+					array_copy(_V, 6, colmesh_matrix_transform_vertex(M, _V[6], _V[7], _V[8]), 0, 3);
 				}
-				addTriangle(V);
+				addTriangle(_V);
 			}
 			if load {
 				buffer_delete(mesh);
@@ -315,23 +315,23 @@ function colmesh() : colmesh_shapes() constructor {
 		return false;
 	}
 	
-	/// @function addTriangle(V[9])
+	/// @function addTriangle(_V[9])
 	/// @description Add a single triangle to the colmesh
-	static addTriangle = function(V){
+	static addTriangle = function(_V){
 
 		var shapeNum = ds_list_size(shapeList);
 		if (array_length(triangles) <= shapeNum){
 			array_resize(triangles, shapeNum + 1);
 		}
 		// Construct normal vector
-		var nx = (V[4] - V[1]) * (V[8] - V[2]) - (V[5] - V[2]) * (V[7] - V[1]);
-		var ny = (V[5] - V[2]) * (V[6] - V[0]) - (V[3] - V[0]) * (V[8] - V[2]);
-		var nz = (V[3] - V[0]) * (V[7] - V[1]) - (V[4] - V[1]) * (V[6] - V[0]);
+		var nx = (_V[4] - _V[1]) * (_V[8] - _V[2]) - (_V[5] - _V[2]) * (_V[7] - _V[1]);
+		var ny = (_V[5] - _V[2]) * (_V[6] - _V[0]) - (_V[3] - _V[0]) * (_V[8] - _V[2]);
+		var nz = (_V[3] - _V[0]) * (_V[7] - _V[1]) - (_V[4] - _V[1]) * (_V[6] - _V[0]);
 		var l = nx * nx + ny * ny + nz * nz;
 		if (l <= 0){return false;}
 		l = 1 / sqrt(l);
 		var tri = array_create(12);
-		array_copy(tri, 0, V, 0, 9);
+		array_copy(tri, 0, _V, 0, 9);
 		tri[9]  = nx * l;
 		tri[10] = ny * l;
 		tri[11] = nz * l;
@@ -378,6 +378,7 @@ function colmesh() : colmesh_shapes() constructor {
 			cmCallingObject = other;
 		}
 		
+		z += radius;
 		var region = getRegion(x, y, z, xup, yup, zup, radius, height);
 		var coll_array = regionDisplaceCapsule(region, x, y, z, xup, yup, zup, radius, height, slopeAngle, fast, executeColFunc);
 	
@@ -385,7 +386,7 @@ function colmesh() : colmesh_shapes() constructor {
 		return {
 			x : coll_array[0],
 			y : coll_array[1],
-			z : coll_array[2],
+			z : coll_array[2] - radius,
 			nx : coll_array[3],
 			ny : coll_array[4],
 			nz : coll_array[5],
@@ -1256,7 +1257,7 @@ function colmesh() : colmesh_shapes() constructor {
 		
 		// Read shape list
 		static M = array_create(16);
-		static V = array_create(9);
+		static _V = array_create(9);
 		var shapeNum = buffer_read(tempBuff, buffer_u32);
 		var triNum = buffer_read(tempBuff, buffer_u32);
 		array_resize(triangles, triNum);
@@ -1265,9 +1266,9 @@ function colmesh() : colmesh_shapes() constructor {
 			switch (type) {
 				case eColMeshShape.Mesh:
 					for (var j = 0; j < 9; j++) {
-						V[j] = buffer_read(tempBuff, buffer_f32);
+						_V[j] = buffer_read(tempBuff, buffer_f32);
 					}
-					addTriangle(V);
+					addTriangle(_V);
 					break;
 				case eColMeshShape.Sphere:
 					var _x = buffer_read(tempBuff, buffer_f32);
@@ -1461,10 +1462,10 @@ function colmesh_load_obj_to_buffer(filename) {
 	colmesh_debug_message("Script colmesh_load_obj_to_buffer: Loading obj file " + string(filename));
 
 	//Create the necessary lists
-	var V = ds_list_create();
-	var N = ds_list_create();
-	var T = ds_list_create();
-	var F = ds_list_create();
+	var _V = ds_list_create();
+	var _N = ds_list_create();
+	var _T = ds_list_create();
+	var _F = ds_list_create();
 
 	//Read .obj as textfile
 	var str, type;
@@ -1474,19 +1475,19 @@ function colmesh_load_obj_to_buffer(filename) {
 		switch string_copy(str, 1, string_pos(" ", str)-1) {
 			//Load vertex positions
 			case "v":
-				ds_list_add(V, read_line(str));
+				ds_list_add(_V, read_line(str));
 				break;
 			//Load vertex normals
 			case "vn":
-				ds_list_add(N, read_line(str));
+				ds_list_add(_N, read_line(str));
 				break;
 			//Load vertex texture coordinates
 			case "vt":
-				ds_list_add(T, read_line(str));
+				ds_list_add(_T, read_line(str));
 				break;
 			//Load faces
 			case "f":
-				read_face(F, str);
+				read_face(_F, str);
 				break;
 		}
 		file_text_readln(file);
@@ -1496,35 +1497,35 @@ function colmesh_load_obj_to_buffer(filename) {
 	// Loop through the loaded information and generate a model
 	var vnt, vertNum, mbuff, vbuff, v, n, t;
 	var bytesPerVert = 3 * 4 + 3 * 4 + 2 * 4 + 4 * 1;
-	vertNum = ds_list_size(F);
+	vertNum = ds_list_size(_F);
 	mbuff = buffer_create(vertNum * bytesPerVert, buffer_fixed, 1);
 	for (var f = 0; f < vertNum; f++){
-		vnt = F[| f];
+		vnt = _F[| f];
 		
 		// Add the vertex to the model buffer
-		v = V[| vnt[0]];
+		v = _V[| vnt[0]];
 		if !is_array(v){v = [0, 0, 0];}
 		buffer_write(mbuff, buffer_f32, v[0]);
 		buffer_write(mbuff, buffer_f32, v[2]);
 		buffer_write(mbuff, buffer_f32, v[1]);
 		
-		n = N[| vnt[1]];
+		n = _N[| vnt[1]];
 		if !is_array(n){n = [0, 0, 1];}
 		buffer_write(mbuff, buffer_f32, n[0]);
 		buffer_write(mbuff, buffer_f32, n[2]);
 		buffer_write(mbuff, buffer_f32, n[1]);
 		
-		t = T[| vnt[2]];
+		t = _T[| vnt[2]];
 		if !is_array(t){t = [0, 0];}
 		buffer_write(mbuff, buffer_f32, t[0]);
 		buffer_write(mbuff, buffer_f32, 1-t[1]);
 		
 		buffer_write(mbuff, buffer_u32, c_white);
 	}
-	ds_list_destroy(F);
-	ds_list_destroy(V);
-	ds_list_destroy(N);
-	ds_list_destroy(T);
+	ds_list_destroy(_F);
+	ds_list_destroy(_V);
+	ds_list_destroy(_N);
+	ds_list_destroy(_T);
 	colmesh_debug_message("Script colmesh_load_obj_to_buffer: Successfully loaded obj " + string(filename));
 	return mbuff
 }

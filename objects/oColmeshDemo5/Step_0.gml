@@ -1,11 +1,13 @@
 // Verlet integration
-fric = 1 - .4;
+fric = 0.6;
 spdX = (x - prevX) * fric;
 spdY = (y - prevY) * fric;
 spdZ = (z - prevZ) * (1 - 0.01);
 prevX = x;
 prevY = y;
 prevZ = z;
+
+global.demoText = "x: "+string(round(x))+"\n" + "y: "+string(round(y))+"\n"+"z: "+string(round(z));
 
 // Controls (rotated 90 degrees to match camera)
 jump = keyboard_check_pressed(vk_space);
@@ -51,9 +53,9 @@ if (col.is_collision) {
 
 // Put player in the middle of the map if he falls off
 if (z < -400) {
-	x = xstart;
-	y = ystart;
-	z = 300;
+	x = room_width * 0.5;
+	y = room_height * 0.5;
+	z = 500;
 	prevX = x;
 	prevY = y;
 	prevZ = z;
