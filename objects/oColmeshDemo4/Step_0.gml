@@ -7,8 +7,7 @@ spdY = (y - prevY) * fric;
 spdZ = (z - prevZ) * (1 - 0.01);
 
 var D = global.levelColmesh.getDeltaMatrix();
-if (is_array(D))
-{
+if (is_array(D)){
 	colmesh_matrix_multiply_fast(D, charMat, charMat);
 	x = charMat[12];
 	y = charMat[13];
@@ -44,28 +43,23 @@ if (sqr(x - prevX) + sqr(y - prevY) + sqr(z - prevZ) > radius * radius) //Only c
 	var dy = yup * d;
 	var dz = zup * d;
 	ray = global.levelColmesh.castRay(prevX + dx, prevY + dy, prevZ + dz, x + dx, y + dy, z + dz);
-	if is_array(ray)
-	{
-		x = ray[0] - dx - (x - prevX) * .1;
-		y = ray[1] - dy - (y - prevY) * .1;
-		z = ray[2] - dz - (z - prevZ) * .1;
+	if is_struct(ray) {
+		x = ray.x - dx - (x - prevX) * .1;
+		y = ray.y - dy - (y - prevY) * .1;
+		z = ray.z - dz - (z - prevZ) * .1;
 	}
 }
 
 //Avoid ground
 ground = false;
 col = global.levelColmesh.displace_capsule(x, y, z, radius, height, 46, false);
-if (col[6]) //If we're touching ground
-{
-	x = col[0];
-	y = col[1];
-	z = col[2];
+if is_struct(col) and col.is_collision {
+	x = col.x;
+	y = col.y;
+	z = col.z;
 	
 	//We're touching ground if the dot product between the returned vector 
-	if (xup * col[3] + yup * col[4] + zup * col[5] > 0.7)
-	{
-		ground = true;
-	}
+	ground = col.is_on_ground;
 }
 
 //Put player back on the map if he falls off

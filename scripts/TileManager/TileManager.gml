@@ -122,7 +122,7 @@ function TileManager(_tile_size) constructor {
 			case eTileType.wedge_small_br:
 				orientation_array = [180, 90, 90];
 				break;
-			case eTileType.slope_b:
+			case eTileType.slope_t:
 				orientation_array = [180, 180, 0];
 				break;
 			case eTileType.slope_l:

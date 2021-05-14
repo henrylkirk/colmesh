@@ -17,6 +17,14 @@ global.demoText = "This demo shows how you can create a ColMesh from an OBJ file
 	oColmeshSystem controls the global.levelColmesh, and makes sure it's cleared.
 */
 
+gpu_set_cullmode(cull_noculling);
+gpu_set_texfilter(true);
+
+//Load the level model to a vertex buffer
+var mbuffLevel = colmesh_load_obj_to_buffer("house.obj");
+house = vertex_create_buffer_from_buffer(mbuffLevel, global.ColMeshFormat);
+buffer_delete(mbuffLevel);
+
 #macro TILE_SIZE 16
 var hw = room_width * 0.5;
 var hh = room_height * 0.5;
@@ -29,6 +37,14 @@ var hh = room_height * 0.5;
 	);
 //	global.levelColmesh.save("Demo5Cache.cm"); //Save a cache, so that loading it the next time will be quicker
 //}
+
+house_x = hw;
+house_y = hh;
+house_z = 1;
+house_mesh = global.levelColmesh.addMesh(
+	"house.obj",
+	colmesh_matrix_build(house_x, house_y, house_z, 0, 0, 0, 10, 10, 10)
+);
 
 // Add tile shapes to colmesh
 tile_manager = new TileManager(TILE_SIZE);

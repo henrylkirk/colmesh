@@ -32,6 +32,7 @@
     {"id":{"name":"TileManager","path":"scripts/TileManager/TileManager.yy",},"order":5,},
     {"id":{"name":"oColmeshDemo5","path":"objects/oColmeshDemo5/oColmeshDemo5.yy",},"order":1,},
     {"id":{"name":"sSpinningRectangle","path":"sprites/sSpinningRectangle/sSpinningRectangle.yy",},"order":17,},
+    {"id":{"name":"spr_texture_house","path":"sprites/spr_texture_house/spr_texture_house.yy",},"order":7,},
     {"id":{"name":"sh_colmesh_shadow","path":"shaders/sh_colmesh_shadow/sh_colmesh_shadow.yy",},"order":1,},
     {"id":{"name":"oCoin","path":"objects/oCoin/oCoin.yy",},"order":2,},
     {"id":{"name":"tiles_collision","path":"tilesets/tiles_collision/tiles_collision.yy",},"order":6,},
@@ -112,6 +113,9 @@
     {"CopyToMask":-1,"filePath":"datafiles","resourceVersion":"1.0","name":"wedge.obj","resourceType":"GMIncludedFile",},
     {"CopyToMask":-1,"filePath":"datafiles","resourceVersion":"1.0","name":"wedge-flat.obj","resourceType":"GMIncludedFile",},
     {"CopyToMask":-1,"filePath":"datafiles","resourceVersion":"1.0","name":".DS_Store","resourceType":"GMIncludedFile",},
+    {"CopyToMask":-1,"filePath":"datafiles","resourceVersion":"1.0","name":"house_tex.png","resourceType":"GMIncludedFile",},
+    {"CopyToMask":-1,"filePath":"datafiles","resourceVersion":"1.0","name":"house.obj","resourceType":"GMIncludedFile",},
+    {"CopyToMask":-1,"filePath":"datafiles","resourceVersion":"1.0","name":"house.mtl","resourceType":"GMIncludedFile",},
   ],
   "MetaData": {
     "IDEVersion": "2.3.2.560",
