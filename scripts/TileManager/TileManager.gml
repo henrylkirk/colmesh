@@ -260,9 +260,9 @@ function TileManager(_tile_size) constructor {
 		
 		// Add it to level's colmesh
 		if is_string(mesh_or_shape) { // mesh
-			_colmesh.addMesh(mesh_or_shape, matrix_build(tx, ty, tz, orientation_array[0], orientation_array[1], orientation_array[2], xscale, yscale, zscale));
+			_colmesh.add_mesh(mesh_or_shape, matrix_build(tx, ty, tz, orientation_array[0], orientation_array[1], orientation_array[2], xscale, yscale, zscale));
 		} else if is_struct(mesh_or_shape) { // shape
-			_colmesh.addShape(mesh_or_shape);
+			_colmesh.add_shape(mesh_or_shape);
 		}
 	}
 }

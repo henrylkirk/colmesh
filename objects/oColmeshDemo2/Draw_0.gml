@@ -15,7 +15,7 @@ matrix_set(matrix_world, matrix_build_identity());
 shader_reset();
 
 //Cast a ray in the looking direction of the player
-var ray = global.levelColmesh.castRay(x, y, z + height, x + charMat[0] * 500, y + charMat[1] * 500, z - radius - 5 + charMat[2] * 500);
+var ray = global.room_colmesh.cast_ray(x, y, z + height, x + charMat[0] * 500, y + charMat[1] * 500, z - radius - 5 + charMat[2] * 500);
 if (is_array(ray))
 {
 	var dx = ray[0] - x;
@@ -29,5 +29,5 @@ if (is_array(ray))
 //Draw debug collision shapes
 if global.drawDebug
 {
-	global.levelColmesh.debugDraw(global.levelColmesh.getRegion(x, y, z, xup, yup, zup, radius, height), false);
+	global.room_colmesh.debugDraw(global.room_colmesh.get_region(x, y, z, xup, yup, zup, radius, height), false);
 }

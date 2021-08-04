@@ -124,7 +124,6 @@ function colmesh_matrix_multiply_fast(M, N, targetM) {
 /// @function colmesh_matrix_build
 /// @description This is an alternative to the regular matrix_build properly so that no shearing is applied even if you both rotate and scale non-uniformly
 function colmesh_matrix_build(x, y, z, xrotation, yrotation, zrotation, xscale, yscale, zscale){
-
 	var M = matrix_build(x, y, z, xrotation, yrotation, zrotation, 1, 1, 1);
 	return colmesh_matrix_scale(M, xscale, yscale, zscale);
 }
@@ -166,7 +165,6 @@ function colmesh_matrix_orthogonalize(M){
 /// @function colmesh_matrix_scale
 /// @description Scaled the given matrix along its own axes
 function colmesh_matrix_scale(M, toScale, siScale, upScale){
-
 	M[@ 0] *= toScale;
 	M[@ 1] *= toScale;
 	M[@ 2] *= toScale;

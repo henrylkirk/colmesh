@@ -7,13 +7,13 @@ prevX = x;
 prevY = y;
 prevZ = z;
 
-global.demoText = "x: "+string(round(x))+"\n" + "y: "+string(round(y))+"\n"+"z: "+string(round(z));
+global.demo_text = "x: "+string(round(x))+"\n" + "y: "+string(round(y))+"\n"+"z: "+string(round(z));
 
 // Controls (rotated 90 degrees to match camera)
 jump = keyboard_check_pressed(vk_space);
 var h = keyboard_check(ord("W")) - keyboard_check(ord("S"));
 var v = keyboard_check(ord("A")) - keyboard_check(ord("D"));
-if (h != 0 && v != 0){	// If walking diagonally, divide the input vector by its own length
+if (h != 0 and v != 0){	// If walking diagonally, divide the input vector by its own length
 	var s = 1 / sqrt(2);
 	h *= s;
 	v *= s;
@@ -32,7 +32,7 @@ if (sqr(x - prevX) + sqr(y - prevY) + sqr(z - prevZ) > radius * radius) {
 	var dx = xup * d;
 	var dy = yup * d;
 	var dz = zup * d;
-	ray = global.levelColmesh.castRay(prevX + dx, prevY + dy, prevZ + dz, x + dx, y + dy, z + dz);
+	ray = global.room_colmesh.cast_ray(prevX + dx, prevY + dy, prevZ + dz, x + dx, y + dy, z + dz);
 	if is_struct(ray) {
 		x = ray.x - dx - (x - prevX) * 0.1;
 		y = ray.y - dy - (y - prevY) * 0.1;
@@ -41,7 +41,7 @@ if (sqr(x - prevX) + sqr(y - prevY) + sqr(z - prevZ) > radius * radius) {
 }
 
 // Avoid ground
-var col = global.levelColmesh.displace_capsule(x, y, z, radius, height, 40, false, true);
+var col = global.room_colmesh.displace_capsule(x, y, z, radius, height, 40, false, true);
 if (col.is_collision) {
 	x = col.x;
 	y = col.y;

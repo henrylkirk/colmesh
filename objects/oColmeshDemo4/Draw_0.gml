@@ -12,11 +12,11 @@ shader_reset();
 if global.drawDebug
 {
 	matrix_set(matrix_world, matrix_build_identity());
-	global.levelColmesh.debugDraw(global.levelColmesh.getRegion(x, y, z, xup, yup, zup, radius, height));
+	global.room_colmesh.debugDraw(global.room_colmesh.get_region(x, y, z, xup, yup, zup, radius, height));
 }
 
 //Cast a ray in the looking direction of the player
-//var ray = global.levelColmesh.castRay(x, y, z + height, x + charMat[0] * 100, y + charMat[1] * 100, z - radius - 50 + charMat[2] * 100);
+//var ray = global.room_colmesh.cast_ray(x, y, z + height, x + charMat[0] * 100, y + charMat[1] * 100, z - radius - 50 + charMat[2] * 100);
 /*if (ray[6])
 {
 	shader_set(sh_colmesh_collider);

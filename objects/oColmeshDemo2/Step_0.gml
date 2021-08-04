@@ -5,7 +5,7 @@ spdX = (x - prevX) * fric;
 spdY = (y - prevY) * fric;
 spdZ = (z - prevZ) * (1 - 0.01);
 
-var D = global.levelColmesh.getDeltaMatrix();
+var D = global.room_colmesh.getDeltaMatrix();
 if (is_array(D))
 {
 	colmesh_matrix_multiply_fast(D, charMat, charMat);
@@ -23,7 +23,7 @@ prevZ = z;
 var jump = keyboard_check_pressed(vk_space);
 var h = keyboard_check(ord("D")) - keyboard_check(ord("A"));
 var v = keyboard_check(ord("W")) - keyboard_check(ord("S"));
-if (h != 0 && v != 0)
+if (h != 0 and v != 0)
 {	//If walking diagonally, divide the input vector by its own length
 	var s = 1 / sqrt(2);
 	h *= s;
@@ -36,20 +36,15 @@ x += spdX + acc * h;
 y += spdY - acc * v;
 z += spdZ - 1 + jump * ground * 15; //Apply gravity in z-direction
 
-//Avoid ground
-ground = false;
-col = global.levelColmesh.displace_capsule(x, y, z, radius, height, 46, false);
-if (col[6]) //If we're touching ground
-{
-	x = col[0];
-	y = col[1];
-	z = col[2];
-	
-	//We're touching ground if the dot product between the returned vector 
-	if (xup * col[3] + yup * col[4] + zup * col[5] > 0.7)
-	{
-		ground = true;
-	}
+// Avoid ground
+var col = global.room_colmesh.displace_capsule(x, y, z, radius, height, 40, false, true);
+if (col.is_collision) {
+	x = col.x;
+	y = col.y;
+	z = col.z;
+	ground = col.is_on_ground;
+} else {
+	ground = false;
 }
 
 //Put player in the middle of the map if he falls off

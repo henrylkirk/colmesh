@@ -43,8 +43,8 @@ function colmesh_shapes() constructor {
 	type = eColMeshShape.Mesh;
 	solid = true;
 	
-	/// @function setSolid(solid)
-	static setSolid = function(_solid) {
+	/// @function set_solid(solid)
+	static set_solid = function(_solid) {
 		/*
 			Toggle solid for this shape. Non-solid objects will not displace other objects.
 			Typically useful for collectible objects like coins, or trigger objects
@@ -52,8 +52,8 @@ function colmesh_shapes() constructor {
 		solid = _solid;
 	}
 	
-	/// @function setCollisionFunction(colFunc)
-	static setCollisionFunction = function(_colFunc) {
+	/// @function set_collision_function(colFunc)
+	static set_collision_function = function(_colFunc) {
 		/*
 			This function lets you give the shape a custom collision function.
 			This is useful for example for collisions with collectible objects like coins and powerups.
@@ -61,21 +61,21 @@ function colmesh_shapes() constructor {
 			
 			colFunc will be executed when executeColFunc is enabled and there is a collision with colmesh.displaceCapsule
 				You have access to the following global variables:
-					cmCol - An array containing the current position of the calling object
-					cmCallingObject - The instance that is using colmesh.displaceCapsule
+					CM_COL - An array containing the current position of the calling object
+					CM_CALLING_OBJECT - The instance that is using colmesh.displaceCapsule
 		*/
 		colFunc = _colFunc;
 	}
 	
-	/// @function setRayFunction(rayFunc)
-	static setRayFunction = function(_rayFunc) {
+	/// @function set_ray_function(rayFunc)
+	static set_ray_function = function(_rayFunc) {
 		/*
 			This function lets you give the shape a custom function that is executed if a ray hits the shape.
 			
-			rayFunc will be executed if the object is hit by a ray with colmesh.castRay. 
+			rayFunc will be executed if the object is hit by a ray with colmesh.cast_ray. 
 				You have access to the following global variables:
-					cmRay - An array containing the position of intersection with the non-solid object.
-					cmCallingObject - The instance that is using colmesh.castRay
+					CM_RAY - An array containing the position of intersection with the non-solid object.
+					CM_CALLING_OBJECT - The instance that is using colmesh.cast_ray
 				IMPORTANT: rayFunc should return true if the ray should stop once it hits the shape, or false if the ray should ignore the object, after rayFunc has been executed!
 		*/
 		rayFunc = _rayFunc;
@@ -99,22 +99,22 @@ function colmesh_shapes() constructor {
 
 		gml_pragma("forceinline");
 		var dp = nx * xup + ny * yup + nz * zup;
-		if (dp > cmCol[6]) {
-			cmCol[@ 3] = nx;
-			cmCol[@ 4] = ny;
-			cmCol[@ 5] = nz;
-			cmCol[@ 6] = dp;
+		if (dp > CM_COL[6]) {
+			CM_COL[@ 3] = nx;
+			CM_COL[@ 4] = ny;
+			CM_COL[@ 5] = nz;
+			CM_COL[@ 6] = dp;
 		}
 		if (dp >= slope) { 
 			//Prevent sliding
 			_r /= dp;
-			cmCol[@ 0] += xup * _r;
-			cmCol[@ 1] += yup * _r;
-			cmCol[@ 2] += zup * _r;
+			CM_COL[@ 0] += xup * _r;
+			CM_COL[@ 1] += yup * _r;
+			CM_COL[@ 2] += zup * _r;
 		} else {
-			cmCol[@ 0] += nx * _r;
-			cmCol[@ 1] += ny * _r;
-			cmCol[@ 2] += nz * _r;
+			CM_COL[@ 0] += nx * _r;
+			CM_COL[@ 1] += ny * _r;
+			CM_COL[@ 2] += nz * _r;
 		}
 	}
 	
@@ -242,7 +242,7 @@ function colmesh_shapes() constructor {
 		var newZ2 = floor((newMM[5] - originZ) * invRegionSize);
 			
 		//If there was no change, we can exit here and now
-		if (oldX1 == newX1 & oldY1 == newY1 && oldZ1 == newZ1 && oldX2 == newX2 && oldY2 == newY2 && oldZ2 == newZ2){exit;}
+		if (oldX1 == newX1 & oldY1 == newY1 and oldZ1 == newZ1 and oldX2 == newX2 and oldY2 == newY2 and oldZ2 == newZ2){exit;}
 			
 		colMesh._expandBoundaries(newMM);
 			
@@ -345,12 +345,12 @@ function colmesh_shapes() constructor {
 	{
 		/*
 			A supplementary function, not meant to be used by itself.
-			Used by colmesh.castRay
+			Used by colmesh.cast_ray
 		*/
 		gml_pragma("forceinline");
-		var dx = cmRay[0] - ox;
-		var dy = cmRay[1] - oy;
-		var dz = cmRay[2] - oz;
+		var dx = CM_RAY[0] - ox;
+		var dy = CM_RAY[1] - oy;
+		var dz = CM_RAY[2] - oz;
 
 
 		var nx = triangle[9], ny = triangle[10], nz = triangle[11];
@@ -398,13 +398,13 @@ function colmesh_shapes() constructor {
 	
 		//The line intersects the triangle. Save the triangle normal and intersection.
 		var s = sign(h);
-		cmRay[0] = itsX;
-		cmRay[1] = itsY;
-		cmRay[2] = itsZ;
-		cmRay[3] = nx * s;
-		cmRay[4] = ny * s;
-		cmRay[5] = nz * s;
-		cmRay[6] = triangle;
+		CM_RAY[0] = itsX;
+		CM_RAY[1] = itsY;
+		CM_RAY[2] = itsZ;
+		CM_RAY[3] = nx * s;
+		CM_RAY[4] = ny * s;
+		CM_RAY[5] = nz * s;
+		CM_RAY[6] = triangle;
 		return true;
 	}	
 	
@@ -413,7 +413,7 @@ function colmesh_shapes() constructor {
 	{
 		/*
 			A supplementary function, not meant to be used by itself.
-			Pushes a sphere out of the shape by changing the global array cmCol
+			Pushes a sphere out of the shape by changing the global array CM_COL
 			Returns true if there was a collision.
 		*/
 		gml_pragma("forceinline");
@@ -740,7 +740,7 @@ function colmesh_shapes() constructor {
 		{
 			region = shapeList;
 		}
-		if (cmRecursion >= cmMaxRecursion){exit;}
+		if (CM_RECURSION >= CM_MAX_RECURSION){exit;}
 		
 		var tex = (argument_count > 1) ? argument[1] : -1;
 	
@@ -751,7 +751,7 @@ function colmesh_shapes() constructor {
 			global.ColMeshDebugShapes[eColMeshShape.Mesh] = vertex_create_buffer();
 			triVbuff = global.ColMeshDebugShapes[eColMeshShape.Mesh];
 		}
-		if (cmRecursion == 0)
+		if (CM_RECURSION == 0)
 		{
 			vertex_begin(triVbuff, global.ColMeshFormat);
 		}
@@ -777,9 +777,9 @@ function colmesh_shapes() constructor {
 					if (shape.type == eColMeshShape.Mesh)
 					{
 						matrix_set(matrix_world, W);
-						++ cmRecursion;
+						++ CM_RECURSION;
 						shape.debugDraw(-1, tex);
-						-- cmRecursion;
+						-- CM_RECURSION;
 						continue;
 					}
 				}
@@ -788,24 +788,24 @@ function colmesh_shapes() constructor {
 			{
 				with _getShape(shape)
 				{
-					var V = triangle;
-					if (cmRecursion > 0)
+					var _V = triangle;
+					if (CM_RECURSION > 0)
 					{
-						var v = colmesh_matrix_transform_vertex(W, V[0] + V[9] * .5, V[1] + V[10] * .5, V[2] + V[11] * .5);
+						var v = colmesh_matrix_transform_vertex(W, _V[0] + _V[9] * .5, _V[1] + _V[10] * .5, _V[2] + _V[11] * .5);
 						var v1x = v[0], v1y = v[1], v1z = v[2];
-						var v = colmesh_matrix_transform_vertex(W, V[3] + V[9] * .5, V[4] + V[10] * .5, V[5] + V[11] * .5);
+						var v = colmesh_matrix_transform_vertex(W, _V[3] + _V[9] * .5, _V[4] + _V[10] * .5, _V[5] + _V[11] * .5);
 						var v2x = v[0], v2y = v[1], v2z = v[2];
-						var v = colmesh_matrix_transform_vertex(W, V[6] + V[9] * .5, V[7] + V[10] * .5, V[8] + V[11] * .5);
+						var v = colmesh_matrix_transform_vertex(W, _V[6] + _V[9] * .5, _V[7] + _V[10] * .5, _V[8] + _V[11] * .5);
 						var v3x = v[0], v3y = v[1], v3z = v[2];
-						var v = colmesh_matrix_transform_vector(W, V[9], V[10], V[11]);
+						var v = colmesh_matrix_transform_vector(W, _V[9], _V[10], _V[11]);
 						var nx = v[0], ny = v[1], nz = v[2];
 					}
 					else
 					{
-						var v1x = V[0], v1y = V[1], v1z = V[2];
-						var v2x = V[3], v2y = V[4], v2z = V[5];
-						var v3x = V[6], v3y = V[7], v3z = V[8];
-						var nx = V[9],  ny = V[10], nz  = V[11];
+						var v1x = _V[0], v1y = _V[1], v1z = _V[2];
+						var v2x = _V[3], v2y = _V[4], v2z = _V[5];
+						var v3x = _V[6], v3y = _V[7], v3z = _V[8];
+						var nx = _V[9],  ny = _V[10], nz  = _V[11];
 					}
 					vertex_position_3d(triVbuff, v1x + nx*.5, v1y + ny*.5, v1z + nz*.5);
 					vertex_normal(triVbuff, nx, ny, nz);
@@ -898,7 +898,7 @@ function colmesh_shapes() constructor {
 			W = baseW;
 		}
 	
-		if (cmRecursion == 0)
+		if (CM_RECURSION == 0)
 		{
 			matrix_set(matrix_world, baseW);
 			shader_set_uniform_f(shader_get_uniform(sh_colmesh_debug, "u_radius"), 0);
@@ -969,10 +969,10 @@ function colmesh_sphere(_x, _y, _z, radius) : colmesh_shapes() constructor
 	{
 		/*
 			A supplementary function, not meant to be used by itself.
-			Used by colmesh.castRay
-			Changes the global array cmRay if the ray intersects the shape
+			Used by colmesh.cast_ray
+			Changes the global array CM_RAY if the ray intersects the shape
 		*/
-		var ray = colmesh_cast_ray_sphere(x, y, z, R, ox, oy, oz, cmRay[0], cmRay[1], cmRay[2]);
+		var ray = colmesh_cast_ray_sphere(x, y, z, R, ox, oy, oz, CM_RAY[0], CM_RAY[1], CM_RAY[2]);
 		if (is_array(ray))
 		{
 			var nx = ray[0] - x;
@@ -981,13 +981,13 @@ function colmesh_sphere(_x, _y, _z, radius) : colmesh_shapes() constructor
 			var n = nx * nx + ny * ny + nz * nz;
 			if (n <= 0){return false;}
 			n = 1 / sqrt(n);
-			cmRay[0] = ray[0];
-			cmRay[1] = ray[1];
-			cmRay[2] = ray[2];
-			cmRay[3] = nx * n;
-			cmRay[4] = ny * n;
-			cmRay[5] = nz * n;
-			cmRay[6] = self;
+			CM_RAY[0] = ray[0];
+			CM_RAY[1] = ray[1];
+			CM_RAY[2] = ray[2];
+			CM_RAY[3] = nx * n;
+			CM_RAY[4] = ny * n;
+			CM_RAY[5] = nz * n;
+			CM_RAY[6] = self;
 			return true;
 		}
 		return false;
@@ -1024,7 +1024,7 @@ function colmesh_sphere(_x, _y, _z, radius) : colmesh_shapes() constructor
 	{
 		/*
 			A supplementary function, not meant to be used by itself.
-			Pushes a sphere out of the shape by changing the global array cmCol
+			Pushes a sphere out of the shape by changing the global array CM_COL
 			Returns true if there was a collision.
 		*/
 		var dx = _x - x;
@@ -1195,11 +1195,11 @@ function colmesh_capsule(_x, _y, _z, _xup, _yup, _zup, radius, height) : colmesh
 	{
 		/*
 			A supplementary function, not meant to be used by itself.
-			Used by colmesh.castRay
-			Changes the global array cmRay if the ray intersects the shape
+			Used by colmesh.cast_ray
+			Changes the global array CM_RAY if the ray intersects the shape
 		*/
 		/*	Algorithm created by TheSnidr	*/
-		var _x = cmRay[0],	_y = cmRay[1],	_z = cmRay[2];
+		var _x = CM_RAY[0],	_y = CM_RAY[1],	_z = CM_RAY[2];
 		var dx = _x - ox,	dy = _y - oy,	dz = _z - oz;
 		
 		//Transform the ray into the cylinder's local space, and do a 2D ray-circle intersection check
@@ -1237,13 +1237,13 @@ function colmesh_capsule(_x, _y, _z, _xup, _yup, _zup, radius, height) : colmesh
 		var ny = itsY - ty;
 		var nz = itsZ - tz;
 		var n = 1 / sqrt(nx * nx + ny * ny + nz * nz);
-		cmRay[0] = itsX;
-		cmRay[1] = itsY;
-		cmRay[2] = itsZ;
-		cmRay[3] = nx * n;
-		cmRay[4] = ny * n;
-		cmRay[5] = nz * n;
-		cmRay[6] = self;
+		CM_RAY[0] = itsX;
+		CM_RAY[1] = itsY;
+		CM_RAY[2] = itsZ;
+		CM_RAY[3] = nx * n;
+		CM_RAY[4] = ny * n;
+		CM_RAY[5] = nz * n;
+		CM_RAY[6] = self;
 		return true;
 	}
 	
@@ -1286,7 +1286,7 @@ function colmesh_capsule(_x, _y, _z, _xup, _yup, _zup, radius, height) : colmesh
 	{
 		/*
 			A supplementary function, not meant to be used by itself.
-			Pushes a sphere out of the shape by changing the global array cmCol
+			Pushes a sphere out of the shape by changing the global array CM_COL
 			Returns true if there was a collision.
 		*/
 		var D = clamp((_x - x) * xup + (_y - y) * yup + (_z - z) * zup, 0, H);
@@ -1415,7 +1415,7 @@ function colmesh_cylinder(_x, _y, _z, _xup, _yup, _zup, radius, height) : colmes
 		var w1 = (_x - x) * xup + (_y - y) * yup + (_z - z) * zup;
 		var w2 = (_x - x) * _xup + (_y - y) * _yup + (_z - z) * _zup;
 		var s = (w1 - w2 * upDp) / (1 - upDp * upDp);
-		if (s > 0 && s < H)
+		if (s > 0 and s < H)
 		{
 			var t = clamp(_xup * (x + xup * s - _x) + _yup * (y + yup * s - _y) + _zup * (z + zup * s - _z), 0, height);
 			ret[0] = _x + _xup * t;
@@ -1455,12 +1455,12 @@ function colmesh_cylinder(_x, _y, _z, _xup, _yup, _zup, radius, height) : colmes
 	{
 		/*
 			A supplementary function, not meant to be used by itself.
-			Used by colmesh.castRay
-			Changes the global array cmRay if the ray intersects the shape
+			Used by colmesh.cast_ray
+			Changes the global array CM_RAY if the ray intersects the shape
 		*/
 		/*	Algorithm created by TheSnidr	*/
 		gml_pragma("forceinline");
-		var _x = cmRay[0],	_y = cmRay[1],	_z = cmRay[2];
+		var _x = CM_RAY[0],	_y = CM_RAY[1],	_z = CM_RAY[2];
 		var dx = _x - ox,	dy = _y - oy,	dz = _z - oz;
 		
 		//Transform the ray into the cylinder's local space, and do a 2D ray-circle intersection check
@@ -1506,13 +1506,13 @@ function colmesh_cylinder(_x, _y, _z, _xup, _yup, _zup, radius, height) : colmes
 			var itsZ = oz + dz * t;
 			var d = sqr(itsX - tx) + sqr(itsY - ty) + sqr(itsZ - tz);
 			if (d > R * R) return false;
-			cmRay[0] = itsX;
-			cmRay[1] = itsY;
-			cmRay[2] = itsZ;
-			cmRay[3] = xup * s;
-			cmRay[4] = yup * s;
-			cmRay[5] = zup * s;
-			cmRay[6] = self;
+			CM_RAY[0] = itsX;
+			CM_RAY[1] = itsY;
+			CM_RAY[2] = itsZ;
+			CM_RAY[3] = xup * s;
+			CM_RAY[4] = yup * s;
+			CM_RAY[5] = zup * s;
+			CM_RAY[6] = self;
 			return true;
 		}
 		
@@ -1524,13 +1524,13 @@ function colmesh_cylinder(_x, _y, _z, _xup, _yup, _zup, radius, height) : colmes
 		var nz = itsZ - tz;
 		n = nx * nx + ny * ny + nz * nz;
 		var n = 1 / max(sqrt(n), 0.00001);
-		cmRay[0] = itsX;
-		cmRay[1] = itsY;
-		cmRay[2] = itsZ;
-		cmRay[3] = nx * n;
-		cmRay[4] = ny * n;
-		cmRay[5] = nz * n;
-		cmRay[6] = self;
+		CM_RAY[0] = itsX;
+		CM_RAY[1] = itsY;
+		CM_RAY[2] = itsZ;
+		CM_RAY[3] = nx * n;
+		CM_RAY[4] = ny * n;
+		CM_RAY[5] = nz * n;
+		CM_RAY[6] = self;
 		return true;
 	}
 	
@@ -1583,7 +1583,7 @@ function colmesh_cylinder(_x, _y, _z, _xup, _yup, _zup, radius, height) : colmes
 	{
 		/*
 			A supplementary function, not meant to be used by itself.
-			Pushes a sphere out of the shape by changing the global array cmCol
+			Pushes a sphere out of the shape by changing the global array CM_COL
 			Returns true if there was a collision.
 		*/
 		var D = clamp((_x - x) * xup + (_y - y) * yup + (_z - z) * zup, 0, H);
@@ -1742,7 +1742,7 @@ function colmesh_unfinished_cone(_x, _y, _z, _xup, _yup, _zup, radius, height) :
 		var w1 = (_x - x) * xup + (_y - y) * yup + (_z - z) * zup;
 		var w2 = (_x - x) * _xup + (_y - y) * _yup + (_z - z) * _zup;
 		var s = (w1 - w2 * upDp) / (1 - upDp * upDp);
-		if (s > 0 && s < H)
+		if (s > 0 and s < H)
 		{
 			var t = clamp(_xup * (x + xup * s - _x) + _yup * (y + yup * s - _y) + _zup * (z + zup * s - _z), 0, height);
 			ret[0] = _x + _xup * t;
@@ -1782,12 +1782,12 @@ function colmesh_unfinished_cone(_x, _y, _z, _xup, _yup, _zup, radius, height) :
 	{
 		/*
 			A supplementary function, not meant to be used by itself.
-			Used by colmesh.castRay
-			Changes the global array cmRay if the ray intersects the shape
+			Used by colmesh.cast_ray
+			Changes the global array CM_RAY if the ray intersects the shape
 		*/
 		/*	Algorithm created by TheSnidr	*/
 		gml_pragma("forceinline");
-		var _x = cmRay[0],	_y = cmRay[1],	_z = cmRay[2];
+		var _x = CM_RAY[0],	_y = CM_RAY[1],	_z = CM_RAY[2];
 		var dx = _x - ox,	dy = _y - oy,	dz = _z - oz;
 		
 		//Transform the ray into the cylinder's local space, and do a 2D ray-circle intersection check
@@ -1833,13 +1833,13 @@ function colmesh_unfinished_cone(_x, _y, _z, _xup, _yup, _zup, radius, height) :
 			var itsZ = oz + dz * t;
 			var d = sqr(itsX - tx) + sqr(itsY - ty) + sqr(itsZ - tz);
 			if (d > R * R) return false;
-			cmRay[0] = itsX;
-			cmRay[1] = itsY;
-			cmRay[2] = itsZ;
-			cmRay[3] = xup * s;
-			cmRay[4] = yup * s;
-			cmRay[5] = zup * s;
-			cmRay[6] = self;
+			CM_RAY[0] = itsX;
+			CM_RAY[1] = itsY;
+			CM_RAY[2] = itsZ;
+			CM_RAY[3] = xup * s;
+			CM_RAY[4] = yup * s;
+			CM_RAY[5] = zup * s;
+			CM_RAY[6] = self;
 			return true;
 		}
 		
@@ -1851,13 +1851,13 @@ function colmesh_unfinished_cone(_x, _y, _z, _xup, _yup, _zup, radius, height) :
 		var nz = itsZ - tz;
 		n = nx * nx + ny * ny + nz * nz;
 		var n = 1 / max(sqrt(n), 0.00001);
-		cmRay[0] = itsX;
-		cmRay[1] = itsY;
-		cmRay[2] = itsZ;
-		cmRay[3] = nx * n;
-		cmRay[4] = ny * n;
-		cmRay[5] = nz * n;
-		cmRay[6] = self;
+		CM_RAY[0] = itsX;
+		CM_RAY[1] = itsY;
+		CM_RAY[2] = itsZ;
+		CM_RAY[3] = nx * n;
+		CM_RAY[4] = ny * n;
+		CM_RAY[5] = nz * n;
+		CM_RAY[6] = self;
 		return true;
 	}
 	
@@ -1910,7 +1910,7 @@ function colmesh_unfinished_cone(_x, _y, _z, _xup, _yup, _zup, radius, height) :
 	{
 		/*
 			A supplementary function, not meant to be used by itself.
-			Pushes a sphere out of the shape by changing the global array cmCol
+			Pushes a sphere out of the shape by changing the global array CM_COL
 			Returns true if there was a collision.
 		*/
 		var D = clamp((_x - x) * xup + (_y - y) * yup + (_z - z) * zup, 0, H);
@@ -2113,14 +2113,14 @@ function colmesh_torus(_x, _y, _z, _xup, _yup, _zup, _R, _r) : colmesh_shapes() 
 	{
 		/*
 			A supplementary function, not meant to be used by itself.
-			Used by colmesh.castRay
-			Changes the global array cmRay if the ray intersects the shape
+			Used by colmesh.cast_ray
+			Changes the global array CM_RAY if the ray intersects the shape
 		*/
 		/*
 			Algorithm created by TheSnidr
 			This is an approximation using the same principle as ray marching
 		*/
-		var _x = cmRay[0],	_y = cmRay[1],	_z = cmRay[2];
+		var _x = CM_RAY[0],	_y = CM_RAY[1],	_z = CM_RAY[2];
 		var dx = _x - ox,	dy = _y - oy,	dz = _z - oz;
 			ox -= x;		oy -= y;		oz -= z;
 		var lox = inv0 * ox + inv4 * oy + inv8 * oz;
@@ -2139,7 +2139,7 @@ function colmesh_torus(_x, _y, _z, _xup, _yup, _zup, _R, _r) : colmesh_shapes() 
 			p = n;
 			n = (sqrt(sqr(sqrt(lox * lox + loy * loy) - 1) + loz * loz) - radiusRatio);
 			d += n;
-			if (p > 0 && n > R) return false; //The ray missed the torus, and we can remove it from the ray casting algorithm
+			if (p > 0 and n > R) return false; //The ray missed the torus, and we can remove it from the ray casting algorithm
 			if (d > l) return false; //The ray did not reach the torus
 			lox += ldx * n;	
 			loy += ldy * n;
@@ -2155,13 +2155,13 @@ function colmesh_torus(_x, _y, _z, _xup, _yup, _zup, _R, _r) : colmesh_shapes() 
 		var ny = itsY - p[1];
 		var nz = itsZ - p[2];
 		var n = 1 / sqrt(nx * nx + ny * ny + nz * nz);
-		cmRay[0] = itsX;
-		cmRay[1] = itsY;
-		cmRay[2] = itsZ;
-		cmRay[3] = nx * n;
-		cmRay[4] = ny * n;
-		cmRay[5] = nz * n;
-		cmRay[6] = self;
+		CM_RAY[0] = itsX;
+		CM_RAY[1] = itsY;
+		CM_RAY[2] = itsZ;
+		CM_RAY[3] = nx * n;
+		CM_RAY[4] = ny * n;
+		CM_RAY[5] = nz * n;
+		CM_RAY[6] = self;
 		return true;
 	}
 	
@@ -2201,7 +2201,7 @@ function colmesh_torus(_x, _y, _z, _xup, _yup, _zup, _R, _r) : colmesh_shapes() 
 	{
 		/*
 			A supplementary function, not meant to be used by itself.
-			Pushes a sphere out of the shape by changing the global array cmCol
+			Pushes a sphere out of the shape by changing the global array CM_COL
 			Returns true if there was a collision.
 		*/
 		gml_pragma("forceinline");
@@ -2360,14 +2360,14 @@ function colmesh_disk(_x, _y, _z, _xup, _yup, _zup, _R, _r) : colmesh_shapes() c
 	{
 		/*
 			A supplementary function, not meant to be used by itself.
-			Used by colmesh.castRay
-			Changes the global array cmRay if the ray intersects the shape
+			Used by colmesh.cast_ray
+			Changes the global array CM_RAY if the ray intersects the shape
 		*/
 		/*
 			Algorithm created by TheSnidr
 			This is an approximation using the same principle as ray marching
 		*/
-		var _x = cmRay[0],	_y = cmRay[1],	_z = cmRay[2];
+		var _x = CM_RAY[0],	_y = CM_RAY[1],	_z = CM_RAY[2];
 		var dx = _x - ox,	dy = _y - oy,	dz = _z - oz;
 			ox -= x;		oy -= y;		oz -= z;
 		var lox = inv0 * ox + inv4 * oy + inv8 * oz;
@@ -2386,7 +2386,7 @@ function colmesh_disk(_x, _y, _z, _xup, _yup, _zup, _R, _r) : colmesh_shapes() c
 			p = n;
 			n = (sqrt(sqr(max(0., sqrt(lox * lox + loy * loy) - 1)) + loz * loz) - radiusRatio);
 			d += n;
-			if (p > 0 && n > R) return false; //The ray missed the torus, and we can remove it from the ray casting algorithm
+			if (p > 0 and n > R) return false; //The ray missed the torus, and we can remove it from the ray casting algorithm
 			if (d > l) return false; //The ray did not reach the torus
 			lox += ldx * n;	
 			loy += ldy * n;
@@ -2402,13 +2402,13 @@ function colmesh_disk(_x, _y, _z, _xup, _yup, _zup, _R, _r) : colmesh_shapes() c
 		var ny = itsY - p[1];
 		var nz = itsZ - p[2];
 		var n = 1 / sqrt(nx * nx + ny * ny + nz * nz);
-		cmRay[0] = itsX;
-		cmRay[1] = itsY;
-		cmRay[2] = itsZ;
-		cmRay[3] = nx * n;
-		cmRay[4] = ny * n;
-		cmRay[5] = nz * n;
-		cmRay[6] = self;
+		CM_RAY[0] = itsX;
+		CM_RAY[1] = itsY;
+		CM_RAY[2] = itsZ;
+		CM_RAY[3] = nx * n;
+		CM_RAY[4] = ny * n;
+		CM_RAY[5] = nz * n;
+		CM_RAY[6] = self;
 		return true;
 	}
 	
@@ -2448,7 +2448,7 @@ function colmesh_disk(_x, _y, _z, _xup, _yup, _zup, _R, _r) : colmesh_shapes() c
 	{
 		/*
 			A supplementary function, not meant to be used by itself.
-			Pushes a sphere out of the shape by changing the global array cmCol
+			Pushes a sphere out of the shape by changing the global array CM_COL
 			Returns true if there was a collision.
 		*/
 		gml_pragma("forceinline");
@@ -2598,22 +2598,22 @@ function colmesh_cube(_x, _y, _z, width, length, height) : colmesh_shapes() cons
 	{
 		/*
 			A supplementary function, not meant to be used by itself.
-			Used by colmesh.castRay
-			Changes the global array cmRay if the ray intersects the shape
+			Used by colmesh.cast_ray
+			Changes the global array CM_RAY if the ray intersects the shape
 		*/
 		//Algorithm created by TheSnidr
 		var t = 2;
 		var x1 = (ox - x) / halfW;
 		var y1 = (oy - y) / halfL;
 		var z1 = (oz - z) / halfH;
-		var x2 = (cmRay[0] - x) / halfW;
-		var y2 = (cmRay[1] - y) / halfL;
-		var z2 = (cmRay[2] - z) / halfH;
+		var x2 = (CM_RAY[0] - x) / halfW;
+		var y2 = (CM_RAY[1] - y) / halfL;
+		var z2 = (CM_RAY[2] - z) / halfH;
 		
 		var nx = 0, ny = 0, nz = 1;
 		var intersection = false;
 		var insideBlock = true;
-		if (x2 != x1 && abs(x1) > 1)
+		if (x2 != x1 and abs(x1) > 1)
 		{
 			insideBlock = false;
 			var s = sign(x1 - x2);
@@ -2622,11 +2622,11 @@ function colmesh_cube(_x, _y, _z, width, length, height) : colmesh_shapes() cons
 			{
 				t = min(t, _t);
 			}
-			else if (_t >= 0 && _t <= 1)
+			else if (_t >= 0 and _t <= 1)
 			{
 				var itsY = lerp(y1, y2, _t);
 				var itsZ = lerp(z1, z2, _t);
-				if (abs(itsY) <= 1 && abs(itsZ) <= 1)
+				if (abs(itsY) <= 1 and abs(itsZ) <= 1)
 				{
 					t = _t;
 					x2 = s;
@@ -2639,7 +2639,7 @@ function colmesh_cube(_x, _y, _z, width, length, height) : colmesh_shapes() cons
 				}
 			}
 		}
-		if (y2 != y1 && abs(y1) > 1)
+		if (y2 != y1 and abs(y1) > 1)
 		{
 			insideBlock = false;
 			var s = sign(y1 - y2);
@@ -2648,11 +2648,11 @@ function colmesh_cube(_x, _y, _z, width, length, height) : colmesh_shapes() cons
 			{
 				t = min(t, _t);
 			}
-			else if (_t >= 0 && _t <= 1)
+			else if (_t >= 0 and _t <= 1)
 			{
 				var itsX = lerp(x1, x2, _t);
 				var itsZ = lerp(z1, z2, _t);
-				if (abs(itsX) <= 1 && abs(itsZ) <= 1)
+				if (abs(itsX) <= 1 and abs(itsZ) <= 1)
 				{
 					t = _t;
 					x2 = itsX;
@@ -2665,7 +2665,7 @@ function colmesh_cube(_x, _y, _z, width, length, height) : colmesh_shapes() cons
 				}
 			}
 		}
-		if (z2 != z1 && abs(z1) > 1)
+		if (z2 != z1 and abs(z1) > 1)
 		{
 			insideBlock = false;
 			var s = sign(z1 - z2);
@@ -2674,11 +2674,11 @@ function colmesh_cube(_x, _y, _z, width, length, height) : colmesh_shapes() cons
 			{
 				t = min(t, _t);
 			}
-			else if (_t >= 0 && _t <= 1)
+			else if (_t >= 0 and _t <= 1)
 			{
 				var itsX = lerp(x1, x2, _t);
 				var itsY = lerp(y1, y2, _t);
-				if (abs(itsX) <= 1 && abs(itsY) <= 1)
+				if (abs(itsX) <= 1 and abs(itsY) <= 1)
 				{
 					t = _t;
 					x2 = itsX;
@@ -2695,13 +2695,13 @@ function colmesh_cube(_x, _y, _z, width, length, height) : colmesh_shapes() cons
 		
 		///////////////////////////////////////////////////////////////////
 		//Return the point of intersection in world space
-		cmRay[0] = x + x2 * halfW;
-		cmRay[1] = y + y2 * halfL;
-		cmRay[2] = z + z2 * halfH;
-		cmRay[3] = nx;
-		cmRay[4] = ny;
-		cmRay[5] = nz;
-		cmRay[6] = self;
+		CM_RAY[0] = x + x2 * halfW;
+		CM_RAY[1] = y + y2 * halfL;
+		CM_RAY[2] = z + z2 * halfH;
+		CM_RAY[3] = nx;
+		CM_RAY[4] = ny;
+		CM_RAY[5] = nz;
+		CM_RAY[6] = self;
 		return true;
 	}
 		
@@ -2753,7 +2753,7 @@ function colmesh_cube(_x, _y, _z, width, length, height) : colmesh_shapes() cons
 	{
 		/*
 			A supplementary function, not meant to be used by itself.
-			Pushes a sphere out of the shape by changing the global array cmCol
+			Pushes a sphere out of the shape by changing the global array CM_COL
 			Returns true if there was a collision.
 		*/
 		//Find normalized block space position
@@ -2966,13 +2966,13 @@ function colmesh_block(_M) : colmesh_shapes() constructor
 	{
 		/*
 			A supplementary function, not meant to be used by itself.
-			Used by colmesh.castRay
-			Changes the global array cmRay if the ray intersects the shape
+			Used by colmesh.cast_ray
+			Changes the global array CM_RAY if the ray intersects the shape
 		*/
 		//Algorithm created by TheSnidr
 		var t = 2;
 		ox -= M[12];	oy -= M[13];	oz -= M[14];
-		var tx = cmRay[0] - M[12], ty = cmRay[1] - M[13], tz = cmRay[2] - M[14];
+		var tx = CM_RAY[0] - M[12], ty = CM_RAY[1] - M[13], tz = CM_RAY[2] - M[14];
 		var x1 = ox * inv0 + oy * inv4 + oz * inv8;
 		var y1 = ox * inv1 + oy * inv5 + oz * inv9;
 		var z1 = ox * inv2 + oy * inv6 + oz * inv10;
@@ -2982,7 +2982,7 @@ function colmesh_block(_M) : colmesh_shapes() constructor
 		var nx = 0, ny = 0, nz = 1;
 		var intersection = false;
 		var insideBlock = true;
-		if (x2 != x1 && abs(x1) > 1)
+		if (x2 != x1 and abs(x1) > 1)
 		{
 			insideBlock = false;
 			var s = sign(x1 - x2);
@@ -2991,11 +2991,11 @@ function colmesh_block(_M) : colmesh_shapes() constructor
 			{
 				t = min(t, _t);
 			}
-			else if (_t >= 0 && _t <= 1)
+			else if (_t >= 0 and _t <= 1)
 			{
 				var itsY = lerp(y1, y2, _t);
 				var itsZ = lerp(z1, z2, _t);
-				if (abs(itsY) <= 1 && abs(itsZ) <= 1)
+				if (abs(itsY) <= 1 and abs(itsZ) <= 1)
 				{
 					t = _t;
 					x2 = s;
@@ -3009,7 +3009,7 @@ function colmesh_block(_M) : colmesh_shapes() constructor
 				}
 			}
 		}
-		if (y2 != y1 && abs(y1) > 1)
+		if (y2 != y1 and abs(y1) > 1)
 		{
 			insideBlock = false;
 			var s = sign(y1 - y2);
@@ -3018,11 +3018,11 @@ function colmesh_block(_M) : colmesh_shapes() constructor
 			{
 				t = min(t, _t);
 			}
-			else if (_t >= 0 && _t <= 1)
+			else if (_t >= 0 and _t <= 1)
 			{
 				var itsX = lerp(x1, x2, _t);
 				var itsZ = lerp(z1, z2, _t);
-				if (abs(itsX) <= 1 && abs(itsZ) <= 1)
+				if (abs(itsX) <= 1 and abs(itsZ) <= 1)
 				{
 					t = _t;
 					x2 = itsX;
@@ -3036,7 +3036,7 @@ function colmesh_block(_M) : colmesh_shapes() constructor
 				}
 			}
 		}
-		if (z2 != z1 && abs(z1) > 1)
+		if (z2 != z1 and abs(z1) > 1)
 		{
 			insideBlock = false;
 			var s = sign(z1 - z2);
@@ -3045,11 +3045,11 @@ function colmesh_block(_M) : colmesh_shapes() constructor
 			{
 				t = min(t, _t);
 			}
-			else if (_t >= 0 && _t <= 1)
+			else if (_t >= 0 and _t <= 1)
 			{
 				var itsX = lerp(x1, x2, _t);
 				var itsY = lerp(y1, y2, _t);
-				if (abs(itsX) <= 1 && abs(itsY) <= 1)
+				if (abs(itsX) <= 1 and abs(itsY) <= 1)
 				{
 					t = _t;
 					x2 = itsX;
@@ -3067,13 +3067,13 @@ function colmesh_block(_M) : colmesh_shapes() constructor
 
 		///////////////////////////////////////////////////////////////////
 		//Return the point of intersection in world space
-		cmRay[0] = M[12] + x2 * M[0] + y2 * M[4] + z2 * M[8];
-		cmRay[1] = M[13] + x2 * M[1] + y2 * M[5] + z2 * M[9];
-		cmRay[2] = M[14] + x2 * M[2] + y2 * M[6] + z2 * M[10];
-		cmRay[3] = nx;
-		cmRay[4] = ny;
-		cmRay[5] = nz;
-		cmRay[6] = self;
+		CM_RAY[0] = M[12] + x2 * M[0] + y2 * M[4] + z2 * M[8];
+		CM_RAY[1] = M[13] + x2 * M[1] + y2 * M[5] + z2 * M[9];
+		CM_RAY[2] = M[14] + x2 * M[2] + y2 * M[6] + z2 * M[10];
+		CM_RAY[3] = nx;
+		CM_RAY[4] = ny;
+		CM_RAY[5] = nz;
+		CM_RAY[6] = self;
 		return true;
 	}
 		
@@ -3126,7 +3126,7 @@ function colmesh_block(_M) : colmesh_shapes() constructor
 	{
 		/*
 			A supplementary function, not meant to be used by itself.
-			Pushes a sphere out of the shape by changing the global array cmCol
+			Pushes a sphere out of the shape by changing the global array CM_COL
 			Returns true if there was a collision.
 		*/
 		//Find normalized block space position
@@ -3295,8 +3295,8 @@ function colmesh_dynamic(_shape, _colMesh, _M, _shapeInd) : colmesh_shapes() con
 	
 	#region Shape-specific functions
 	
-	/// @function setMatrix(M, moving)
-	static setMatrix = function(_M, _moving) 
+	/// @function set_matrix(M, moving)
+	static set_matrix = function(_M, _moving) 
 	{	
 		/*	
 			This script lets you make it seem like a colmesh instance has been transformed.
@@ -3349,7 +3349,7 @@ function colmesh_dynamic(_shape, _colMesh, _M, _shapeInd) : colmesh_shapes() con
 		temp[12] = _x;
 		temp[13] = _y;
 		temp[14] = _z;
-		setMatrix(temp, true);
+		set_matrix(temp, true);
 	}
 	
 	#endregion
@@ -3399,46 +3399,46 @@ function colmesh_dynamic(_shape, _colMesh, _M, _shapeInd) : colmesh_shapes() con
 	{
 		/*
 			A supplementary function, not meant to be used by itself.
-			Used by colmesh.castRay
-			Changes the global array cmRay if the ray intersects the shape
+			Used by colmesh.cast_ray
+			Changes the global array CM_RAY if the ray intersects the shape
 		*/
 		//Make a copy of the ray, since the ray casting process might change this
 		static temp = array_create(7);
-		array_copy(temp, 0, cmRay, 0, 7);
+		array_copy(temp, 0, CM_RAY, 0, 7);
 		
 		//Transform the ray to local space
-		var ex = cmRay[0], ey = cmRay[1], ez = cmRay[2];
-		cmRay[0] = I[0] * ex + I[4] * ey + I[8] * ez + I[12];
-		cmRay[1] = I[1] * ex + I[5] * ey + I[9] * ez + I[13];
-		cmRay[2] = I[2] * ex + I[6] * ey + I[10]* ez + I[14];
-		cmRay[3] = I[0] * ox + I[4] * oy + I[8] * oz + I[12];
-		cmRay[4] = I[1] * ox + I[5] * oy + I[9] * oz + I[13];
-		cmRay[5] = I[2] * ox + I[6] * oy + I[10]* oz + I[14];
+		var ex = CM_RAY[0], ey = CM_RAY[1], ez = CM_RAY[2];
+		CM_RAY[0] = I[0] * ex + I[4] * ey + I[8] * ez + I[12];
+		CM_RAY[1] = I[1] * ex + I[5] * ey + I[9] * ez + I[13];
+		CM_RAY[2] = I[2] * ex + I[6] * ey + I[10]* ez + I[14];
+		CM_RAY[3] = I[0] * ox + I[4] * oy + I[8] * oz + I[12];
+		CM_RAY[4] = I[1] * ox + I[5] * oy + I[9] * oz + I[13];
+		CM_RAY[5] = I[2] * ox + I[6] * oy + I[10]* oz + I[14];
 		
 		var success = false;
 		if (shape.type == eColMeshShape.Mesh)
 		{
 			//If this is a mesh, we want to raycast against all the shapes the mesh contains
-			success = is_array(shape.castRay(cmRay[3], cmRay[4], cmRay[5], cmRay[0], cmRay[1], cmRay[2]));
+			success = is_array(shape.cast_ray(CM_RAY[3], CM_RAY[4], CM_RAY[5], CM_RAY[0], CM_RAY[1], CM_RAY[2]));
 		}
 		else
 		{
 			//If this is not a mesh, we can raycast against just this shape
-			success = shape._castRay(cmRay[3], cmRay[4], cmRay[5]);
+			success = shape._castRay(CM_RAY[3], CM_RAY[4], CM_RAY[5]);
 		}
 		if (!success)
 		{
-			array_copy(cmRay, 0, temp, 0, 7);
+			array_copy(CM_RAY, 0, temp, 0, 7);
 			return false;
 		}
-		var ex = cmRay[0], ey = cmRay[1], ez = cmRay[2];
-		var nx = cmRay[3], ny = cmRay[4], nz = cmRay[5];
-		cmRay[0] = M[0] * ex + M[4] * ey + M[8] * ez + M[12];
-		cmRay[1] = M[1] * ex + M[5] * ey + M[9] * ez + M[13];
-		cmRay[2] = M[2] * ex + M[6] * ey + M[10]* ez + M[14];
-		cmRay[3] = (M[0] * nx + M[4] * ny + M[8] * nz) / scale;
-		cmRay[4] = (M[1] * nx + M[5] * ny + M[9] * nz) / scale;
-		cmRay[5] = (M[2] * nx + M[6] * ny + M[10]* nz) / scale;
+		var ex = CM_RAY[0], ey = CM_RAY[1], ez = CM_RAY[2];
+		var nx = CM_RAY[3], ny = CM_RAY[4], nz = CM_RAY[5];
+		CM_RAY[0] = M[0] * ex + M[4] * ey + M[8] * ez + M[12];
+		CM_RAY[1] = M[1] * ex + M[5] * ey + M[9] * ez + M[13];
+		CM_RAY[2] = M[2] * ex + M[6] * ey + M[10]* ez + M[14];
+		CM_RAY[3] = (M[0] * nx + M[4] * ny + M[8] * nz) / scale;
+		CM_RAY[4] = (M[1] * nx + M[5] * ny + M[9] * nz) / scale;
+		CM_RAY[5] = (M[2] * nx + M[6] * ny + M[10]* nz) / scale;
 		return true;
 	}
 	
@@ -3470,7 +3470,7 @@ function colmesh_dynamic(_shape, _colMesh, _M, _shapeInd) : colmesh_shapes() con
 					bz = sign(bz);
 				}
 				var p = colmesh_matrix_transform_vertex(M, bx, by, bz);
-				cmCol[0] = p[0];
+				CM_COL[0] = p[0];
 			}
 			else
 			{	//Nearest point on the cube in normalized block space
@@ -3479,10 +3479,10 @@ function colmesh_dynamic(_shape, _colMesh, _M, _shapeInd) : colmesh_shapes() con
 				bz = clamp(bz, -1, 1);
 				var p = colmesh_matrix_transform_vertex(M, bx, by, bz);
 			}
-			cmCol[@ 0] = p[0];
-			cmCol[@ 1] = p[1];
-			cmCol[@ 2] = p[2];
-			return cmCol;
+			CM_COL[@ 0] = p[0];
+			CM_COL[@ 1] = p[1];
+			CM_COL[@ 2] = p[2];
+			return CM_COL;
 		}
 		var p = colmesh_matrix_transform_vertex(I, _x, _y, _z);
 		var n = shape._getClosestPoint(p[0], p[1], p[2]);
@@ -3527,21 +3527,21 @@ function colmesh_dynamic(_shape, _colMesh, _M, _shapeInd) : colmesh_shapes() con
 	{
 		/*
 			A supplementary function, not meant to be used by itself.
-			Pushes a sphere out of the shape by changing the global array cmCol
+			Pushes a sphere out of the shape by changing the global array CM_COL
 			Returns true if there was a collision.
 		*/
 		var temp = array_create(7);
-		array_copy(temp, 0, cmCol, 0, 7);
+		array_copy(temp, 0, CM_COL, 0, 7);
 		
-		//cmCol contains the current position of the capsule in indices 0-3, and the current collision normal vector in indices 3-5
-		var _x = cmCol[0], _y = cmCol[1], _z = cmCol[2];
-		var nx = cmCol[3], ny = cmCol[4], nz = cmCol[5];
-		cmCol[0] = I[0] * _x + I[4] * _y + I[8] * _z + I[12];
-		cmCol[1] = I[1] * _x + I[5] * _y + I[9] * _z + I[13];
-		cmCol[2] = I[2] * _x + I[6] * _y + I[10]* _z + I[14];
-		cmCol[3] = (I[0] * nx + I[4] * ny + I[8] * nz) * scale;
-		cmCol[4] = (I[1] * nx + I[5] * ny + I[9] * nz) * scale;
-		cmCol[5] = (I[2] * nx + I[6] * ny + I[10]* nz) * scale;
+		//CM_COL contains the current position of the capsule in indices 0-3, and the current collision normal vector in indices 3-5
+		var _x = CM_COL[0], _y = CM_COL[1], _z = CM_COL[2];
+		var nx = CM_COL[3], ny = CM_COL[4], nz = CM_COL[5];
+		CM_COL[0] = I[0] * _x + I[4] * _y + I[8] * _z + I[12];
+		CM_COL[1] = I[1] * _x + I[5] * _y + I[9] * _z + I[13];
+		CM_COL[2] = I[2] * _x + I[6] * _y + I[10]* _z + I[14];
+		CM_COL[3] = (I[0] * nx + I[4] * ny + I[8] * nz) * scale;
+		CM_COL[4] = (I[1] * nx + I[5] * ny + I[9] * nz) * scale;
+		CM_COL[5] = (I[2] * nx + I[6] * ny + I[10]* nz) * scale;
 		
 		var _xup = (I[0] * xup + I[4] * yup + I[8] * zup) * scale;
 		var _yup = (I[1] * xup + I[5] * yup + I[9] * zup) * scale;
@@ -3552,10 +3552,10 @@ function colmesh_dynamic(_shape, _colMesh, _M, _shapeInd) : colmesh_shapes() con
 		{
 			//Special case if this dynamic contains a mesh
 			var slopeAngle = (slope >= 1) ? 0 : darccos(slope);
-			shape.displaceCapsule(cmCol[0], cmCol[1], cmCol[2], _xup, _yup, _zup, radius / scale, height / scale, slopeAngle, fast);
-			if (cmCol[6])
+			shape.displaceCapsule(CM_COL[0], CM_COL[1], CM_COL[2], _xup, _yup, _zup, radius / scale, height / scale, slopeAngle, fast);
+			if (CM_COL[6])
 			{
-				cmCol[6] = max(temp[6], _xup * cmCol[3] + _yup * cmCol[4] + _zup * cmCol[5]);
+				CM_COL[6] = max(temp[6], _xup * CM_COL[3] + _yup * CM_COL[4] + _zup * CM_COL[5]);
 				col = true;
 			}
 		}
@@ -3569,43 +3569,42 @@ function colmesh_dynamic(_shape, _colMesh, _M, _shapeInd) : colmesh_shapes() con
 		}
 		if (col)
 		{
-			if (slope < 1 && cmTransform >= 0)
+			if (slope < 1 and CM_TRANSFORM >= 0)
 			{
-				ds_queue_enqueue(cmTransform, M);
+				ds_queue_enqueue(CM_TRANSFORM, M);
 				if (moving)
 				{
 					//This object is moving. Save its current world matrix and the inverse of the previous 
 					//world matrix so that figuring out the delta matrix later is as easy as a matrix multiplication
-					ds_queue_enqueue(cmTransform, pI);
+					ds_queue_enqueue(CM_TRANSFORM, pI);
 				}
 				//If the transformation queue is empty, this is the first dynamic to be added. 
 				//If it's static as well, there's no point in adding it to the transformation queue
-				else if (!ds_queue_empty(cmTransform))
+				else if (!ds_queue_empty(CM_TRANSFORM))
 				{	
 					//If the dynamic is not marked as "moving", save the current inverse matrix to the transformation 
 					//queue so that no transformation is done. It will then only transform the preceding transformations
 					//into its own frame of reference
-					ds_queue_enqueue(cmTransform, I);
+					ds_queue_enqueue(CM_TRANSFORM, I);
 				}
 			}
 			//Transform collision position and normal to world-space
-			var _x = cmCol[0], _y = cmCol[1], _z = cmCol[2];
-			var nx = cmCol[3], ny = cmCol[4], nz = cmCol[5];
-			cmCol[0] = M[0] * _x + M[4] * _y + M[8] * _z + M[12];
-			cmCol[1] = M[1] * _x + M[5] * _y + M[9] * _z + M[13];
-			cmCol[2] = M[2] * _x + M[6] * _y + M[10]* _z + M[14];
-			cmCol[3] = (M[0] * nx + M[4] * ny + M[8] * nz) / scale;
-			cmCol[4] = (M[1] * nx + M[5] * ny + M[9] * nz) / scale;
-			cmCol[5] = (M[2] * nx + M[6] * ny + M[10]* nz) / scale;
+			var _x = CM_COL[0], _y = CM_COL[1], _z = CM_COL[2];
+			var nx = CM_COL[3], ny = CM_COL[4], nz = CM_COL[5];
+			CM_COL[0] = M[0] * _x + M[4] * _y + M[8] * _z + M[12];
+			CM_COL[1] = M[1] * _x + M[5] * _y + M[9] * _z + M[13];
+			CM_COL[2] = M[2] * _x + M[6] * _y + M[10]* _z + M[14];
+			CM_COL[3] = (M[0] * nx + M[4] * ny + M[8] * nz) / scale;
+			CM_COL[4] = (M[1] * nx + M[5] * ny + M[9] * nz) / scale;
+			CM_COL[5] = (M[2] * nx + M[6] * ny + M[10]* nz) / scale;
 			return true;
 		}
-		array_copy(cmCol, 0, temp, 0, 7);
+		array_copy(CM_COL, 0, temp, 0, 7);
 		return false;
 	}
 	
 	/// @function _getPriority(x, y, z, maxR)
-	static _getPriority = function(_x, _y, _z, maxR)
-	{
+	static _getPriority = function(_x, _y, _z, maxR) {
 		/*
 			A supplementary function, not meant to be used by itself.
 			Returns -1 if the shape is too far away
@@ -3623,14 +3622,12 @@ function colmesh_dynamic(_shape, _colMesh, _M, _shapeInd) : colmesh_shapes() con
 	#endregion
 	
 	//Update the matrix
-	setMatrix(_M, false);
+	set_matrix(_M, false);
 }
 
-function colmesh_none() constructor
-{
-	/*
-		This is a failsafe object for when loading a ColMesh that contains dynamic objects
-	*/
+/// @function colmesh_none
+/// @description This is a failsafe object for when loading a ColMesh that contains dynamic objects
+function colmesh_none() constructor {
 	type = eColMeshShape.None;
 	static capsuleCollision = function(x, y, z, xup, yup, zup, radius, height){return false;}
 	static _displace = function(nx, ny, nz, xup, yup, zup, _r, slope){}

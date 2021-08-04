@@ -11,7 +11,7 @@ var str = "Move with WASD + space"
 	+ "\nR: Disable drawing"
 	+ "\nH: Hide text"
 	+ "\nCoins: " + string(global.coins)
-	+ "\n" + global.demoText;
+	+ "\n" + global.demo_text;
 draw_set_color(c_black);
 draw_text(9, 9, str);
 draw_text(11, 9, str);

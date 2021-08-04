@@ -1,6 +1,6 @@
 /// @description Setup colmesh system
 
-if variable_global_exists("global.levelColmesh") {
+if variable_global_exists("global.room_colmesh") {
 	exit;
 }
 
@@ -14,9 +14,9 @@ global.modDisk = colmesh_create_disk(20, 10, 1, 1);
 global.drawDebug = false;
 global.disableDraw = false;
 global.drawText = true;
-global.demoText = "";
+global.demo_text = "";
 
-global.levelColmesh = new colmesh();
+global.room_colmesh = new colmesh();
 
 global.lightDir = [0, 0, -1];
 global.camX = 0;

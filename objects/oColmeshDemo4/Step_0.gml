@@ -6,7 +6,7 @@ spdX = (x - prevX) * fric;
 spdY = (y - prevY) * fric;
 spdZ = (z - prevZ) * (1 - 0.01);
 
-var D = global.levelColmesh.getDeltaMatrix();
+var D = global.room_colmesh.getDeltaMatrix();
 if (is_array(D)){
 	colmesh_matrix_multiply_fast(D, charMat, charMat);
 	x = charMat[12];
@@ -22,7 +22,7 @@ prevZ = z;
 var jump = keyboard_check_pressed(vk_space);
 var h = keyboard_check(ord("D")) - keyboard_check(ord("A"));
 var v = keyboard_check(ord("W")) - keyboard_check(ord("S"));
-if (h != 0 && v != 0)
+if (h != 0 and v != 0)
 {	//If walking diagonally, divide the input vector by its own length
 	var s = 1 / sqrt(2);
 	h *= s;
@@ -42,7 +42,7 @@ if (sqr(x - prevX) + sqr(y - prevY) + sqr(z - prevZ) > radius * radius) //Only c
 	var dx = xup * d;
 	var dy = yup * d;
 	var dz = zup * d;
-	ray = global.levelColmesh.castRay(prevX + dx, prevY + dy, prevZ + dz, x + dx, y + dy, z + dz);
+	ray = global.room_colmesh.cast_ray(prevX + dx, prevY + dy, prevZ + dz, x + dx, y + dy, z + dz);
 	if is_struct(ray) {
 		x = ray.x - dx - (x - prevX) * .1;
 		y = ray.y - dy - (y - prevY) * .1;
@@ -50,16 +50,15 @@ if (sqr(x - prevX) + sqr(y - prevY) + sqr(z - prevZ) > radius * radius) //Only c
 	}
 }
 
-//Avoid ground
-ground = false;
-col = global.levelColmesh.displace_capsule(x, y, z, radius, height, 46, false);
-if is_struct(col) and col.is_collision {
+// Avoid ground
+var col = global.room_colmesh.displace_capsule(x, y, z, radius, height, 40, false, true);
+if (col.is_collision) {
 	x = col.x;
 	y = col.y;
 	z = col.z;
-	
-	//We're touching ground if the dot product between the returned vector 
 	ground = col.is_on_ground;
+} else {
+	ground = false;
 }
 
 //Put player back on the map if he falls off
