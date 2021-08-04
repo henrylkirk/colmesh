@@ -7,7 +7,7 @@ prevX = x;
 prevY = y;
 prevZ = z;
 
-//Controls
+// Controls
 jump = keyboard_check_pressed(vk_space);
 var h = keyboard_check(ord("D")) - keyboard_check(ord("A"));
 var v = keyboard_check(ord("W")) - keyboard_check(ord("S"));
@@ -21,7 +21,7 @@ if (h != 0 and v != 0) {	//If walking diagonally, divide the input vector by its
 acc = 5;
 x += spdX - acc * v;
 y += spdY - acc * h;
-z += spdZ - 1 + jump * ground * 15; //Apply gravity in z-direction
+z += spdZ - 1 + jump * ground * 15; // Apply gravity in z-direction
 
 //Cast a short-range ray from the previous position to the current position to avoid going through geometry
 //Only cast ray if there's a risk that we've gone through geometry
@@ -32,9 +32,9 @@ if (sqr(x - prevX) + sqr(y - prevY) + sqr(z - prevZ) > radius * radius){
 	var dz = zup * d;
 	ray = global.room_colmesh.cast_ray(prevX + dx, prevY + dy, prevZ + dz, x + dx, y + dy, z + dz);
 	if is_array(ray) {
-		x = ray[0] - dx - (x - prevX) * .1;
-		y = ray[1] - dy - (y - prevY) * .1;
-		z = ray[2] - dz - (z - prevZ) * .1;
+		x = ray[0] - dx - (x - prevX) * 0.1;
+		y = ray[1] - dy - (y - prevY) * 0.1;
+		z = ray[2] - dz - (z - prevZ) * 0.1;
 	}
 }
 

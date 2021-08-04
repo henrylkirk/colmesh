@@ -369,7 +369,6 @@ function colmesh() : colmesh_shapes() constructor {
 		yup = is_real(yup) ? yup : 0;
 		zup = is_real(zup) ? zup : 1;
 		
-		z += radius;
 		var region = get_region(x, y, z, xup, yup, zup, radius, height);
 		var coll_array = regionDisplaceCapsule(region, x, y, z, xup, yup, zup, radius, height, slopeAngle, fast, executeColFunc);
 	
@@ -377,7 +376,7 @@ function colmesh() : colmesh_shapes() constructor {
 		return {
 			x : coll_array[0],
 			y : coll_array[1],
-			z : coll_array[2] - radius,
+			z : coll_array[2],
 			nx : coll_array[3],
 			ny : coll_array[4],
 			nz : coll_array[5],
@@ -412,8 +411,7 @@ function colmesh() : colmesh_shapes() constructor {
 		CM_COL[6] = -1; //Until collision checking is done, this will store the highest dot product between triangle normal and up vector
 		
 		if (is_undefined(region) || CM_RECURSION >= CM_MAX_RECURSION) {
-			//Exit the script if the given region does not exist
-			//Exit the script if we've reached the recursive limit
+			// Exit the script if the given region does not exist or if we've reached the recursive limit
 			return CM_COL;
 		}
 		var success = false;
