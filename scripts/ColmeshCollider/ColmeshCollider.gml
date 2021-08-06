@@ -1,14 +1,14 @@
 /// @function ColmeshCollider
 /// @param id - The owner's instance id
-/// @param {real} height - The height of the capsule collider
-/// @param {real} radius - The radius of the capsule collider
+/// @param {real} [height] - The height of the capsule collider
+/// @param {real} [radius] - The radius of the capsule collider
 /// @param {boolean} [fast=true] - If false, use precise collision checks
 /// @description A helper struct for use with colmesh
-function ColmeshCollider(id, height, radius, fast = true) constructor {
+function ColmeshCollider(id, height = 16, radius = height * 0.5, fast = true) constructor {
 	self.height = height;
 	self.radius = radius;
 	self.fast = fast;
-	static slope_angle = 40;
+	static slope_angle = 40; // the angle of slopes it can traverse
 	self.id = id; // store owner instance id
 	
 	/// @function step
@@ -32,7 +32,7 @@ function ColmeshCollider(id, height, radius, fast = true) constructor {
 			}
 
 			// Avoid ground
-			var col = global.room_colmesh.displace_capsule(x, y, z, other.radius, other.height, other.slope_angle, true, true);
+			var col = global.room_colmesh.displace_capsule(x, y, z, xup, yup, zup, other.radius, other.height, other.slope_angle, true, true);
 			if (is_struct(col) and col.is_collision) {
 				x = col.x;
 				y = col.y;

@@ -25,7 +25,9 @@ var mbuffLevel = colmesh_load_obj_to_buffer("house.obj");
 house = vertex_create_buffer_from_buffer(mbuffLevel, global.ColMeshFormat);
 buffer_delete(mbuffLevel);
 
+#macro ONE_OVER_SQRT_TWO 0.70710678118
 #macro TILE_SIZE 16
+
 var hw = room_width * 0.5;
 var hh = room_height * 0.5;
 
@@ -56,13 +58,16 @@ y = hh;
 z = 300;
 radius = 10;
 height = 16;
-prevX = x;
-prevY = y;
-prevZ = z;
-ground = false;
+velocity_max = new Vector3(6, 6, 10); // Max velocity for all three axis
+prev_position = new Vector3(x, y, z);
+velocity = new Vector3(0, 0, 0);
+is_on_ground = false;
+z_ground = 0;
 xup = 0;
 yup = 0;
 zup = 1;
+enable_z_bounce = false;
+collider = new ColmeshCollider(id, height, radius, false);
 
 // Enable 3D projection
 view_enabled = true;

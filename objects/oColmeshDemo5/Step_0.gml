@@ -1,66 +1,41 @@
-// Verlet integration
-fric = 0.6;
-spdX = (x - prevX) * fric;
-spdY = (y - prevY) * fric;
-spdZ = (z - prevZ) * (1 - 0.01);
-prevX = x;
-prevY = y;
-prevZ = z;
+// Save previous position
+prev_position.set(x, y, z);
+
+// Make sure not to fall through the ground
+if z <= z_ground {
+    z = z_ground;
+	if enable_z_bounce and velocity_max.z > 0.1 {
+		velocity_max.z *= 0.7;
+		velocity.z = velocity_max.z;
+	} else {
+		velocity.z = 0;
+	}
+} else {
+	velocity.z -= (mass * grav); // mass * acceleration
+}
 
 global.demo_text = "x: "+string(round(x))+"\n" + "y: "+string(round(y))+"\n"+"z: "+string(round(z));
 
-// Controls (rotated 90 degrees to match camera)
-jump = keyboard_check_pressed(vk_space);
-var h = keyboard_check(ord("W")) - keyboard_check(ord("S"));
-var v = keyboard_check(ord("A")) - keyboard_check(ord("D"));
+// Movement
+var h = keyboard_check(ord("S")) - keyboard_check(ord("W"));
+var v = keyboard_check(ord("D")) - keyboard_check(ord("A"));
 if (h != 0 and v != 0){	// If walking diagonally, divide the input vector by its own length
-	var s = 1 / sqrt(2);
-	h *= s;
-	v *= s;
+	h *= ONE_OVER_SQRT_TWO;
+	v *= ONE_OVER_SQRT_TWO;
 }
-
-// Move
-acc = 2;
-x += spdX - acc * v;
-y += spdY - acc * h;
-z += spdZ - 1 + jump * ground * 15; // Apply gravity in z-direction
-
-// Cast a short-range ray from the previous position to the current position to avoid going through geometry
-// Only cast ray if there's a risk that we've gone through geometry
-if (sqr(x - prevX) + sqr(y - prevY) + sqr(z - prevZ) > radius * radius) {
-	var d = height * (0.5 + 0.5 * sign(xup * (x - prevX) + yup * (y - prevY) + zup * (z - prevZ)));
-	var dx = xup * d;
-	var dy = yup * d;
-	var dz = zup * d;
-	ray = global.room_colmesh.cast_ray_ext(prevX + dx, prevY + dy, prevZ + dz, x + dx, y + dy, z + dz);
-	if is_struct(ray) {
-		x = ray.x - dx - (x - prevX) * 0.1;
-		y = ray.y - dy - (y - prevY) * 0.1;
-		z = ray.z - dz - (z - prevZ) * 0.1;
-	}
-}
-
-// Avoid ground
-var col = global.room_colmesh.displace_capsule(x, y, z, 0, 0, 1, radius, height, 40, false, true);
-if (col.is_collision) {
-	x = col.x;
-	y = col.y;
-	z = col.z;
-	ground = col.is_on_ground;
-} else {
-	ground = false;
-}
+var acc = 2; // movement acceleration
+velocity.x += acc * v;
+velocity.y += acc * h;
 
 // Put player in the middle of the map if he falls off
 if (z < -400) {
 	x = room_width * 0.5;
 	y = room_height * 0.5;
 	z = 500;
-	prevX = x;
-	prevY = y;
-	prevZ = z;
+	prev_position.set(x, y, z);
 }
 
+// Move camera
 var d = 100;
 global.camX = x + d * dcos(yaw) * dcos(pitch);
 global.camY = y + d * dsin(yaw) * dcos(pitch);
