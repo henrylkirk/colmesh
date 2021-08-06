@@ -14,7 +14,7 @@
   "duration": 1.154388,
   "parent": {
     "name": "Demo",
-    "path": "folders/ColMesh/Demo.yy",
+    "path": "folders/Demo.yy",
   },
   "resourceVersion": "1.0",
   "name": "sndCoin",

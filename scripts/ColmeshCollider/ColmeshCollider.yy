@@ -6,7 +6,7 @@
     "path": "folders/Collision/Colmesh.yy",
   },
   "resourceVersion": "1.0",
-  "name": "colmesh",
+  "name": "ColmeshCollider",
   "tags": [],
   "resourceType": "GMScript",
 }

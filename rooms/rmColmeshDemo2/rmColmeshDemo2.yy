@@ -283,7 +283,7 @@
   },
   "parent": {
     "name": "Demo 2 - Primitives",
-    "path": "folders/ColMesh/Demo/Demo 2 - Primitives.yy",
+    "path": "folders/Demo/Demo 2 - Primitives.yy",
   },
   "resourceVersion": "1.0",
   "name": "rmColmeshDemo2",

@@ -47,7 +47,7 @@
   },
   "parent": {
     "name": "Demo 1 - Simple mesh",
-    "path": "folders/ColMesh/Demo/Demo 1 - Simple mesh.yy",
+    "path": "folders/Demo/Demo 1 - Simple mesh.yy",
   },
   "resourceVersion": "1.0",
   "name": "rmColmeshDemo1",

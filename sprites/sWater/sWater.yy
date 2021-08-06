@@ -149,7 +149,7 @@
   "nineSlice": null,
   "parent": {
     "name": "Sprites",
-    "path": "folders/ColMesh/Demo/Sprites.yy",
+    "path": "folders/Demo/Sprites.yy",
   },
   "resourceVersion": "1.0",
   "name": "sWater",

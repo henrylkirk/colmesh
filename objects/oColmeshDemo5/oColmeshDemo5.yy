@@ -32,7 +32,7 @@
   "overriddenProperties": [],
   "parent": {
     "name": "Demo 5 - Flat ground",
-    "path": "folders/ColMesh/Demo/Demo 5 - Flat ground.yy",
+    "path": "folders/Demo/Demo 5 - Flat ground.yy",
   },
   "resourceVersion": "1.0",
   "name": "oColmeshDemo5",

@@ -31,7 +31,7 @@
   "overriddenProperties": [],
   "parent": {
     "name": "Demo 3 - Combining mesh and primitives",
-    "path": "folders/ColMesh/Demo/Demo 3 - Combining mesh and primitives.yy",
+    "path": "folders/Demo/Demo 3 - Combining mesh and primitives.yy",
   },
   "resourceVersion": "1.0",
   "name": "oColmeshDemo3",

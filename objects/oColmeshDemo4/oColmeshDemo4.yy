@@ -32,7 +32,7 @@
   "overriddenProperties": [],
   "parent": {
     "name": "Demo 4 - Moving objects",
-    "path": "folders/ColMesh/Demo/Demo 4 - Moving objects.yy",
+    "path": "folders/Demo/Demo 4 - Moving objects.yy",
   },
   "resourceVersion": "1.0",
   "name": "oColmeshDemo4",
