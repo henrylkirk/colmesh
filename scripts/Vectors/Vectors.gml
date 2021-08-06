@@ -115,7 +115,7 @@ function Vector2(_x, _y) constructor {
 	/// @description Normalize a scalar
 	/// @returns {Vector2} self
     static normalize = function() {
-        if ((x != 0) || (y != 0)) {
+        if ((x != 0) or (y != 0)) {
             var _factor = 1/sqrt(sqr(x) + sqr(y));
 			multiply(_factor);
         }
@@ -322,7 +322,7 @@ function Vector3(_x, _y, _z) : Vector2(_x, _y) constructor {
 	/// @function normalize
 	/// @description Normalize a scalar to Vector3
     static normalize = function() {
-        if ((x != 0) || (y != 0) || (z != 0)) {
+        if ((x != 0) or (y != 0) or (z != 0)) {
             var _factor = 1/sqrt(sqr(x) + sqr(y) + sqr(z));
             x *= _factor;
             y *= _factor;

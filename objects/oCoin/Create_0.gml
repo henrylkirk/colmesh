@@ -17,14 +17,14 @@ colFunc = function()
 {
 	global.coins ++;					 //Increment the global variable "coins"
 	instance_destroy();					 //This will destroy the current instance of oCoin
-	global.room_colmesh.removeShape(shape);	 //"shape" is oCoin's shape variable. Remove it from the ColMesh
+	global.room_colmesh.remove_shape(shape);	 //"shape" is oCoin's shape variable. Remove it from the ColMesh
 	audio_play_sound(sndCoin, 0, false); //Play coin pickup sound
 }
 
 //Create a spherical collision shape for the coin
 //Give the coin the collision function we created. 
-//The collision function will be executed if the player collides with the coin, using colmesh.displaceCapsule.
-shape = global.room_colmesh.addTrigger(new colmesh_sphere(x, y, z, radius), colFunc);
+//The collision function will be executed if the player collides with the coin, using colmesh.displace_capsule.
+shape = global.room_colmesh.add_trigger(new colmesh_sphere(x, y, z, radius), colFunc);
 
 
 //M = colmesh_matrix_build(x, y, z, 0, 0, 0, 1, 1, 1);

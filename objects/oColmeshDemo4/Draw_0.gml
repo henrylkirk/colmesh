@@ -12,7 +12,7 @@ shader_reset();
 if global.drawDebug
 {
 	matrix_set(matrix_world, matrix_build_identity());
-	global.room_colmesh.debugDraw(global.room_colmesh.get_region(x, y, z, xup, yup, zup, radius, height));
+	global.room_colmesh.debug_draw(global.room_colmesh.get_region(x, y, z, xup, yup, zup, radius, height));
 }
 
 //Cast a ray in the looking direction of the player

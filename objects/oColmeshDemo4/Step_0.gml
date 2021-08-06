@@ -6,7 +6,7 @@ spdX = (x - prevX) * fric;
 spdY = (y - prevY) * fric;
 spdZ = (z - prevZ) * (1 - 0.01);
 
-var D = global.room_colmesh.getDeltaMatrix();
+var D = global.room_colmesh.get_delta_matrix();
 if (is_array(D)){
 	colmesh_matrix_multiply_fast(D, charMat, charMat);
 	x = charMat[12];

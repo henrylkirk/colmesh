@@ -2,6 +2,18 @@
 	Some math scripts that are used by the ColMesh system.
 */
 
+/// @function colmesh_vector_magnitude(x, y, z)
+/// @description Returns the magnitude of the given vector
+function colmesh_vector_magnitude(x, y, z) {
+	return sqrt(dot_product_3d(x, y, z, x, y, z));
+}
+
+/// @function colmesh_vector_square(x, y, z)
+/// @description Returns the square of the magnitude of the given vector
+function colmesh_vector_square(x, y, z) {
+	return dot_product_3d(x, y, z, x, y, z);
+}
+
 /// @function colmesh_matrix_invert_fast
 /// @description Returns the inverse of a 4x4 matrix. Assumes indices 3, 7 and 11 are 0, and index 15 is 1
 function colmesh_matrix_invert_fast(M, targetM) {

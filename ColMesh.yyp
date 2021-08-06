@@ -23,6 +23,7 @@
     {"id":{"name":"oColmeshDemoSpinningBlockY","path":"objects/oColmeshDemoSpinningBlockY/oColmeshDemoSpinningBlockY.yy",},"order":10,},
     {"id":{"name":"oColmeshParent","path":"objects/oColmeshParent/oColmeshParent.yy",},"order":1,},
     {"id":{"name":"sCapsule","path":"sprites/sCapsule/sCapsule.yy",},"order":13,},
+    {"id":{"name":"colmesh_global_functions","path":"scripts/colmesh_global_functions/colmesh_global_functions.yy",},"order":5,},
     {"id":{"name":"sCylinder","path":"sprites/sCylinder/sCylinder.yy",},"order":11,},
     {"id":{"name":"sh_colmesh_debug","path":"shaders/sh_colmesh_debug/sh_colmesh_debug.yy",},"order":1,},
     {"id":{"name":"oColmeshDemoRampRight","path":"objects/oColmeshDemoRampRight/oColmeshDemoRampRight.yy",},"order":4,},

@@ -13,5 +13,5 @@ shader_reset();
 //Draw debug collision shapes
 if global.drawDebug
 {
-	global.room_colmesh.debugDraw(global.room_colmesh.get_region(x, y, z, xup, yup, zup, radius, height));
+	global.room_colmesh.debug_draw(global.room_colmesh.get_region(x, y, z, xup, yup, zup, radius, height));
 }
