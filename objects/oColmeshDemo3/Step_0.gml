@@ -34,7 +34,7 @@ y += spdY;
 z += spdZ;
 
 // Avoid ground
-var col = global.room_colmesh.displace_capsule(x, y, z, radius, height, 40, false, true);
+var col = global.room_colmesh.displace_capsule(x, y, z, 0, 0, 1, radius, height, 40, false, true);
 if (col.is_collision) {
 	x = col.x;
 	y = col.y;
