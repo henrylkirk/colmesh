@@ -32,7 +32,7 @@ if (sqr(x - prevX) + sqr(y - prevY) + sqr(z - prevZ) > radius * radius) {
 	var dx = xup * d;
 	var dy = yup * d;
 	var dz = zup * d;
-	ray = global.room_colmesh.cast_ray(prevX + dx, prevY + dy, prevZ + dz, x + dx, y + dy, z + dz);
+	ray = global.room_colmesh.cast_ray_ext(prevX + dx, prevY + dy, prevZ + dz, x + dx, y + dy, z + dz);
 	if is_struct(ray) {
 		x = ray.x - dx - (x - prevX) * 0.1;
 		y = ray.y - dy - (y - prevY) * 0.1;

@@ -287,7 +287,7 @@ function colmesh() : colmesh_shapes() constructor {
 		//Adds the given shape to the ColMesh.
 		//Look in colmesh_shapes for a list of all the shapes that can be added.
 		//Typical usage:
-		//	levelColmesh.add_shape(new colmesh_sphere(x, y, z, radius));
+		//	global.room_colmesh.add_shape(new colmesh_sphere(x, y, z, radius));
 		var _shape = get_shape(shape);
 		expand_boundaries(_shape.get_min_max());
 		if (_shape.type != eColMeshShape.Dynamic)
@@ -336,7 +336,7 @@ function colmesh() : colmesh_shapes() constructor {
 		//Typical usage:
 		//	//Create event
 		//	M = matrix_build(x, y, z, xangle, yangle, zangle, size, size, size); //Create a matrix
-		//	dynamic = levelColmesh.add_dynamic(new colmesh_sphere(0, 0, 0, radius), M); //Add a dynamic sphere to the colmesh, and save it to a variable called "dynamic"
+		//	dynamic = global.room_colmesh.add_dynamic(new colmesh_sphere(0, 0, 0, radius), M); //Add a dynamic sphere to the colmesh, and save it to a variable called "dynamic"
 				
 		//	//Step event
 		//	M = matrix_build(x, y, z, xangle, yangle, zangle, size, size, size); //Update the matrix
@@ -476,7 +476,19 @@ function colmesh() : colmesh_shapes() constructor {
 		var AABB = colmesh_capsule_get_AABB(x, y, z, xup, yup, zup, fast ? radius * CM_FIRST_PASS_RADIUS : radius, height);
 		var region = get_region(AABB);
 		
-		return region_displace_capsule(region, x, y, z, xup, yup, zup, radius, height, slopeAngle, fast, executeColFunc);
+		var coll_array = region_displace_capsule(region, x, y, z, xup, yup, zup, radius, height, slopeAngle, fast, executeColFunc);
+	
+		// Transform array into struct
+		return {
+			x : coll_array[0],
+			y : coll_array[1],
+			z : coll_array[2],
+			nx : coll_array[3],
+			ny : coll_array[4],
+			nz : coll_array[5],
+			is_collision : coll_array[6],
+			is_on_ground : (xup * coll_array[3] + yup * coll_array[4] + zup * coll_array[5] > 0.7)
+		}
 	}
 	
 	/// @function region_displace_capsule(region, x, y, z, xup, yup, zup, radius, height, slopeAngle, fast*, executeColFunc*)
@@ -669,7 +681,7 @@ function colmesh() : colmesh_shapes() constructor {
 		//Since matrices are arrays, and arrays are stored by their handle, any changes to the arrays from the previous frame will also be applied to the delta matrix!
 			
 		//Typical usage for making the player move:
-		//	var D = levelColmesh.get_delta_matrix();
+		//	var D = global.room_colmesh.get_delta_matrix();
 		//	if (is_array(D))
 		//	{
 		//		var p = matrix_transform_vertex(D, x, y, z);
@@ -679,7 +691,7 @@ function colmesh() : colmesh_shapes() constructor {
 		//	}
 				
 		//And for transforming a vector:
-		//	var D = levelColmesh.get_delta_matrix();
+		//	var D = global.room_colmesh.get_delta_matrix();
 		//	if (is_array(D))
 		//	{
 		//		var p = matrix_transform_vector(D, xto, yto, zto);
@@ -689,7 +701,7 @@ function colmesh() : colmesh_shapes() constructor {
 		//	}
 			
 		//And for transforming a matrix:
-		//	var D = levelColmesh.get_delta_matrix();
+		//	var D = global.room_colmesh.get_delta_matrix();
 		//	if (is_array(D))
 		//	{
 		//		colmesh_matrix_multiply_fast(D, targetMatrix, targetMatrix);
@@ -765,9 +777,8 @@ function colmesh() : colmesh_shapes() constructor {
 	
 	#region Ray casting
 	
-	/// @function cast_ray(x1, y1, z1, x2, y2, z2, executeRayFunc*)
-	static cast_ray = function(x1, y1, z1, x2, y2, z2, executeRayFunc)
-	{
+	/// @function cast_ray_ext(x1, y1, z1, x2, y2, z2, executeRayFunc*)
+	static cast_ray_ext = function(x1, y1, z1, x2, y2, z2, executeRayFunc) {
 		//Casts a ray from (x1, y1, z1) to (x2, y2, z2).
 		//If there was an intersection, it returns an array with the following format:
 		//	[x, y, z, nX, nY, nZ, success]

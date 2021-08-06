@@ -1,7 +1,7 @@
 /// @description
 
 //Cast a ray from high above to the ground so that the coin is placed onto the ground
-var ray = global.room_colmesh.cast_ray(x, y, 1000, x, y, -100);
+var ray = global.room_colmesh.cast_ray_ext(x, y, 1000, x, y, -100);
 if (!is_array(ray))
 {
 	//The ray didn't hit anything, for some reason. Destroy this coin.

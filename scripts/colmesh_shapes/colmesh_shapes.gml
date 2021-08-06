@@ -92,8 +92,8 @@ function colmesh_shapes() constructor {
 		var newReg = colMesh.get_regions(get_min_max());
 		if (!array_equals(oldReg, newReg))
 		{
-			levelColmesh.remove_shape_from_subdiv(self, oldReg);
-			levelColmesh.add_shape_to_subdiv(self, newReg, false);
+			global.room_colmesh.remove_shape_from_subdiv(self, oldReg);
+			global.room_colmesh.add_shape_to_subdiv(self, newReg, false);
 		}
 	}
 	
