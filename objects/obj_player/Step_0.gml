@@ -1,4 +1,4 @@
-var fric = 0.6; //is_on_ground ? friction_ground : friction_air;
+var fric = is_on_ground ? friction_ground : friction_air;
 velocity.x = (x - prev_position.x) * fric;
 velocity.y = (y - prev_position.y) * fric;
 velocity.z = (z - prev_position.z) * (0.99);
@@ -6,9 +6,8 @@ velocity.z = (z - prev_position.z) * (0.99);
 prev_position.set(x, y, z);
 
 jump = keyboard_check_pressed(vk_space);
-z += velocity.z - 1 + jump * is_on_ground * 15; // Apply gravity in z-direction
-
-global.demo_text = "x: "+string(round(x))+"\n" + "y: "+string(round(y))+"\n"+"z: "+string(round(z));
+//z += velocity.z + (jump * is_on_ground * 15) - 1; // Apply gravity in z-direction
+z += velocity.z + (jump * is_on_ground * 15) - 1; // Apply gravity in z-direction
 
 // Movement
 var v = keyboard_check(ord("S")) - keyboard_check(ord("W"));
@@ -30,3 +29,6 @@ if (z < -400) {
 }
 
 collider.step();
+
+// Set demo text
+global.demo_text = "x: "+string(round(x))+"\n" + "y: "+string(round(y))+"\n"+"z: "+string(round(z));
