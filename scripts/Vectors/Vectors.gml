@@ -266,7 +266,7 @@ function Vector2(x = 0, y = 0) constructor {
 	///	@description Find the dot product
 	/// @returns {real} The scalar dot product
 	static dot = function(o) {
-		return x * o.y - y * o.x;
+		return dot_product(x, y, o.x, o.y);
 	}
 	
 	/// @function to_array()
@@ -311,6 +311,10 @@ function Vector3(x = 0, y = 0, z = 0) : Vector2(x, y) constructor {
 		    x += o.x;
 		    y += o.y;
 			z += o.z;
+		} else if argument_count == 3 {
+			x += argument[0];
+			y += argument[1];
+			z += argument[2];
 		} else if is_real(o) {
 			x += o;
 			y += o;
@@ -321,7 +325,7 @@ function Vector3(x = 0, y = 0, z = 0) : Vector2(x, y) constructor {
 		return self;
 	}
 
-	/// @function copy
+	/// @function copy()
 	/// @description Create a new vector with the same values as this one
 	/// @returns {Vector3} new_vector
 	static copy = function(){
@@ -336,6 +340,10 @@ function Vector3(x = 0, y = 0, z = 0) : Vector2(x, y) constructor {
 		    x -= o.x;
 		    y -= o.y;
 			z -= o.z;
+		} else if argument_count == 3 {
+			x -= argument[0];
+			y -= argument[1];
+			z -= argument[2];
 		} else if is_real(o) {
 			x -= o;
 			y -= o;
@@ -354,6 +362,10 @@ function Vector3(x = 0, y = 0, z = 0) : Vector2(x, y) constructor {
 			x *= o.x;
 			y *= o.y;
 			z *= o.z;
+		} else if argument_count == 3 {
+			x *= argument[0];
+			y *= argument[1];
+			z *= argument[2];
 		} else if is_real(o) {
 			x *= o;
 			y *= o;
@@ -365,7 +377,7 @@ function Vector3(x = 0, y = 0, z = 0) : Vector2(x, y) constructor {
 	}
 
 	/// @function normalize()
-	/// @description Normalize a scalar to Vector3
+	/// @description Normalize a Vector3 (maintain direction but set length to 1)
 	/// @returns {Vector3} self
     static normalize = function() {
         if ((x != 0) or (y != 0) or (z != 0)) {
