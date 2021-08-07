@@ -9,7 +9,7 @@ shader_set(sh_colmesh_collider);
 global.shader_set_lightdir(sh_colmesh_collider);
 shader_set_uniform_f(shader_get_uniform(sh_colmesh_collider, "u_radius"), 0);
 shader_set_uniform_f(shader_get_uniform(sh_colmesh_collider, "u_color"), .2, .7, .25);
-matrix_set(matrix_world, block.M);
+matrix_set(matrix_world, block.matrix);
 vertex_submit(global.modBlock, pr_trianglelist, -1);
 matrix_set(matrix_world, matrix_build_identity());
 shader_reset();

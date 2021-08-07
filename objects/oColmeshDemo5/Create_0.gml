@@ -35,7 +35,7 @@ var hh = room_height * 0.5;
 //if (!global.room_colmesh.load("Demo5Cache.cm")){
 	// No cache found, add flat ground to Colmesh
 	global.room_colmesh.add_shape(
-		new colmesh_block(colmesh_matrix_build(hw, hh, -16, 0, 0, 0, hw, hh, 16))
+		new ColmeshBlock(colmesh_matrix_build(hw, hh, -16, 0, 0, 0, hw, hh, 16))
 	);
 //	global.room_colmesh.save("Demo5Cache.cm"); //Save a cache, so that loading it the next time will be quicker
 //}

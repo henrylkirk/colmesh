@@ -34,12 +34,12 @@ global.shader_set_lightdir = function(shader){
 /// @description This function will draw a circular shadow onto terrain beneath the given coordinates
 global.colmeshdemo_draw_circular_shadow = function(x, y, z, xup, yup, zup, radius, length, alpha){	
 
-	var M = colmesh_matrix_build_from_vector(x, y, z, xup, yup, zup, 1, 1, 1);
+	var matrix = colmesh_matrix_build_from_vector(x, y, z, xup, yup, zup, 1, 1, 1);
 	
 	gpu_set_zwriteenable(false);
 	shader_set(sh_colmesh_shadow);
 	gpu_set_blendmode_ext_sepalpha(bm_zero, bm_one, bm_one, bm_zero);
-	matrix_set(matrix_world, matrix_multiply(matrix_build(0, 0, 0, 0, 0, 0, -radius, radius, -length), M));
+	matrix_set(matrix_world, matrix_multiply(matrix_build(0, 0, 0, 0, 0, 0, -radius, radius, -length), matrix));
 	gpu_set_cullmode(cull_clockwise);
 
 	shader_set_uniform_f(shader_get_uniform(sh_colmesh_shadow, "u_color"), 0, 0, 0, 1 - alpha);

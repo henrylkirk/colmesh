@@ -24,8 +24,8 @@ col_func = function()
 //Create a spherical collision shape for the coin
 //Give the coin the collision function we created. 
 //The collision function will be executed if the player collides with the coin, using Colmesh.displace_capsule.
-shape = global.room_colmesh.add_trigger(new colmesh_sphere(x, y, z, radius), col_func);
+shape = global.room_colmesh.add_trigger(new ColmeshSphere(x, y, z, radius), col_func);
 
 
-//M = colmesh_matrix_build(x, y, z, 0, 0, 0, 1, 1, 1);
-//shape = global.room_colmesh.add_dynamic(new colmesh_sphere(0, 0, 0, radius), M);
+//matrix = colmesh_matrix_build(x, y, z, 0, 0, 0, 1, 1, 1);
+//shape = global.room_colmesh.add_dynamic(new ColmeshSphere(0, 0, 0, radius), matrix);

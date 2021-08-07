@@ -38,7 +38,7 @@ z += spdZ - 1 + jump * ground * 15; //Apply gravity in z-direction
 //Cast a short-range ray from the previous position to the current position to avoid going through geometry
 if (sqr(x - prevX) + sqr(y - prevY) + sqr(z - prevZ) > radius * radius) //Only cast ray if there's a risk that we've gone through geometry
 {
-	var d = height * (.5 + .5 * sign(xup * (x - prevX) + yup * (y - prevY) + zup * (z - prevZ)));
+	var d = height * (.5 +0.5 * sign(xup * (x - prevX) + yup * (y - prevY) + zup * (z - prevZ)));
 	var dx = xup * d;
 	var dy = yup * d;
 	var dz = zup * d;

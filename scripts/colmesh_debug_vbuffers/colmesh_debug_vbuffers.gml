@@ -566,29 +566,29 @@ function colmesh_create_cylinder(steps, hRep, vRep){
 		//Bottom lid
 		vertex_position_3d(vbuff, 1, 0, 0);
 		vertex_normal(vbuff, 0, 0, -1);
-		vertex_texcoord(vbuff, hRep, .5 * vRep);
+		vertex_texcoord(vbuff, hRep,0.5 * vRep);
 		vertex_color(vbuff, c_white, 1);
 		vertex_position_3d(vbuff, xc2, xs2, 0);
 		vertex_normal(vbuff, 0, 0, -1);
-		vertex_texcoord(vbuff, (.5 + .5 * xc2) * hRep, (.5 + .5 * xs2) * vRep);
+		vertex_texcoord(vbuff, (.5 +0.5 * xc2) * hRep, (.5 +0.5 * xs2) * vRep);
 		vertex_color(vbuff, c_white, 1);
 		vertex_position_3d(vbuff, xc1, xs1, 0);
 		vertex_normal(vbuff, 0, 0, -1);
-		vertex_texcoord(vbuff, (.5 + .5 * xc1) * hRep, (.5 + .5 * xs1) * vRep);
+		vertex_texcoord(vbuff, (.5 +0.5 * xc1) * hRep, (.5 +0.5 * xs1) * vRep);
 		vertex_color(vbuff, c_white, 1);
 		
 		//Top lid
 		vertex_position_3d(vbuff, 1, 0, 1);
 		vertex_normal(vbuff, 0, 0, 1);
-		vertex_texcoord(vbuff, hRep, .5 * vRep);
+		vertex_texcoord(vbuff, hRep,0.5 * vRep);
 		vertex_color(vbuff, c_white, 1);
 		vertex_position_3d(vbuff, xc1, xs1, 1);
 		vertex_normal(vbuff, 0, 0, 1);
-		vertex_texcoord(vbuff, (.5 + .5 * xc1) * hRep, (.5 + .5 * xs1) * vRep);
+		vertex_texcoord(vbuff, (.5 +0.5 * xc1) * hRep, (.5 +0.5 * xs1) * vRep);
 		vertex_color(vbuff, c_white, 1);
 		vertex_position_3d(vbuff, xc2, xs2, 1);
 		vertex_normal(vbuff, 0, 0, 1);
-		vertex_texcoord(vbuff, (.5 + .5 * xc2) * hRep, (.5 + .5 * xs2) * vRep);
+		vertex_texcoord(vbuff, (.5 +0.5 * xc2) * hRep, (.5 +0.5 * xs2) * vRep);
 		vertex_color(vbuff, c_white, 1);
 	}
 	vertex_end(vbuff);

@@ -16,9 +16,9 @@ function colmesh_vector_square(x, y, z) {
 
 /// @function colmesh_matrix_invert_fast
 /// @description Returns the inverse of a 4x4 matrix. Assumes indices 3, 7 and 11 are 0, and index 15 is 1
-function colmesh_matrix_invert_fast(M, targetM) {
+function colmesh_matrix_invert_fast(matrix, targetM) {
 
-	var m0 = M[0], m1 = M[1], m2 = M[2], m4 = M[4], m5 = M[5], m6 = M[6], m8 = M[8], m9 = M[9], m10 = M[10], m12 = M[12], m13 = M[13], m14 = M[14];
+	var m0 = matrix[0], m1 = matrix[1], m2 = matrix[2], m4 = matrix[4], m5 = matrix[5], m6 = matrix[6], m8 = matrix[8], m9 = matrix[9], m10 = matrix[10], m12 = matrix[12], m13 = matrix[13], m14 = matrix[14];
 	var inv = targetM;
 	inv[@ 0]  = m5 * m10 - m9 * m6;
 	inv[@ 1]  = -m1 * m10 + m9 * m2;
@@ -51,9 +51,9 @@ function colmesh_matrix_invert_fast(M, targetM) {
 
 /// @function colmesh_matrix_invert
 /// @description Proper matrix inversion
-function colmesh_matrix_invert(M, targetM){
+function colmesh_matrix_invert(matrix, targetM){
 	
-	var m0 = M[0], m1 = M[1], m2 = M[2], m3 = M[3], m4 = M[4], m5 = M[5], m6 = M[6], m7 = M[7], m8 = M[8], m9 = M[9], m10 = M[10], m11 = M[11], m12 = M[12], m13 = M[13], m14 = M[14], m15 = M[15];
+	var m0 = matrix[0], m1 = matrix[1], m2 = matrix[2], m3 = matrix[3], m4 = matrix[4], m5 = matrix[5], m6 = matrix[6], m7 = matrix[7], m8 = matrix[8], m9 = matrix[9], m10 = matrix[10], m11 = matrix[11], m12 = matrix[12], m13 = matrix[13], m14 = matrix[14], m15 = matrix[15];
 	var inv = targetM;
 	inv[@ 0]  = m5 * m10 * m15 - m5 * m11 * m14 - m9 * m6 * m15 + m9 * m7 * m14 +m13 * m6 * m11 - m13 * m7 * m10;
 	inv[@ 1]  = -m1 * m10 * m15 + m1 * m11 * m14 + m9 * m2 * m15 - m9 * m3 * m14 - m13 * m2 * m11 + m13 * m3 * m10;
@@ -85,9 +85,9 @@ function colmesh_matrix_invert(M, targetM){
 
 /// @function colmesh_matrix_multiply
 /// @description Multiplies two matrices and outputs the result to targetM
-function colmesh_matrix_multiply(M, N, targetM) {
+function colmesh_matrix_multiply(matrix, N, targetM) {
 
-	var m0 = M[0], m1 = M[1], m2 = M[2], m3 = M[3], m4 = M[4], m5 = M[5], m6 = M[6], m7 = M[7], m8 = M[8], m9 = M[9], m10 = M[10], m11 = M[11], m12 = M[12], m13 = M[13], m14 = M[14], m15 = M[15];
+	var m0 = matrix[0], m1 = matrix[1], m2 = matrix[2], m3 = matrix[3], m4 = matrix[4], m5 = matrix[5], m6 = matrix[6], m7 = matrix[7], m8 = matrix[8], m9 = matrix[9], m10 = matrix[10], m11 = matrix[11], m12 = matrix[12], m13 = matrix[13], m14 = matrix[14], m15 = matrix[15];
 	var n0 = N[0], n1 = N[1], n2 = N[2], n3 = N[3], n4 = N[4], n5 = N[5], n6 = N[6], n7 = N[7], n8 = N[8], n9 = N[9], n10 = N[10], n11 = N[11], n12 = N[12], n13 = N[13], n14 = N[14], n15 = N[15];
 	targetM[@ 0]  = m0 * n0 + m4 * n1 + m8 * n2 + m12 * n3;
 	targetM[@ 1]  = m1 * n0 + m5 * n1 + m9 * n2 + m13 * n3;
@@ -110,9 +110,9 @@ function colmesh_matrix_multiply(M, N, targetM) {
 
 /// @function colmesh_matrix_multiply_fast
 /// @description Multiplies two matrices and outputs the result to targetM. Assumes indices 3, 7 and 11 are 0, and 15 is 1
-function colmesh_matrix_multiply_fast(M, N, targetM) {
+function colmesh_matrix_multiply_fast(matrix, N, targetM) {
 
-	var m0 = M[0], m1 = M[1], m2 = M[2], m4 = M[4], m5 = M[5], m6 = M[6], m8 = M[8], m9 = M[9], m10 = M[10], m12 = M[12], m13 = M[13], m14 = M[14];
+	var m0 = matrix[0], m1 = matrix[1], m2 = matrix[2], m4 = matrix[4], m5 = matrix[5], m6 = matrix[6], m8 = matrix[8], m9 = matrix[9], m10 = matrix[10], m12 = matrix[12], m13 = matrix[13], m14 = matrix[14];
 	var n0 = N[0], n1 = N[1], n2 = N[2], n4 = N[4], n5 = N[5], n6 = N[6], n8 = N[8], n9 = N[9], n10 = N[10], n12 = N[12], n13 = N[13], n14 = N[14];
 	targetM[@ 0]  = m0 * n0 + m4 * n1 + m8 * n2;
 	targetM[@ 1]  = m1 * n0 + m5 * n1 + m9 * n2;
@@ -136,12 +136,12 @@ function colmesh_matrix_multiply_fast(M, N, targetM) {
 /// @function colmesh_matrix_build
 /// @description This is an alternative to the regular matrix_build properly so that no shearing is applied even if you both rotate and scale non-uniformly
 function colmesh_matrix_build(x, y, z, xrotation, yrotation, zrotation, xscale, yscale, zscale){
-	var M = matrix_build(x, y, z, xrotation, yrotation, zrotation, 1, 1, 1);
-	return colmesh_matrix_scale(M, xscale, yscale, zscale);
+	var matrix = matrix_build(x, y, z, xrotation, yrotation, zrotation, 1, 1, 1);
+	return colmesh_matrix_scale(matrix, xscale, yscale, zscale);
 }
 
 /// @function colmesh_matrix_orthogonalize
-function colmesh_matrix_orthogonalize(M){
+function colmesh_matrix_orthogonalize(matrix){
 	/*
 		This makes sure the three vectors of the given matrix are all unit length
 		and perpendicular to each other, using the up direciton as master.
@@ -149,77 +149,77 @@ function colmesh_matrix_orthogonalize(M){
 		as the up direction, but this vector is not used directly for creating the view matrix; rather, 
 		it's being used as reference, and the entire view matrix is being orthogonalized to the looking direction.
 	*/
-	var l = M[8] * M[8] + M[9] * M[9] + M[10] * M[10];
+	var l = matrix[8] * matrix[8] + matrix[9] * matrix[9] + matrix[10] * matrix[10];
 	if (l == 0){exit;}
 	l = 1 / sqrt(l);
-	M[@ 8] *= l;
-	M[@ 9] *= l;
-	M[@ 10]*= l;
+	matrix[@ 8] *= l;
+	matrix[@ 9] *= l;
+	matrix[@ 10]*= l;
 	
-	M[@ 4] = M[9] * M[2] - M[10]* M[1];
-	M[@ 5] = M[10]* M[0] - M[8] * M[2];
-	M[@ 6] = M[8] * M[1] - M[9] * M[0];
-	var l = M[4] * M[4] + M[5] * M[5] + M[6] * M[6];
+	matrix[@ 4] = matrix[9] * matrix[2] - matrix[10]* matrix[1];
+	matrix[@ 5] = matrix[10]* matrix[0] - matrix[8] * matrix[2];
+	matrix[@ 6] = matrix[8] * matrix[1] - matrix[9] * matrix[0];
+	var l = matrix[4] * matrix[4] + matrix[5] * matrix[5] + matrix[6] * matrix[6];
 	if (l == 0){exit;}
 	l = 1 / sqrt(l);
-	M[@ 4] *= l;
-	M[@ 5] *= l;
-	M[@ 6] *= l;
+	matrix[@ 4] *= l;
+	matrix[@ 5] *= l;
+	matrix[@ 6] *= l;
 	
 	//The last vector is automatically normalized, since the two other vectors now are perpendicular unit vectors
-	M[@ 0] = M[10]* M[5] - M[9] * M[6];
-	M[@ 1] = M[8] * M[6] - M[10]* M[4];
-	M[@ 2] = M[9] * M[4] - M[8] * M[5];
+	matrix[@ 0] = matrix[10]* matrix[5] - matrix[9] * matrix[6];
+	matrix[@ 1] = matrix[8] * matrix[6] - matrix[10]* matrix[4];
+	matrix[@ 2] = matrix[9] * matrix[4] - matrix[8] * matrix[5];
 	
-	return M;
+	return matrix;
 }
 
 /// @function colmesh_matrix_scale
 /// @description Scaled the given matrix along its own axes
-function colmesh_matrix_scale(M, toScale, siScale, upScale){
-	M[@ 0] *= toScale;
-	M[@ 1] *= toScale;
-	M[@ 2] *= toScale;
-	M[@ 4] *= siScale;
-	M[@ 5] *= siScale;
-	M[@ 6] *= siScale;
-	M[@ 8] *= upScale;
-	M[@ 9] *= upScale;
-	M[@ 10]*= upScale;
-	return M;
+function colmesh_matrix_scale(matrix, toScale, siScale, upScale){
+	matrix[@ 0] *= toScale;
+	matrix[@ 1] *= toScale;
+	matrix[@ 2] *= toScale;
+	matrix[@ 4] *= siScale;
+	matrix[@ 5] *= siScale;
+	matrix[@ 6] *= siScale;
+	matrix[@ 8] *= upScale;
+	matrix[@ 9] *= upScale;
+	matrix[@ 10]*= upScale;
+	return matrix;
 }
 
 /// @function colmesh_matrix_build_from_vector
 /// @description Creates a matrix based on the vector (vx, vy, vz). The vector will be used as basis for the up-vector of the matrix, ie. indices 8, 9, 10
 function colmesh_matrix_build_from_vector(X, Y, Z, vx, vy, vz, toScale, siScale, upScale){
 
-	var M = [0, 1, 1, 0, 0, 0, 0, 0, vx, vy, vz, 0, X, Y, Z, 1];
+	var matrix = [0, 1, 1, 0, 0, 0, 0, 0, vx, vy, vz, 0, X, Y, Z, 1];
 	if abs(vx) < abs(vy){
-		M[0] = 1;
+		matrix[0] = 1;
 	}
-	colmesh_matrix_orthogonalize(M);
-	return colmesh_matrix_scale(M, toScale, siScale, upScale);
+	colmesh_matrix_orthogonalize(matrix);
+	return colmesh_matrix_scale(matrix, toScale, siScale, upScale);
 }
 
 /// @function colmesh_matrix_transform_vertex
 /// @description Transforms a vertex using the given matrix
-function colmesh_matrix_transform_vertex(M, x, y, z){
+function colmesh_matrix_transform_vertex(matrix, x, y, z){
 
 	static ret = array_create(3);
-	ret[@ 0] = M[0] * x + M[4] * y + M[8] * z + M[12];
-	ret[@ 1] = M[1] * x + M[5] * y + M[9] * z + M[13];
-	ret[@ 2] = M[2] * x + M[6] * y + M[10]* z + M[14];
+	ret[@ 0] = matrix[0] * x + matrix[4] * y + matrix[8] * z + matrix[12];
+	ret[@ 1] = matrix[1] * x + matrix[5] * y + matrix[9] * z + matrix[13];
+	ret[@ 2] = matrix[2] * x + matrix[6] * y + matrix[10]* z + matrix[14];
 	return ret;
 }
 
 /// @function colmesh_matrix_transform_vector
 /// @description Transforms a vector using the given matrix
-function colmesh_matrix_transform_vector(M, x, y, z){
+function colmesh_matrix_transform_vector(matrix, x, y, z){
 
 	static ret = array_create(3);
-	ret[@ 0] = M[0] * x + M[4] * y + M[8] * z;
-	ret[@ 1] = M[1] * x + M[5] * y + M[9] * z;
-	ret[@ 2] = M[2] * x + M[6] * y + M[10]* z;
+	ret[@ 0] = matrix[0] * x + matrix[4] * y + matrix[8] * z;
+	ret[@ 1] = matrix[1] * x + matrix[5] * y + matrix[9] * z;
+	ret[@ 2] = matrix[2] * x + matrix[6] * y + matrix[10]* z;
 	return ret;
 }
 

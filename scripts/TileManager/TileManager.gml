@@ -246,7 +246,7 @@ function TileManager(_tile_size) constructor {
 				mesh_or_shape = "wedge-flat.obj";
 				break;
 			case eTileType.cube:
-				mesh_or_shape = new colmesh_cube(tx, ty, tz, xscale, yscale, zscale);
+				mesh_or_shape = new ColmeshCube(tx, ty, tz, xscale, yscale, zscale);
 				break;
 			case eTileType.block_vert_l:
 			case eTileType.block_vert_m:
@@ -254,7 +254,7 @@ function TileManager(_tile_size) constructor {
 			case eTileType.block_hor_t:
 			case eTileType.block_hor_m:
 			case eTileType.block_hor_b:
-				mesh_or_shape = new colmesh_block(matrix_build(tx, ty, tz, orientation_array[0], orientation_array[1], orientation_array[2], xscale, yscale, zscale));
+				mesh_or_shape = new ColmeshBlock(matrix_build(tx, ty, tz, orientation_array[0], orientation_array[1], orientation_array[2], xscale, yscale, zscale));
 				break;
 		}
 		

@@ -249,10 +249,10 @@ function colmesh__addUnique(r1, r2)
 	var i = ds_list_size(r2);
 	repeat i
 	{
-		var shapeInd = r2[| --i];
-		if (ds_list_find_index(r1, shapeInd) < 0)
+		var shape_ind = r2[| --i];
+		if (ds_list_find_index(r1, shape_ind) < 0)
 		{
-			ds_list_add(r1, shapeInd);
+			ds_list_add(r1, shape_ind);
 		}
 	}
 	return true;
@@ -525,15 +525,15 @@ function colmesh_region_cast_ray(region, x1, y1, z1, x2, y2, z2, _executeRayFunc
 	var i = ds_list_size(region);
 	repeat i
 	{
-		var shape = get_shape(region[| -- i])
+		var shape = get_shape(region[| --i])
 		static temp = array_create(7);
 		if (!shape.solid)
 		{
 			array_copy(temp, 0, CM_RAY, 0, 7);
 		}
-		++ CM_RECURSION;
+		++CM_RECURSION;
 		var ray = shape.cast_ray(x1, y1, z1);
-		-- CM_RECURSION;
+		--CM_RECURSION;
 		if (ray)
 		{
 			if (shape.type == eColMeshShape.Trigger)
@@ -582,9 +582,9 @@ function colmesh_region_capsule_collision(region, x, y, z, xup, yup, zup, radius
 	var i = ds_list_size(region);
 	repeat (i)
 	{
-		++ CM_RECURSION;
+		++CM_RECURSION;
 		var col = get_shape(region[| --i]).capsule_collision(x, y, z, xup, yup, zup, radius, height);
-		-- CM_RECURSION;
+		--CM_RECURSION;
 		if (col) return true;
 	}
 	return false;

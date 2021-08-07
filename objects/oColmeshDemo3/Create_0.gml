@@ -22,7 +22,7 @@ buffer_delete(mbuffLevel);
 if (!global.room_colmesh.load("Demo3Cache.cm")) {
 	//If a cache does not exist, generate a Colmesh from an OBJ file, subdivide it, and save a cache
 	global.room_colmesh.add_mesh("CoronaColmesh.obj"); //Notice how I supply a path to an OBJ file. I could have instead used the mbuffLevel that I created earlier in this event
-	global.room_colmesh.add_shape(new colmesh_sphere(0, 0, 0, 400));
+	global.room_colmesh.add_shape(new ColmeshSphere(0, 0, 0, 400));
 	global.room_colmesh.subdivide(100);
 	global.room_colmesh.save("Demo3Cache.cm"); //Save a cache, so that loading it the next time will be quicker
 }

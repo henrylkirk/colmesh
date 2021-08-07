@@ -68,9 +68,9 @@ function Colmesh() : ColmeshShape() constructor {
 		// Update subdivision parameters
 		sp_hash = ds_map_create();
 		region_size = region_size;
-		origin_x = (minimum[0] + maximum[0]) * .5;
-		origin_y = (minimum[1] + maximum[1]) * .5;
-		origin_z = (minimum[2] + maximum[2]) * .5;
+		origin_x = (minimum[0] + maximum[0]) *0.5;
+		origin_y = (minimum[1] + maximum[1]) *0.5;
+		origin_z = (minimum[2] + maximum[2]) *0.5;
 		
 		// Subdivide
 		var shape_num = ds_list_size(shape_list);
@@ -94,15 +94,15 @@ function Colmesh() : ColmeshShape() constructor {
 		repeat xNum {
 			++xx;
 			var yy = regions[1];
-			var _x = (xx + .5) * region_size + origin_x;
+			var _x = (xx +0.5) * region_size + origin_x;
 			repeat yNum {
 				++yy;
 				var zz = regions[2];
-				var _y = (yy + .5) * region_size + origin_y;
+				var _y = (yy +0.5) * region_size + origin_y;
 				repeat zNum {
 					++zz;
-					var _z = (zz + .5) * region_size + origin_z;
-					if (!precise or struct.intersects_cube(region_size * .5, _x, _y, _z)){
+					var _z = (zz +0.5) * region_size + origin_z;
+					if (!precise or struct.intersects_cube(region_size *0.5, _x, _y, _z)){
 						var key = colmesh_get_key(xx, yy, zz);
 						var list = sp_hash[? key];
 						if (is_undefined(list)){
@@ -259,7 +259,7 @@ function Colmesh() : ColmeshShape() constructor {
 	/// @description Adds the given shape to the Colmesh
 	static add_shape = function(shape){
 		// Typical usage:
-		// global.room_colmesh.add_shape(new colmesh_sphere(x, y, z, radius));
+		// global.room_colmesh.add_shape(new ColmeshSphere(x, y, z, radius));
 		var s = get_shape(shape);
 		expand_boundaries(s.get_min_max());
 		if (s.type != eColMeshShape.Dynamic){
@@ -286,9 +286,9 @@ function Colmesh() : ColmeshShape() constructor {
 		return shape;
 	}
 	
-	/// @function add_dynamic(shape, M)
+	/// @function add_dynamic(shape, matrix)
 	/// @description Adds a dynamic shape to the Colmesh
-	static add_dynamic = function(shape, M){
+	static add_dynamic = function(shape, matrix){
 		// A dynamic is a special kind of shape container that can be moved, scaled and rotated dynamically.
 		// Look in ColmeshShape for a list of all the shapes that can be added.
 			
@@ -299,20 +299,20 @@ function Colmesh() : ColmeshShape() constructor {
 			
 		//Typical usage:
 		//	//Create event
-		//	M = matrix_build(x, y, z, xangle, yangle, zangle, size, size, size); //Create a matrix
-		//	dynamic = global.room_colmesh.add_dynamic(new colmesh_sphere(0, 0, 0, radius), M); //Add a dynamic sphere to the Colmesh, and save it to a variable called "dynamic"
+		//	matrix = matrix_build(x, y, z, xangle, yangle, zangle, size, size, size); //Create a matrix
+		//	dynamic = global.room_colmesh.add_dynamic(new ColmeshSphere(0, 0, 0, radius), matrix); //Add a dynamic sphere to the Colmesh, and save it to a variable called "dynamic"
 				
 		//	//Step event
-		//	M = matrix_build(x, y, z, xangle, yangle, zangle, size, size, size); // Update the matrix
-		//	dynamic.setMatrix(M, true); // "moving" should only be true if the orientation is updated every step
-		return add_shape(new colmesh_dynamic(shape, self, M, ds_list_size(shape_list)));
+		//	matrix = matrix_build(x, y, z, xangle, yangle, zangle, size, size, size); // Update the matrix
+		//	dynamic.set_matrix(matrix, true); // "moving" should only be true if the orientation is updated every step
+		return add_shape(new ColmeshDynamic(shape, self, matrix, ds_list_size(shape_list)));
 	}
 	
 	/// @function add_mesh(mesh, [matrix])
 	/// @param {obj} mesh - Should be either a path to an OBJ file, an array containing buffers, or a buffer containing vertex info
 	/// @description Adds a mesh to the Colmesh
 	/// @returns void - This script does not return anything. The mesh as a whole does not have a handle. Triangles are added to the Colmesh individually.
-	static add_mesh = function(mesh, M){
+	static add_mesh = function(mesh, matrix){
 		
 		// "mesh" should be in the following format:
 		// 3D position, 3x4 bytes
@@ -355,10 +355,10 @@ function Colmesh() : ColmeshShape() constructor {
 					    V[j * 3 + k] = buffer_peek(mesh, i + j * bytesPerVert + k * 4, buffer_f32);
 					}
 				}
-				if (is_array(M)){
-					array_copy(V, 0, colmesh_matrix_transform_vertex(M, V[0], V[1], V[2]), 0, 3);
-					array_copy(V, 3, colmesh_matrix_transform_vertex(M, V[3], V[4], V[5]), 0, 3);
-					array_copy(V, 6, colmesh_matrix_transform_vertex(M, V[6], V[7], V[8]), 0, 3);
+				if (is_array(matrix)){
+					array_copy(V, 0, colmesh_matrix_transform_vertex(matrix, V[0], V[1], V[2]), 0, 3);
+					array_copy(V, 3, colmesh_matrix_transform_vertex(matrix, V[3], V[4], V[5]), 0, 3);
+					array_copy(V, 6, colmesh_matrix_transform_vertex(matrix, V[6], V[7], V[8]), 0, 3);
 				}
 				add_triangle(V);
 			}
@@ -519,8 +519,8 @@ function Colmesh() : ColmeshShape() constructor {
 		
 		repeat i {
 			// First pass, find potential collisions and add them to the ds_priority
-			var shapeInd = region[| --i];
-			var shape = get_shape(shapeInd);
+			var shape_ind = region[| --i];
+			var shape = get_shape(shape_ind);
 			if (shape.type == eColMeshShape.Trigger){
 				if (execute_col_func and is_method(shape.col_func)){
 					++CM_RECURSION;
@@ -539,7 +539,7 @@ function Colmesh() : ColmeshShape() constructor {
 			}
 			var pri = shape.get_priority(p[0], p[1], p[2], radius * CM_FIRST_PASS_RADIUS);
 			if (pri >= 0){
-				ds_priority_add(P, shapeInd, pri);
+				ds_priority_add(P, shape_ind, pri);
 			}
 		}
 		
@@ -588,7 +588,7 @@ function Colmesh() : ColmeshShape() constructor {
 	/// @desription Useful for getting the change in orientation in those cases where the player is standing on a dynamic shape.
 	/// @returns {matrix/boolean} delta_matrix
 	static get_delta_matrix = function() {
-		// If the player stands on a dynamic shape, its matrix and the inverse of its previous matrix are saved to that queue. This is done in colmesh_dynamic.displace_sphere.
+		// If the player stands on a dynamic shape, its matrix and the inverse of its previous matrix are saved to that queue. This is done in ColmeshDynamic.displace_sphere.
 		// If the dynamic shape is inside multiple layers of colmeshes, their matrices and inverse previous matrices are also added to the queue.
 		// These matrices are all multiplied together in this function, resulting in their combined movements gathered in a single matrix.
 		// The reson they are saved to a queue and not just multiplied together immediately is that you usually want to get the delta matrix the step after the collision was performed.
@@ -628,14 +628,14 @@ function Colmesh() : ColmeshShape() constructor {
 		var num = ds_queue_size(queue);
 		if (num > 1) {
 			// The first two matrices can simply be multiplied together
-			var M = ds_queue_dequeue(queue); //The current world matrix
+			var matrix = ds_queue_dequeue(queue); //The current world matrix
 			var pI = ds_queue_dequeue(queue); //The inverse of the previous world matrix
-			var m = matrix_multiply(pI, M);
+			var m = matrix_multiply(pI, matrix);
 			repeat (num / 2 - 1) {
 				// The subsequent matrices need to be multiplied with the target matrix in the correct order
-				M = ds_queue_dequeue(queue); // The current world matrix
+				matrix = ds_queue_dequeue(queue); // The current world matrix
 				pI = ds_queue_dequeue(queue); // The inverse of the previous world matrix
-				m = matrix_multiply(matrix_multiply(pI, m), M);
+				m = matrix_multiply(matrix_multiply(pI, m), matrix);
 			}
 			return m;
 		}
@@ -665,8 +665,8 @@ function Colmesh() : ColmeshShape() constructor {
 		ret[1] = y;
 		ret[2] = z;
 		repeat i {
-			var shapeInd = abs(region[| --i]);
-			var shape = get_shape(shape_list[| shapeInd]);
+			var shape_ind = abs(region[| --i]);
+			var shape = get_shape(shape_list[| shape_ind]);
 			var p = shape.get_closest_point(x, y, z);
 			var d = colmesh_vector_square(p[0] - x, p[1] - y, p[2] - z);
 			if (d < minD) {
@@ -1037,18 +1037,18 @@ function Colmesh() : ColmeshShape() constructor {
 						buffer_write(temp_buff, buffer_f32, halfH);
 						break;
 					case eColMeshShape.Block:
-						buffer_write(temp_buff, buffer_f32, M[0]);
-						buffer_write(temp_buff, buffer_f32, M[1]);
-						buffer_write(temp_buff, buffer_f32, M[2]);
-						buffer_write(temp_buff, buffer_f32, M[4]);
-						buffer_write(temp_buff, buffer_f32, M[5]);
-						buffer_write(temp_buff, buffer_f32, M[6]);
-						buffer_write(temp_buff, buffer_f32, M[8]);
-						buffer_write(temp_buff, buffer_f32, M[9]);
-						buffer_write(temp_buff, buffer_f32, M[10]);
-						buffer_write(temp_buff, buffer_f32, M[12]);
-						buffer_write(temp_buff, buffer_f32, M[13]);
-						buffer_write(temp_buff, buffer_f32, M[14]);
+						buffer_write(temp_buff, buffer_f32, matrix[0]);
+						buffer_write(temp_buff, buffer_f32, matrix[1]);
+						buffer_write(temp_buff, buffer_f32, matrix[2]);
+						buffer_write(temp_buff, buffer_f32, matrix[4]);
+						buffer_write(temp_buff, buffer_f32, matrix[5]);
+						buffer_write(temp_buff, buffer_f32, matrix[6]);
+						buffer_write(temp_buff, buffer_f32, matrix[8]);
+						buffer_write(temp_buff, buffer_f32, matrix[9]);
+						buffer_write(temp_buff, buffer_f32, matrix[10]);
+						buffer_write(temp_buff, buffer_f32, matrix[12]);
+						buffer_write(temp_buff, buffer_f32, matrix[13]);
+						buffer_write(temp_buff, buffer_f32, matrix[14]);
 						break;
 				}
 			}
@@ -1071,8 +1071,8 @@ function Colmesh() : ColmeshShape() constructor {
 				var numPos = buffer_tell(temp_buff);
 				buffer_write(temp_buff, buffer_u32, num);
 				repeat n {
-					var shapeInd = region[| --n];
-					buffer_write(temp_buff, buffer_u32, ds_list_find_index(shape_list, shapeInd));
+					var shape_ind = region[| --n];
+					buffer_write(temp_buff, buffer_u32, ds_list_find_index(shape_list, shape_ind));
 				}
 				buffer_poke(temp_buff, numPos, buffer_u32, num);
 				key = ds_map_find_next(sp_hash, key);
@@ -1147,7 +1147,7 @@ function Colmesh() : ColmeshShape() constructor {
 					var _y = buffer_read(temp_buff, buffer_f32);
 					var _z = buffer_read(temp_buff, buffer_f32);
 					var R  = buffer_read(temp_buff, buffer_f32);
-					add_shape(new colmesh_sphere(_x, _y, _z, R));
+					add_shape(new ColmeshSphere(_x, _y, _z, R));
 					break;
 				case eColMeshShape.Capsule:
 					var _x  = buffer_read(temp_buff, buffer_f32);
@@ -1158,7 +1158,7 @@ function Colmesh() : ColmeshShape() constructor {
 					var zup = buffer_read(temp_buff, buffer_f32);
 					var R   = buffer_read(temp_buff, buffer_f32);
 					var H   = buffer_read(temp_buff, buffer_f32);
-					add_shape(new colmesh_capsule(_x, _y, _z, xup, yup, zup, R, H));
+					add_shape(new ColmeshCapsule(_x, _y, _z, xup, yup, zup, R, H));
 					break;
 				case eColMeshShape.Cylinder:
 					var _x  = buffer_read(temp_buff, buffer_f32);
@@ -1169,7 +1169,7 @@ function Colmesh() : ColmeshShape() constructor {
 					var zup = buffer_read(temp_buff, buffer_f32);
 					var R   = buffer_read(temp_buff, buffer_f32);
 					var H   = buffer_read(temp_buff, buffer_f32);
-					add_shape(new colmesh_cylinder(_x, _y, _z, xup, yup, zup, R, H));
+					add_shape(new ColmeshCylinder(_x, _y, _z, xup, yup, zup, R, H));
 					break;
 				case eColMeshShape.Torus:
 					var _x  = buffer_read(temp_buff, buffer_f32);
@@ -1189,32 +1189,32 @@ function Colmesh() : ColmeshShape() constructor {
 					var halfW = buffer_read(temp_buff, buffer_f32);
 					var halfL = buffer_read(temp_buff, buffer_f32);
 					var halfH = buffer_read(temp_buff, buffer_f32);
-					add_shape(new colmesh_cube(_x, _y, _z, halfW * 2, halfW * 2, halfH * 2));
+					add_shape(new ColmeshCube(_x, _y, _z, halfW * 2, halfW * 2, halfH * 2));
 					break;
 				case eColMeshShape.Block:
-					var M = array_create(16);
-					M[0]  = buffer_read(temp_buff, buffer_f32);
-					M[1]  = buffer_read(temp_buff, buffer_f32);
-					M[2]  = buffer_read(temp_buff, buffer_f32);
-					M[4]  = buffer_read(temp_buff, buffer_f32);
-					M[5]  = buffer_read(temp_buff, buffer_f32);
-					M[6]  = buffer_read(temp_buff, buffer_f32);
-					M[8]  = buffer_read(temp_buff, buffer_f32);
-					M[9]  = buffer_read(temp_buff, buffer_f32);
-					M[10] = buffer_read(temp_buff, buffer_f32);
-					M[12] = buffer_read(temp_buff, buffer_f32);
-					M[13] = buffer_read(temp_buff, buffer_f32);
-					M[14] = buffer_read(temp_buff, buffer_f32);
-					M[15] = 1;
-					add_shape(new colmesh_block(M));
+					var matrix = array_create(16);
+					matrix[0]  = buffer_read(temp_buff, buffer_f32);
+					matrix[1]  = buffer_read(temp_buff, buffer_f32);
+					matrix[2]  = buffer_read(temp_buff, buffer_f32);
+					matrix[4]  = buffer_read(temp_buff, buffer_f32);
+					matrix[5]  = buffer_read(temp_buff, buffer_f32);
+					matrix[6]  = buffer_read(temp_buff, buffer_f32);
+					matrix[8]  = buffer_read(temp_buff, buffer_f32);
+					matrix[9]  = buffer_read(temp_buff, buffer_f32);
+					matrix[10] = buffer_read(temp_buff, buffer_f32);
+					matrix[12] = buffer_read(temp_buff, buffer_f32);
+					matrix[13] = buffer_read(temp_buff, buffer_f32);
+					matrix[14] = buffer_read(temp_buff, buffer_f32);
+					matrix[15] = 1;
+					add_shape(new ColmeshBlock(matrix));
 					break;
 				case eColMeshShape.None:
 					//Dynamic shapes are NOT saved! This is a failsafe so that the order of objects added after the dynamic is kept.
-					add_shape(new colmesh_none());
+					add_shape(new ColmeshNone());
 					break;
 				case eColMeshShape.Dynamic:
 					//Dynamic shapes are NOT saved! This is a failsafe so that the order of objects added after the dynamic is kept.
-					add_shape(new colmesh_none());
+					add_shape(new ColmeshNone());
 					break;
 			}
 		}
