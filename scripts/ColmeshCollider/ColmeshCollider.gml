@@ -43,14 +43,10 @@ function ColmeshCollider(id, height = 16, radius = height * 0.5, fast = true) co
 			}
 
 			// Find z ground
-			if is_on_ground {
-				z_ground = z;
-			} else {
-				var ray = global.room_colmesh.cast_ray_ext(x, y, z, x, y, -32);
-				if is_struct(ray) {
-					z_ground = ray.z;
-				}
-			}
+			//var ray = global.room_colmesh.cast_ray_ext(x, y, z, x, y, -32);
+			//if is_struct(ray) {
+			//	z_ground = ray.z;
+			//}
 		}
 	}
 	

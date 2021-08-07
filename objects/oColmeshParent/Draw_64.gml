@@ -1,4 +1,3 @@
-/// @description
 if !global.drawText
 {
 	draw_text(10, 10, "FPS: " + string(fps) + " / " + string(game_get_speed(gamespeed_fps)) + "\nPress H to unhide description");
@@ -11,7 +10,10 @@ var str = "Move with WASD + space"
 	+ "\nR: Disable drawing"
 	+ "\nH: Hide text"
 	+ "\nCoins: " + string(global.coins)
-	+ "\n" + global.demo_text;
+	+ "\n" + global.demo_text
+	+ "\nVelocity: " + string(obj_player.velocity);
+	
+	
 draw_set_color(c_black);
 draw_text(9, 9, str);
 draw_text(11, 9, str);

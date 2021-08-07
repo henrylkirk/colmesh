@@ -35,7 +35,7 @@ var hh = room_height * 0.5;
 //if (!global.room_colmesh.load("Demo5Cache.cm")){
 	// No cache found, add flat ground to colmesh
 	global.room_colmesh.add_shape(
-		new colmesh_block(colmesh_matrix_build(hw, hh, -1, 0, 0, 0, hw, hh, 1))
+		new colmesh_block(colmesh_matrix_build(hw, hh, -16, 0, 0, 0, hw, hh, 16))
 	);
 //	global.room_colmesh.save("Demo5Cache.cm"); //Save a cache, so that loading it the next time will be quicker
 //}
@@ -51,23 +51,6 @@ house_mesh = global.room_colmesh.add_mesh(
 // Add tile shapes to colmesh
 tile_manager = new TileManager(TILE_SIZE);
 tile_manager.tile_layer_to_colmesh(global.room_colmesh, "tiles_collision");
-
-// Player variables
-x = hw;
-y = hh;
-z = 300;
-radius = 10;
-height = 16;
-velocity_max = new Vector3(6, 6, 10); // Max velocity for all three axis
-prev_position = new Vector3(x, y, z);
-velocity = new Vector3(0, 0, 0);
-is_on_ground = false;
-z_ground = 0;
-xup = 0;
-yup = 0;
-zup = 1;
-enable_z_bounce = false;
-collider = new ColmeshCollider(id, height, radius, false);
 
 // Enable 3D projection
 view_enabled = true;
