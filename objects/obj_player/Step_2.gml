@@ -11,8 +11,8 @@
 //}
 
 // Apply velocity to position
-//x += velocity.x;
-//y += velocity.y;
+x += velocity.x;
+y += velocity.y;
 //z += velocity.z;
 
 // Move collider
