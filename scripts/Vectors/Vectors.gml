@@ -74,14 +74,14 @@ function Vector2(x = 0, y = 0) constructor {
 	}
 
 	/// @function equals
-	/// @param {real/Vector2} x/vector
+	/// @param {real/Vector2} x/other_vector
 	/// @param {real} [y]
-	/// @returns {boolean} equals
 	/// @description Check if two Vector2's have the same values, or whether this vector is equal to two real numbers
+		/// @returns {boolean} equals
 	static equals = function() {
-		if argument_count == 1 { // A vector - check if each component is equal
+		if instanceof(argument[0]) == "Vector2" { // A vector - check if each component is equal
 			return (x == argument[0].x) and (y == argument[0].y);
-		} else if is_real(argument[0]) and is_real(argument[1]) { // Two real numbers
+		} else if (argument_count == 2) { // Two real numbers
 			return (x == argument[0]) and (y == argument[1]);
 		} else {
 			throw "ERROR Vector2.equals: Invalid argument(s) provided";
@@ -462,6 +462,20 @@ function Vector3(x = 0, y = 0, z = 0) : Vector2(x, y) constructor {
 	/// @returns {real} dot_product
 	static dot = function(o){
 		return dot_product_3d(x, y, z, o.x, o.y, o.z);
+	}
+	
+	/// @function get_square()
+	/// @description Returns the square of the magnitude of the vector
+	/// @returns {real} square
+	static get_square = function() {
+		return dot_product_3d(x, y, z, x, y, z);
+	}
+	
+	/// @function get_magnitude()
+	/// @description Returns the magnitude of the given vector
+	/// @returns {real} magnitude
+	static get_magnitude = function() {
+		return sqrt(get_square());
 	}
 
 }
