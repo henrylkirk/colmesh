@@ -1,5 +1,5 @@
 
-function colmesh_capsule_get_AABB(x, y, z, xup, yup, zup, radius, height)
+function colmesh_capsule_get_aabb(x, y, z, xup, yup, zup, radius, height)
 {
 	static AABB = array_create(6);
 	xup *= height;
@@ -195,14 +195,14 @@ function colmesh_convert_smf(model)
 	for (var m = 0; m < num; m ++)
 	{
 		var buff = mBuff[m];
-		var buffSize = buffer_get_size(buff);
-		var vertNum = buffSize div SMFbytesPerVert;
+		var buff_size = buffer_get_size(buff);
+		var vertNum = buff_size div SMFbytesPerVert;
 		for (var i = 0; i < vertNum; i ++)
 		{
 			//Copy position and normal
 			buffer_copy(buff, i * SMFbytesPerVert, targetBytesPerVert, newBuff, size + i * targetBytesPerVert);
 		}
-		size += buffSize * targetBytesPerVert / SMFbytesPerVert;
+		size += buff_size * targetBytesPerVert / SMFbytesPerVert;
 	}
 	
 	buffer_resize(newBuff, size);
@@ -492,7 +492,7 @@ function colmesh__triangle_displace_sphere(triangle, x, y, z, xup, yup, zup, hei
 }
 
 
-function colmesh__region_cast_ray(region, x1, y1, z1, x2, y2, z2, _executeRayFunc)
+function colmesh_region_cast_ray(region, x1, y1, z1, x2, y2, z2, _executeRayFunc)
 {
 	//This ray casting script is faster than the regular colmesh raycasting script.
 	//However, it will only cast a ray onto the shapes in the current region, and is as such a "short-range" ray.
@@ -564,7 +564,7 @@ function colmesh__region_cast_ray(region, x1, y1, z1, x2, y2, z2, _executeRayFun
 }
 
 
-function colmesh__region_capsule_collision(region, x, y, z, xup, yup, zup, radius, height)
+function colmesh_region_capsule_collision(region, x, y, z, xup, yup, zup, radius, height)
 {
 	//Returns whether or not the given capsule collides with the given region
 	if (is_undefined(region))

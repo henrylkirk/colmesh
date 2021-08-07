@@ -45,9 +45,9 @@ global.ColMeshTransformQueueMap = ds_map_create();
 /// @description Creates an empty ColMesh
 function Colmesh() : ColmeshShape() constructor {
 	sp_hash = -1; // used for a ds map
-	originX = 0;
-	originY = 0;
-	originZ = 0;
+	origin_x = 0;
+	origin_y = 0;
+	origin_z = 0;
 	triangle = -1;
 	triangles = [];
 	region_size = 0;
@@ -68,9 +68,9 @@ function Colmesh() : ColmeshShape() constructor {
 		// Update subdivision parameters
 		sp_hash = ds_map_create();
 		region_size = region_size;
-		originX = (minimum[0] + maximum[0]) * .5;
-		originY = (minimum[1] + maximum[1]) * .5;
-		originZ = (minimum[2] + maximum[2]) * .5;
+		origin_x = (minimum[0] + maximum[0]) * .5;
+		origin_y = (minimum[1] + maximum[1]) * .5;
+		origin_z = (minimum[2] + maximum[2]) * .5;
 		
 		// Subdivide
 		var shapeNum = ds_list_size(shape_list);
@@ -94,14 +94,14 @@ function Colmesh() : ColmeshShape() constructor {
 		repeat xNum {
 			++xx;
 			var yy = regions[1];
-			var _x = (xx + .5) * region_size + originX;
+			var _x = (xx + .5) * region_size + origin_x;
 			repeat yNum {
 				++yy;
 				var zz = regions[2];
-				var _y = (yy + .5) * region_size + originY;
+				var _y = (yy + .5) * region_size + origin_y;
 				repeat zNum {
 					++zz;
-					var _z = (zz + .5) * region_size + originZ;
+					var _z = (zz + .5) * region_size + origin_z;
 					if (!precise or struct.intersects_cube(region_size * .5, _x, _y, _z)){
 						var key = colmesh_get_key(xx, yy, zz);
 						var list = sp_hash[? key];
@@ -336,11 +336,11 @@ function Colmesh() : ColmeshShape() constructor {
 			var num = array_length(mesh);
 			var totalSize = 0;
 			for (var i = 0; i < num; i++) {
-				var buffSize = buffer_get_size(mesh[i]);
+				var buff_size = buffer_get_size(mesh[i]);
 				var buffPos = totalSize;
-				totalSize += buffSize;
+				totalSize += buff_size;
 				buffer_resize(mesh, totalSize);
-				buffer_copy(mesh[i], 0, buffSize, mesh, buffPos);
+				buffer_copy(mesh[i], 0, buff_size, mesh, buffPos);
 			}
 			mesh = _mesh;
 		}
@@ -409,7 +409,7 @@ function Colmesh() : ColmeshShape() constructor {
 	
 	#endregion
 	
-	/// @function displace_capsule(x, y, z, [xup], [yup], [zup], radius, height, slopeAngle, fast*, executeColFunc*)
+	/// @function displace_capsule(x, y, z, [xup], [yup], [zup], radius, height, slope_angle, fast*, executeColFunc*)
 	/// @param {real} x
 	/// @param {real} y
 	/// @param {real} z
@@ -418,10 +418,10 @@ function Colmesh() : ColmeshShape() constructor {
 	/// @param {real} [zup]
 	/// @param {real} radius
 	/// @param {real} height
-	/// @param {real} slopeAngle - Slope is given in degrees, and is the maximum slope angle allowed before the capsule starts sliding downhill
+	/// @param {real} slope_angle - Slope is given in degrees, and is the maximum slope angle allowed before the capsule starts sliding downhill
 	/// @param {boolean} [fast] - If false, will process in 2 passes: The first pass sorts through all triangles in the region, and checks if there is a potential collision. The second pass makes the capsule avoid triangles, starting with the triangles that cause the greatest displacement.
 	/// @description Pushes a capsule out of a collision mesh
-	static displace_capsule = function(x, y, z, xup = 0, yup = 0, zup = 1, radius, height, slopeAngle, fast = false, executeColFunc){
+	static displace_capsule = function(x, y, z, xup = 0, yup = 0, zup = 1, radius, height, slope_angle, fast = false, executeColFunc){
 		
 		// This will first use get_region to get a list containing all shapes the capsule potentially could collide with
 		
@@ -429,10 +429,10 @@ function Colmesh() : ColmeshShape() constructor {
 			CM_CALLING_OBJECT = other;
 		}
 		if (is_undefined(fast)){fast = false;}
-		var AABB = colmesh_capsule_get_AABB(x, y, z, xup, yup, zup, fast ? radius * CM_FIRST_PASS_RADIUS : radius, height);
+		var AABB = colmesh_capsule_get_aabb(x, y, z, xup, yup, zup, fast ? radius * CM_FIRST_PASS_RADIUS : radius, height);
 		var region = get_region(AABB);
 		
-		var coll_array = region_displace_capsule(region, x, y, z, xup, yup, zup, radius, height, slopeAngle, fast, executeColFunc);
+		var coll_array = region_displace_capsule(region, x, y, z, xup, yup, zup, radius, height, slope_angle, fast, executeColFunc);
 	
 		// Transform array into struct
 		return {
@@ -447,9 +447,9 @@ function Colmesh() : ColmeshShape() constructor {
 		}
 	}
 	
-	/// @function region_displace_capsule(region, x, y, z, xup, yup, zup, radius, height, slopeAngle, fast*, executeColFunc*)
+	/// @function region_displace_capsule(region, x, y, z, xup, yup, zup, radius, height, slope_angle, [fast=true], [execute_col_func=false])
 	/// @description Pushes a capsule out of a collision mesh
-	static region_displace_capsule = function(region, x, y, z, xup, yup, zup, radius, height, slopeAngle, _fast, _executeColFunc) {	
+	static region_displace_capsule = function(region, x, y, z, xup, yup, zup, radius, height, slope_angle, _fast = true, execute_col_func = false) {	
 			
 		// Since dynamic shapes could potentially contain the colmesh itself, this script also needs a recursion counter to avoid infinite loops.
 		// You can change the maximum number of recursive calls by changing the CM_MAX_RECURSION macro.
@@ -457,7 +457,7 @@ function Colmesh() : ColmeshShape() constructor {
 		CM_COL[0] = x;
 		CM_COL[1] = y;
 		CM_COL[2] = z;
-		CM_COL[6] = -1; //Until collision checking is done, this will store the highest dot product between triangle normal and up vector
+		CM_COL[6] = -1; // Until collision checking is done, this will store the highest dot product between triangle normal and up vector
 		
 		if (is_undefined(region) or CM_RECURSION >= CM_MAX_RECURSION){
 			// Exit the script if the given region does not exist or if we've reached the recursion limit
@@ -466,16 +466,16 @@ function Colmesh() : ColmeshShape() constructor {
 		var success = false;
 		var i = ds_list_size(region);
 		var fast = (is_undefined(_fast) ? false : _fast);
-		var slope = ((slopeAngle <= 0) ? 1 : dcos(slopeAngle));
-		var executeColFunc = (is_undefined(_executeColFunc) ? false : _executeColFunc);
+		var slope = ((slope_angle <= 0) ? 1 : dcos(slope_angle));
+		var executeColFunc = (is_undefined(execute_col_func) ? false : execute_col_func);
 		
 		// p is the center of the sphere for which we're doing collision checking. 
 		// If height is larger than 0, this will be overwritten by the closest point to the shape along the central axis of the capsule
 		var p = CM_COL;
 		
 		if (fast) {
-			//If we're doing fast collision checking, the collisions are done on a first-come-first-serve basis. 
-			//Fast collisions will also not save anything to the delta matrix queue
+			// If we're doing fast collision checking, the collisions are done on a first-come-first-serve basis. 
+			// Fast collisions will also not save anything to the delta matrix queue
 			repeat i {
 				var shape = get_shape(region[| --i]);
 				if (shape.type == eColMeshShape.Trigger){
@@ -491,7 +491,7 @@ function Colmesh() : ColmeshShape() constructor {
 					}
 				}
 				if (height != 0) {	
-					//If height is larger than 0, this is a capsule, and we must find the most fitting point along the central axis of the capsule
+					// If height is larger than 0, this is a capsule, and we must find the most fitting point along the central axis of the capsule
 					p = shape.capsule_get_ref(CM_COL[0], CM_COL[1], CM_COL[2], xup, yup, zup, height);
 				}
 				++CM_RECURSION;
@@ -502,8 +502,8 @@ function Colmesh() : ColmeshShape() constructor {
 			return CM_COL;
 		}
 		
+		// If this is the first recursive call, clear the transformation stack of the calling object
 		if (CM_RECURSION == 0){
-			//If this is the first recursive call, clear the transformation stack of the calling object
 			if (CM_CALLING_OBJECT < 0){
 				CM_CALLING_OBJECT = other;
 			}
@@ -515,30 +515,29 @@ function Colmesh() : ColmeshShape() constructor {
 		
 		var P = priority[CM_RECURSION];
 		if (P < 0){
-			//We need a separate ds_priority for each recursive level, otherwise they'll mess with each other
+			// We need a separate ds_priority for each recursive level, otherwise they'll mess with each other
 			P = ds_priority_create();
 			priority[CM_RECURSION] = P;
 		}
 		
 		repeat i {
-			//First pass, find potential collisions and add them to the ds_priority
+			// First pass, find potential collisions and add them to the ds_priority
 			var shapeInd = region[| --i];
 			var shape = get_shape(shapeInd);
 			if (shape.type == eColMeshShape.Trigger){
 				if (executeColFunc and is_method(shape.colFunc)){
-					++ CM_RECURSION;
-					if (shape.capsule_collision(CM_COL[0], CM_COL[1], CM_COL[2], xup, yup, zup, radius, height))
-					{
+					++CM_RECURSION;
+					if (shape.capsule_collision(CM_COL[0], CM_COL[1], CM_COL[2], xup, yup, zup, radius, height)){
 						shape.colFunc(other.id);
 					}
-					-- CM_RECURSION;
+					--CM_RECURSION;
 				}
 			}
 			if (!shape.solid){
 				continue;
 			}
 			if (height != 0){
-				//If height is larger than 0, this is a capsule, and we must find the most fitting point along the central axis of the capsule
+				// If height is larger than 0, this is a capsule, and we must find the most fitting point along the central axis of the capsule
 				p = shape.capsule_get_ref(CM_COL[0], CM_COL[1], CM_COL[2], xup, yup, zup, height);
 			}
 			var pri = shape.get_priority(p[0], p[1], p[2], radius * CM_FIRST_PASS_RADIUS);
@@ -548,10 +547,10 @@ function Colmesh() : ColmeshShape() constructor {
 		}
 		
 		repeat (ds_priority_size(P)){
-			//Second pass, collide with the nearby shapes, starting with the closest one
+			// Second pass, collide with the nearby shapes, starting with the closest one
 			var shape = get_shape(ds_priority_delete_min(P));
 			if (height != 0){	
-				//If height is larger than 0, this is a capsule, and we must find the most fitting point along the central axis of the capsule
+				// If height is larger than 0, this is a capsule, and we must find the most fitting point along the central axis of the capsule
 				p = shape.capsule_get_ref(CM_COL[0], CM_COL[1], CM_COL[2], xup, yup, zup, height);
 			}
 			++CM_RECURSION;
@@ -559,7 +558,7 @@ function Colmesh() : ColmeshShape() constructor {
 			--CM_RECURSION;
 			if (success and slope < 1){
 				if (dot_product_3d(xup, yup, zup, CM_COL[3], CM_COL[4], CM_COL[5]) > slope){
-					//Set slope to 1 so that slope calculations are only done for the shape that displaces the player the most
+					// Set slope to 1 so that slope calculations are only done for the shape that displaces the player the most
 					slope = 1; 
 				}
 			}
@@ -577,27 +576,28 @@ function Colmesh() : ColmeshShape() constructor {
 	/// @function capsule_collision(x, y, z, xup, yup, zup, radius, height)
 	/// @description Returns whether or not the given capsule collides with the colmesh
 	static capsule_collision = function(x, y, z, xup, yup, zup, radius, height) {
-		var AABB = colmesh_capsule_get_AABB(x, y, z, xup, yup, zup, radius, height);
+		var AABB = colmesh_capsule_get_aabb(x, y, z, xup, yup, zup, radius, height);
 		var region = get_region(AABB);
-		return colmesh__region_capsule_collision(region, x, y, z, xup, yup, zup, radius, height);
+		return colmesh_region_capsule_collision(region, x, y, z, xup, yup, zup, radius, height);
 	}
 	
 	/// @function region_capsule_collision(x, y, z, xup, yup, zup, radius, height)
 	/// @description Returns whether or not the given capsule collides with the given region
 	static region_capsule_collision = function(region, x, y, z, xup, yup, zup, radius, height) {
-		return colmesh__region_capsule_collision(region, x, y, z, xup, yup, zup, radius, height);
+		return colmesh_region_capsule_collision(region, x, y, z, xup, yup, zup, radius, height);
 	}
 	
 	/// @function get_delta_matrix()
+	/// @desription Useful for getting the change in orientation in those cases where the player is standing on a dynamic shape.
+	/// @returns {matrix/boolean} delta_matrix
 	static get_delta_matrix = function() {
-		//This is useful for getting the change in orientation in those cases where the player is standing on a dynamic shape.
-		//If the player stands on a dynamic shape, its matrix and the inverse of its previous matrix are saved to that queue. This is done in colmesh_dynamic.displace_sphere.
-		//If the dynamic shape is inside multiple layers of colmeshes, their matrices and inverse previous matrices are also added to the queue.
-		//These matrices are all multiplied together in this function, resulting in their combined movements gathered in a single matrix.
-		//The reson they are saved to a queue and not just multiplied together immediately is that you usually want to get the delta matrix the step after the collision was performed.
-		//Since matrices are arrays, and arrays are stored by their handle, any changes to the arrays from the previous frame will also be applied to the delta matrix!
+		// If the player stands on a dynamic shape, its matrix and the inverse of its previous matrix are saved to that queue. This is done in colmesh_dynamic.displace_sphere.
+		// If the dynamic shape is inside multiple layers of colmeshes, their matrices and inverse previous matrices are also added to the queue.
+		// These matrices are all multiplied together in this function, resulting in their combined movements gathered in a single matrix.
+		// The reson they are saved to a queue and not just multiplied together immediately is that you usually want to get the delta matrix the step after the collision was performed.
+		// Since matrices are arrays, and arrays are stored by their handle, any changes to the arrays from the previous frame will also be applied to the delta matrix!
 			
-		//Typical usage for making the player move:
+		// Typical usage for making the player move:
 		//	var D = global.room_colmesh.get_delta_matrix();
 		//	if (is_array(D))
 		//	{
@@ -607,7 +607,7 @@ function Colmesh() : ColmeshShape() constructor {
 		//		z = p[2];
 		//	}
 				
-		//And for transforming a vector:
+		// And for transforming a vector:
 		//	var D = global.room_colmesh.get_delta_matrix();
 		//	if (is_array(D))
 		//	{
@@ -617,7 +617,7 @@ function Colmesh() : ColmeshShape() constructor {
 		//		zto = p[2];
 		//	}
 			
-		//And for transforming a matrix:
+		// And for transforming a matrix:
 		//	var D = global.room_colmesh.get_delta_matrix();
 		//	if (is_array(D))
 		//	{
@@ -630,14 +630,14 @@ function Colmesh() : ColmeshShape() constructor {
 		}
 		var num = ds_queue_size(queue);
 		if (num > 1) {
-			//The first two matrices can simply be multiplied together
+			// The first two matrices can simply be multiplied together
 			var M = ds_queue_dequeue(queue); //The current world matrix
 			var pI = ds_queue_dequeue(queue); //The inverse of the previous world matrix
 			var m = matrix_multiply(pI, M);
 			repeat (num / 2 - 1) {
-				//The subsequent matrices need to be multiplied with the target matrix in the correct order
-				M = ds_queue_dequeue(queue); //The current world matrix
-				pI = ds_queue_dequeue(queue); //The inverse of the previous world matrix
+				// The subsequent matrices need to be multiplied with the target matrix in the correct order
+				M = ds_queue_dequeue(queue); // The current world matrix
+				pI = ds_queue_dequeue(queue); // The inverse of the previous world matrix
 				m = matrix_multiply(matrix_multiply(pI, m), M);
 			}
 			return m;
@@ -648,8 +648,8 @@ function Colmesh() : ColmeshShape() constructor {
 	/// @function get_nearest_point(x, y, z)
 	/// @description Returns the nearest point on the colmesh to the given point. Only checks the region the point is in
 	static get_nearest_point = function(x, y, z) {
-		var AABB = colmesh_capsule_get_AABB(x, y, z, 0, 0, 1, 0, 0);
-		return region_get_nearest_point(get_region(AABB), x, y, z);
+		var aabb = colmesh_capsule_get_aabb(x, y, z, 0, 0, 1, 0, 0);
+		return region_get_nearest_point(get_region(aabb), x, y, z);
 	}
 	
 	/// @function region_get_nearest_point(region, x, y, z, radius)
@@ -712,15 +712,15 @@ function Colmesh() : ColmeshShape() constructor {
 		var incx = abs(idx) + (idx == 0);
 		var incy = abs(idy) + (idy == 0);
 		var incz = abs(idz) + (idz == 0);
-		var ox = (x1 - originX) / region_size;
-		var oy = (y1 - originY) / region_size;
-		var oz = (z1 - originZ) / region_size;
+		var ox = (x1 - origin_x) / region_size;
+		var oy = (y1 - origin_y) / region_size;
+		var oz = (z1 - origin_z) / region_size;
 		var currX = ox, currY = oy, currZ = oz;
 		var key = colmesh_get_key(floor(currX), floor(currY), floor(currZ));
 		var prevKey = key;
 		var t = 0, _t = 0;
 		while (t < 1) {	
-			//Find which region needs to travel the shortest to cross a wall
+			// Find which region needs to travel the shortest to cross a wall
 			var tMaxX = - frac(currX) * idx;
 			var tMaxY = - frac(currY) * idy;
 			var tMaxZ = - frac(currZ) * idz;
@@ -761,7 +761,7 @@ function Colmesh() : ColmeshShape() constructor {
 			t = min(1, _t * region_size);
 			var region = sp_hash[? prevKey];
 			if (!is_undefined(region)){
-				if (is_array(colmesh__region_cast_ray(region, x1, y1, z1, x1 + ldx * t, y1 + ldy * t, z1 + ldz * t, executeRayFunc))){
+				if (is_array(colmesh_region_cast_ray(region, x1, y1, z1, x1 + ldx * t, y1 + ldy * t, z1 + ldz * t, executeRayFunc))){
 					if (CM_RECURSION == 0){
 						CM_CALLING_OBJECT = -1;
 					}
@@ -773,15 +773,11 @@ function Colmesh() : ColmeshShape() constructor {
 		return false;
 	}
 	
-	/// @function region_cast_ray(region, x1, y1, z1, x2, y2, z2, executeRayFunc*)
-	static region_cast_ray = function(region, x1, y1, z1, x2, y2, z2, _executeRayFunc) 
-	{
-		//This ray casting script is faster than the regular colmesh raycasting script.
-		//However, it will only cast a ray onto the shapes in the current region, and is as such a "short-range" ray.
-		//If there was an intersection, it returns an array with the following format:
-		//	[x, y, z, nX, nY, nZ, success]
-		//Returns false if there was no intersection.
-		return colmesh__region_cast_ray(region, x1, y1, z1, x2, y2, z2, _executeRayFunc);
+	/// @function region_cast_ray(region, x1, y1, z1, x2, y2, z2, [execute_ray_func])
+	/// @description This ray casting method is faster than the regular colmesh raycasting one, but it will only cast a ray onto the shapes in the current region, and is as such a "short-range" ray
+	/// @returns {array/boolean} intersection - If there was an intersection, it returns an array with the following format: [x, y, z, nX, nY, nZ, success]. Returns false if there was no intersection.
+	static region_cast_ray = function(region, x1, y1, z1, x2, y2, z2, execute_ray_func = false) {
+		return colmesh_region_cast_ray(region, x1, y1, z1, x2, y2, z2, execute_ray_func);
 	}
 		
 	#endregion
@@ -789,9 +785,8 @@ function Colmesh() : ColmeshShape() constructor {
 	#region Supplementaries
 	
 	/// @function expand_boundaries(AABB[6])
-	static expand_boundaries = function(AABB)
-	{
-		//Expands the boundaries of the ColMesh. This will only come into effect once the ColMesh is subdivided.
+	/// @description Expands the boundaries of the Colmesh. This will only come into effect once the Colmesh is subdivided.
+	static expand_boundaries = function(AABB){
 		minimum[0] = min(minimum[0], AABB[0]);
 		minimum[1] = min(minimum[1], AABB[1]);
 		minimum[2] = min(minimum[2], AABB[2]);
@@ -801,14 +796,11 @@ function Colmesh() : ColmeshShape() constructor {
 	}
 	
 	/// @function get_shape(shape)
-	static get_shape = function(shape)
-	{
-		//A supplementary function.
-		//If the given shape is a real value, it must contain a triangle index. 
-		//It will then load that triangle into the colmesh, and return the index of the colmesh.
-		//If it does not contain a real, the given shape is returned.
-		if (is_array(shape))
-		{	
+	static get_shape = function(shape){
+		// If the given shape is a real value, it must contain a triangle index. 
+		// It will then load that triangle into the colmesh, and return the index of the colmesh.
+		// If it does not contain a real, the given shape is returned.
+		if is_array(shape) {	
 			triangle = shape; 
 			return self;
 		}
@@ -816,19 +808,16 @@ function Colmesh() : ColmeshShape() constructor {
 	}
 	
 	/// @function constrain_ray(x1, y1, z1, x2, y2, z2)
-	static constrain_ray = function(x1, y1, z1, x2, y2, z2) 
-	{
-		//This script will truncate the ray from (x1, y1, z1) to (x2, y2, z2) so that it fits inside the bounding box of the colmesh.
-		//Returns false if the ray is fully outside the bounding box.
-		
-		///////////////////////////////////////////////////////////////////
-		//Convert from world coordinates to local coordinates
-		var sx = (maximum[0] - minimum[0]) * .5;
-		var sy = (maximum[1] - minimum[1]) * .5;
-		var sz = (maximum[2] - minimum[2]) * .5;
-		var mx = (maximum[0] + minimum[0]) * .5;
-		var my = (maximum[1] + minimum[1]) * .5;
-		var mz = (maximum[2] + minimum[2]) * .5;
+	/// @description This method will truncate the ray from (x1, y1, z1) to (x2, y2, z2) so that it fits inside the bounding box of the colmesh. Returns false if the ray is fully outside the bounding box
+	static constrain_ray = function(x1, y1, z1, x2, y2, z2) {
+
+		// Convert from world coordinates to local coordinates
+		var sx = (maximum[0] - minimum[0]) * 0.5;
+		var sy = (maximum[1] - minimum[1]) * 0.5;
+		var sz = (maximum[2] - minimum[2]) * 0.5;
+		var mx = (maximum[0] + minimum[0]) * 0.5;
+		var my = (maximum[1] + minimum[1]) * 0.5;
+		var mz = (maximum[2] + minimum[2]) * 0.5;
 		x1 = (x1 - mx) / sx;
 		y1 = (y1 - my) / sy;
 		z1 = (z1 - mz) / sz;
@@ -837,43 +826,36 @@ function Colmesh() : ColmeshShape() constructor {
 		z2 = (z2 - mz) / sz;
 		
 		var intersection = true;
-		if (min(x1, y1, z1, x2, y2, z2) < -1 or max(x1, y1, z1, x2, y2, z2) > 1)
-		{
-			if ((x1 < -1 and x2 < -1) or (y1 < -1 and y2 < -1) or (z1 < -1 and z2 < -1) or (x1 > 1 and x2 > 1) or (y1 > 1 and y2 > 1) or (z1 > 1 and z2 > 1))
-			{	//The ray is fully outside the bounding box, and we can end the algorithm here
+		if (min(x1, y1, z1, x2, y2, z2) < -1 or max(x1, y1, z1, x2, y2, z2) > 1){
+			if ((x1 < -1 and x2 < -1) or (y1 < -1 and y2 < -1) or (z1 < -1 and z2 < -1) or (x1 > 1 and x2 > 1) or (y1 > 1 and y2 > 1) or (z1 > 1 and z2 > 1)){
+				// The ray is fully outside the bounding box, and we can end the algorithm here
 				return false;
 			}
 			intersection = false;
 		}
 	
-		///////////////////////////////////////////////////////////////////
-		//Check X dimension
+		// Check X dimension
 		var d = x2 - x1;
-		if (d != 0)
-		{
-			//Check outside
+		if (d != 0){
+			// Check outside
 			var s = sign(d);
 			var t = (- s - x1) / d;
-			if (abs(x1) > 1 and t >= 0 and t <= 1)
-			{
+			if (abs(x1) > 1 and t >= 0 and t <= 1){
 				var itsY = lerp(y1, y2, t);
 				var itsZ = lerp(z1, z2, t);
-				if (abs(itsY) <= 1 and abs(itsZ) <= 1)
-				{
+				if (abs(itsY) <= 1 and abs(itsZ) <= 1){
 					x1 = - s;
 					y1 = itsY;
 					z1 = itsZ;
 					intersection = true;
 				}
 			}
-			//Check inside
+			// Check inside
 			var t = (s - x1) / d;
-			if (t >= 0 and t <= 1)
-			{
+			if (t >= 0 and t <= 1){
 				var itsY = lerp(y1, y2, t);
 				var itsZ = lerp(z1, z2, t);
-				if (abs(itsY) <= 1 and abs(itsZ) <= 1)
-				{
+				if (abs(itsY) <= 1 and abs(itsZ) <= 1){
 					x2 = s;
 					y2 = itsY;
 					z2 = itsZ;
@@ -881,34 +863,29 @@ function Colmesh() : ColmeshShape() constructor {
 				}
 			}
 		}
-		///////////////////////////////////////////////////////////////////
-		//Check Y dimension
+
+		// Check Y dimension
 		var d = y2 - y1;
-		if (d != 0)
-		{
-			//Check outside
+		if (d != 0) {
+			// Check outside
 			var s = sign(d);
 			var t = (- s - y1) / d;
-			if (abs(y1) > 1 and t >= 0 and t <= 1)
-			{
+			if (abs(y1) > 1 and t >= 0 and t <= 1){
 				var itsX = lerp(x1, x2, t);
 				var itsZ = lerp(z1, z2, t);
-				if (abs(itsX) <= 1 and abs(itsZ) <= 1)
-				{
+				if (abs(itsX) <= 1 and abs(itsZ) <= 1){
 					x1 = itsX;
 					y1 = - s;
 					z1 = itsZ;
 					intersection = true;
 				}
 			}
-			//Check inside
+			// Check inside
 			var t = (s - y1) / d;
-			if (t >= 0 and t <= 1)
-			{
+			if (t >= 0 and t <= 1){
 				var itsX = lerp(x1, x2, t);
 				var itsZ = lerp(z1, z2, t);
-				if (abs(itsX) <= 1 and abs(itsZ) <= 1)
-				{
+				if (abs(itsX) <= 1 and abs(itsZ) <= 1){
 					x2 = itsX;
 					y2 = s;
 					z2 = itsZ;
@@ -916,34 +893,29 @@ function Colmesh() : ColmeshShape() constructor {
 				}
 			}
 		}
-		///////////////////////////////////////////////////////////////////
-		//Check Z dimension
+
+		// Check Z dimension
 		var d = z2 - z1;
-		if (d != 0)
-		{
-			//Check outside
+		if (d != 0) {
+			// Check outside
 			var s = sign(d);
 			var t = (- s - z1) / d;
-			if (abs(z1) > 1 and t >= 0 and t <= 1)
-			{
+			if (abs(z1) > 1 and t >= 0 and t <= 1){
 				var itsX = lerp(x1, x2, t);
 				var itsY = lerp(y1, y2, t);
-				if (abs(itsX) <= 1 and abs(itsY) <= 1)
-				{
+				if (abs(itsX) <= 1 and abs(itsY) <= 1) {
 					x1 = itsX;
 					y1 = itsY;
 					z1 = - s;
 					intersection = true;
 				}
 			}
-			//Check inside
+			// Check inside
 			var t = (s - z1) / d;
-			if (t >= 0 and t <= 1)
-			{
+			if (t >= 0 and t <= 1){
 				var itsX = lerp(x1, x2, t);
 				var itsY = lerp(y1, y2, t);
-				if (abs(itsY) <= 1 and abs(itsY) <= 1)
-				{
+				if (abs(itsY) <= 1 and abs(itsY) <= 1) {
 					x2 = itsX;
 					y2 = itsY;
 					z2 = s;
@@ -951,14 +923,12 @@ function Colmesh() : ColmeshShape() constructor {
 				}
 			}
 		}
-		if (!intersection)
-		{
-			//The ray is outside the box and does not intersect the box
+		if (!intersection){
+			// The ray is outside the box and does not intersect the box
 			return false;
 		}
 
-		///////////////////////////////////////////////////////////////////
-		//Return the point of intersection in world space
+		// Return the point of intersection in world space
 		CM_RAY[0] = (x1 * sx + mx);
 		CM_RAY[1] = (y1 * sy + my);
 		CM_RAY[2] = (z1 * sz + mz);
@@ -973,11 +943,10 @@ function Colmesh() : ColmeshShape() constructor {
 	#region Saving and loading
 	
 	/// @function save(path)
-	static save = function(path)
-	{
-		//Saves the colmesh to a file.
-		//This function will not work in HTML5.
-		//For HTML5 you need to create a buffer, write the colmesh to it with colmesh.write_to_buffer, and save it with buffer_save_async.
+	/// @description Saves the colmesh to a file.
+	static save = function(path) {
+		// This function will not work in HTML5.
+		// For HTML5 you need to create a buffer, write the colmesh to it with colmesh.write_to_buffer, and save it with buffer_save_async.
 		var buff = buffer_create(1, buffer_grow, 1);
 		write_to_buffer(buff);
 		buffer_resize(buff, buffer_tell(buff));
@@ -986,14 +955,12 @@ function Colmesh() : ColmeshShape() constructor {
 	}
 	
 	/// @function load(path)
-	static load = function(path)
-	{
-		//Loads the colmesh from a file.
-		//This function will not work in HTML5.
-		//For HTML5 you need to load a buffer asynchronously, and read from that using colmesh.read_from_buffer.
+	/// @description Loads the colmesh from a file.
+	static load = function(path) {
+		// This function will not work in HTML5.
+		// For HTML5 you need to load a buffer asynchronously, and read from that using colmesh.read_from_buffer.
 		var buff = buffer_load(path);
-		if (buff < 0)
-		{
+		if (buff < 0) {
 			colmesh_debug_message("Colmesh.load: Could not find file " + string(path));
 			return false;
 		}
@@ -1003,173 +970,160 @@ function Colmesh() : ColmeshShape() constructor {
 	}
 	
 	/// @function write_to_buffer(saveBuff)
-	static write_to_buffer = function(saveBuff)
-	{
-		//Writes the colmesh to a buffer.
-		//This will not save dynamic shapes!
+	/// @description Writes/saves the Colmesh to a buffer. This will not save dynamic shapes.
+	static write_to_buffer = function(saveBuff){
 		var debugTime = current_time;
-		var tempBuff = buffer_create(1, buffer_grow, 1);
+		var temp_buff = buffer_create(1, buffer_grow, 1);
 		var shapeNum = ds_list_size(shape_list);
 		
-		//Write shape list
-		buffer_write(tempBuff, buffer_u32, shapeNum);
-		buffer_write(tempBuff, buffer_u32, array_length(triangles));
-		for (var i = 0; i < shapeNum; i ++)
-		{
-			with get_shape(shape_list[| i])
-			{
-				if (type == eColMeshShape.Trigger)
-				{
-					//Do not write triggers objects
-					buffer_write(tempBuff, buffer_u8, eColMeshShape.None);
+		// Write shape list
+		buffer_write(temp_buff, buffer_u32, shapeNum);
+		buffer_write(temp_buff, buffer_u32, array_length(triangles));
+		for (var i = 0; i < shapeNum; i++) {
+			with get_shape(shape_list[| i]) {
+				if (type == eColMeshShape.Trigger) {
+					// Do not write triggers objects
+					buffer_write(temp_buff, buffer_u8, eColMeshShape.None);
 					colmesh_debug_message("Error in function Colmesh.write_to_buffer: Trying to save a trigger. Triggers cannot be saved to file!");
 					continue;
 				}
-				buffer_write(tempBuff, buffer_u8, type);
-				switch type
-				{
+				buffer_write(temp_buff, buffer_u8, type);
+				switch type {
 					case eColMeshShape.Mesh:
 						for (var j = 0; j < 9; j ++)
 						{
-							buffer_write(tempBuff, buffer_f32, triangle[j]);
+							buffer_write(temp_buff, buffer_f32, triangle[j]);
 						}
 						break;
 					case eColMeshShape.Sphere:
-						buffer_write(tempBuff, buffer_f32, x);
-						buffer_write(tempBuff, buffer_f32, y);
-						buffer_write(tempBuff, buffer_f32, z);
-						buffer_write(tempBuff, buffer_f32, R);
+						buffer_write(temp_buff, buffer_f32, x);
+						buffer_write(temp_buff, buffer_f32, y);
+						buffer_write(temp_buff, buffer_f32, z);
+						buffer_write(temp_buff, buffer_f32, R);
 						break;
 					case eColMeshShape.Capsule:
-						buffer_write(tempBuff, buffer_f32, x);
-						buffer_write(tempBuff, buffer_f32, y);
-						buffer_write(tempBuff, buffer_f32, z);
-						buffer_write(tempBuff, buffer_f32, xup);
-						buffer_write(tempBuff, buffer_f32, yup);
-						buffer_write(tempBuff, buffer_f32, zup);
-						buffer_write(tempBuff, buffer_f32, R);
-						buffer_write(tempBuff, buffer_f32, H);
+						buffer_write(temp_buff, buffer_f32, x);
+						buffer_write(temp_buff, buffer_f32, y);
+						buffer_write(temp_buff, buffer_f32, z);
+						buffer_write(temp_buff, buffer_f32, xup);
+						buffer_write(temp_buff, buffer_f32, yup);
+						buffer_write(temp_buff, buffer_f32, zup);
+						buffer_write(temp_buff, buffer_f32, R);
+						buffer_write(temp_buff, buffer_f32, H);
 						break;
 					case eColMeshShape.Cylinder:
-						buffer_write(tempBuff, buffer_f32, x);
-						buffer_write(tempBuff, buffer_f32, y);
-						buffer_write(tempBuff, buffer_f32, z);
-						buffer_write(tempBuff, buffer_f32, xup);
-						buffer_write(tempBuff, buffer_f32, yup);
-						buffer_write(tempBuff, buffer_f32, zup);
-						buffer_write(tempBuff, buffer_f32, R);
-						buffer_write(tempBuff, buffer_f32, H);
+						buffer_write(temp_buff, buffer_f32, x);
+						buffer_write(temp_buff, buffer_f32, y);
+						buffer_write(temp_buff, buffer_f32, z);
+						buffer_write(temp_buff, buffer_f32, xup);
+						buffer_write(temp_buff, buffer_f32, yup);
+						buffer_write(temp_buff, buffer_f32, zup);
+						buffer_write(temp_buff, buffer_f32, R);
+						buffer_write(temp_buff, buffer_f32, H);
 						break;
 					case eColMeshShape.Torus:
-						buffer_write(tempBuff, buffer_f32, x);
-						buffer_write(tempBuff, buffer_f32, y);
-						buffer_write(tempBuff, buffer_f32, z);
-						buffer_write(tempBuff, buffer_f32, xup);
-						buffer_write(tempBuff, buffer_f32, yup);
-						buffer_write(tempBuff, buffer_f32, zup);
-						buffer_write(tempBuff, buffer_f32, R);
-						buffer_write(tempBuff, buffer_f32, r);
+						buffer_write(temp_buff, buffer_f32, x);
+						buffer_write(temp_buff, buffer_f32, y);
+						buffer_write(temp_buff, buffer_f32, z);
+						buffer_write(temp_buff, buffer_f32, xup);
+						buffer_write(temp_buff, buffer_f32, yup);
+						buffer_write(temp_buff, buffer_f32, zup);
+						buffer_write(temp_buff, buffer_f32, R);
+						buffer_write(temp_buff, buffer_f32, r);
 						break;
 					case eColMeshShape.Cube:
-						buffer_write(tempBuff, buffer_f32, x);
-						buffer_write(tempBuff, buffer_f32, y);
-						buffer_write(tempBuff, buffer_f32, z);
-						buffer_write(tempBuff, buffer_f32, halfW);
-						buffer_write(tempBuff, buffer_f32, halfL);
-						buffer_write(tempBuff, buffer_f32, halfH);
+						buffer_write(temp_buff, buffer_f32, x);
+						buffer_write(temp_buff, buffer_f32, y);
+						buffer_write(temp_buff, buffer_f32, z);
+						buffer_write(temp_buff, buffer_f32, halfW);
+						buffer_write(temp_buff, buffer_f32, halfL);
+						buffer_write(temp_buff, buffer_f32, halfH);
 						break;
 					case eColMeshShape.Block:
-						buffer_write(tempBuff, buffer_f32, M[0]);
-						buffer_write(tempBuff, buffer_f32, M[1]);
-						buffer_write(tempBuff, buffer_f32, M[2]);
-						buffer_write(tempBuff, buffer_f32, M[4]);
-						buffer_write(tempBuff, buffer_f32, M[5]);
-						buffer_write(tempBuff, buffer_f32, M[6]);
-						buffer_write(tempBuff, buffer_f32, M[8]);
-						buffer_write(tempBuff, buffer_f32, M[9]);
-						buffer_write(tempBuff, buffer_f32, M[10]);
-						buffer_write(tempBuff, buffer_f32, M[12]);
-						buffer_write(tempBuff, buffer_f32, M[13]);
-						buffer_write(tempBuff, buffer_f32, M[14]);
+						buffer_write(temp_buff, buffer_f32, M[0]);
+						buffer_write(temp_buff, buffer_f32, M[1]);
+						buffer_write(temp_buff, buffer_f32, M[2]);
+						buffer_write(temp_buff, buffer_f32, M[4]);
+						buffer_write(temp_buff, buffer_f32, M[5]);
+						buffer_write(temp_buff, buffer_f32, M[6]);
+						buffer_write(temp_buff, buffer_f32, M[8]);
+						buffer_write(temp_buff, buffer_f32, M[9]);
+						buffer_write(temp_buff, buffer_f32, M[10]);
+						buffer_write(temp_buff, buffer_f32, M[12]);
+						buffer_write(temp_buff, buffer_f32, M[13]);
+						buffer_write(temp_buff, buffer_f32, M[14]);
 						break;
 				}
 			}
 		}
 
-		//Write subdivision to buffer
-		if (sp_hash >= 0)
-		{
-			buffer_write(tempBuff, buffer_u32, ds_map_size(sp_hash));
-			buffer_write(tempBuff, buffer_f32, region_size);
-			buffer_write(tempBuff, buffer_f32, originX);
-			buffer_write(tempBuff, buffer_f32, originY);
-			buffer_write(tempBuff, buffer_f32, originZ);
+		// Write subdivision to buffer
+		if (sp_hash >= 0) {
+			buffer_write(temp_buff, buffer_u32, ds_map_size(sp_hash));
+			buffer_write(temp_buff, buffer_f32, region_size);
+			buffer_write(temp_buff, buffer_f32, origin_x);
+			buffer_write(temp_buff, buffer_f32, origin_y);
+			buffer_write(temp_buff, buffer_f32, origin_z);
 			
 			var key = ds_map_find_first(sp_hash);
-			while (!is_undefined(key))
-			{
+			while (!is_undefined(key)) {
 				var region = sp_hash[? key];
 				var num = ds_list_size(region);
 				var n = num;
-				buffer_write(tempBuff, buffer_u64, key);
-				var numPos = buffer_tell(tempBuff);
-				buffer_write(tempBuff, buffer_u32, num);
-				repeat n
-				{
+				buffer_write(temp_buff, buffer_u64, key);
+				var numPos = buffer_tell(temp_buff);
+				buffer_write(temp_buff, buffer_u32, num);
+				repeat n {
 					var shapeInd = region[| --n];
-					buffer_write(tempBuff, buffer_u32, ds_list_find_index(shape_list, shapeInd));
+					buffer_write(temp_buff, buffer_u32, ds_list_find_index(shape_list, shapeInd));
 				}
-				buffer_poke(tempBuff, numPos, buffer_u32, num);
+				buffer_poke(temp_buff, numPos, buffer_u32, num);
 				key = ds_map_find_next(sp_hash, key);
 			}
-		}
-		else
-		{
-			buffer_write(tempBuff, buffer_u32, 0);
+		} else {
+			buffer_write(temp_buff, buffer_u32, 0);
 		}
 
-		//Write to savebuff
-		var buffSize = buffer_tell(tempBuff);
+		// Write to savebuff
+		var buff_size = buffer_tell(temp_buff);
 		buffer_write(saveBuff, buffer_string, "ColMesh v3");
-		buffer_write(saveBuff, buffer_u64, buffSize);
-		buffer_copy(tempBuff, 0, buffSize, saveBuff, buffer_tell(saveBuff));
-		buffer_seek(saveBuff, buffer_seek_relative, buffSize);
+		buffer_write(saveBuff, buffer_u64, buff_size);
+		buffer_copy(temp_buff, 0, buff_size, saveBuff, buffer_tell(saveBuff));
+		buffer_seek(saveBuff, buffer_seek_relative, buff_size);
 		colmesh_debug_message("Script Colmesh.write_to_buffer: Wrote colmesh to buffer in " + string(current_time - debugTime) + " milliseconds");
 
-		//Clean up
-		buffer_delete(tempBuff);
+		// Clean up
+		buffer_delete(temp_buff);
 	}
 		
-	/// @function read_from_buffer(loadBuff)
-	static read_from_buffer = function(loadBuff) 
-	{
-		//Reads a collision mesh from the given buffer.
+	/// @function read_from_buffer(load_buff)
+	/// @description Reads a collision mesh from the given buffer
+	static read_from_buffer = function(load_buff) {
 		var debugTime = current_time;
 		clear();
 		
-		//Make sure this is a colmesh
+		// Make sure this is a colmesh
 		var version = 3;
-		var headerText = buffer_read(loadBuff, buffer_string);
-		var buffSize = buffer_read(loadBuff, buffer_u64);
-		var tempBuff = buffer_create(buffSize, buffer_fixed, 1);
-		buffer_copy(loadBuff, buffer_tell(loadBuff), buffSize, tempBuff, 0);
-		buffer_seek(loadBuff, buffer_seek_relative, buffSize);
+		var header_text = buffer_read(load_buff, buffer_string);
+		var buff_size = buffer_read(load_buff, buffer_u64);
+		var temp_buff = buffer_create(buff_size, buffer_fixed, 1);
+		buffer_copy(load_buff, buffer_tell(load_buff), buff_size, temp_buff, 0);
+		buffer_seek(load_buff, buffer_seek_relative, buff_size);
 		
-		switch headerText
-		{
+		switch header_text {
 			case "ColMesh v3":
 				version = 3;
 				break;
 			case "ColMesh v2":
 				version = 2;
-				region_size = buffer_read(tempBuff, buffer_f32);
-				buffer_seek(tempBuff, buffer_seek_relative, 36);
+				region_size = buffer_read(temp_buff, buffer_f32);
+				buffer_seek(temp_buff, buffer_seek_relative, 36);
 				subdivide(region_size);
 				break;
 			case "ColMesh":
 				version = 1;
-				region_size = buffer_read(tempBuff, buffer_f32);
-				buffer_seek(tempBuff, buffer_seek_relative, 54);
+				region_size = buffer_read(temp_buff, buffer_f32);
+				buffer_seek(temp_buff, buffer_seek_relative, 54);
 				subdivide(region_size);
 				break;
 			default:
@@ -1177,86 +1131,83 @@ function Colmesh() : ColmeshShape() constructor {
 				return false;
 		}
 		
-		//Read shape list
-		var shapeNum = buffer_read(tempBuff, buffer_u32);
-		var triNum = buffer_read(tempBuff, buffer_u32);
+		// Read shape list
+		var shapeNum = buffer_read(temp_buff, buffer_u32);
+		var triNum = buffer_read(temp_buff, buffer_u32);
 		array_resize(triangles, triNum);
-		for (var i = 0; i < shapeNum; i ++)
-		{
-			var type = buffer_read(tempBuff, buffer_u8);
-			switch (type)
-			{
+		for (var i = 0; i < shapeNum; i++){
+			var type = buffer_read(temp_buff, buffer_u8);
+			switch (type){
 				case eColMeshShape.Mesh:
 					var V = array_create(9);
-					for (var j = 0; j < 9; j ++)
-					{
-						V[j] = buffer_read(tempBuff, buffer_f32);
+					for (var j = 0; j < 9; j++){
+						V[j] = buffer_read(temp_buff, buffer_f32);
 					}
 					add_triangle(V);
 					break;
 				case eColMeshShape.Sphere:
-					var _x = buffer_read(tempBuff, buffer_f32);
-					var _y = buffer_read(tempBuff, buffer_f32);
-					var _z = buffer_read(tempBuff, buffer_f32);
-					var R  = buffer_read(tempBuff, buffer_f32);
+					var _x = buffer_read(temp_buff, buffer_f32);
+					var _y = buffer_read(temp_buff, buffer_f32);
+					var _z = buffer_read(temp_buff, buffer_f32);
+					var R  = buffer_read(temp_buff, buffer_f32);
 					add_shape(new colmesh_sphere(_x, _y, _z, R));
 					break;
 				case eColMeshShape.Capsule:
-					var _x  = buffer_read(tempBuff, buffer_f32);
-					var _y  = buffer_read(tempBuff, buffer_f32);
-					var _z  = buffer_read(tempBuff, buffer_f32);
-					var xup = buffer_read(tempBuff, buffer_f32);
-					var yup = buffer_read(tempBuff, buffer_f32);
-					var zup = buffer_read(tempBuff, buffer_f32);
-					var R   = buffer_read(tempBuff, buffer_f32);
-					var H   = buffer_read(tempBuff, buffer_f32);
+					var _x  = buffer_read(temp_buff, buffer_f32);
+					var _y  = buffer_read(temp_buff, buffer_f32);
+					var _z  = buffer_read(temp_buff, buffer_f32);
+					var xup = buffer_read(temp_buff, buffer_f32);
+					var yup = buffer_read(temp_buff, buffer_f32);
+					var zup = buffer_read(temp_buff, buffer_f32);
+					var R   = buffer_read(temp_buff, buffer_f32);
+					var H   = buffer_read(temp_buff, buffer_f32);
 					add_shape(new colmesh_capsule(_x, _y, _z, xup, yup, zup, R, H));
 					break;
 				case eColMeshShape.Cylinder:
-					var _x  = buffer_read(tempBuff, buffer_f32);
-					var _y  = buffer_read(tempBuff, buffer_f32);
-					var _z  = buffer_read(tempBuff, buffer_f32);
-					var xup = buffer_read(tempBuff, buffer_f32);
-					var yup = buffer_read(tempBuff, buffer_f32);
-					var zup = buffer_read(tempBuff, buffer_f32);
-					var R   = buffer_read(tempBuff, buffer_f32);
-					var H   = buffer_read(tempBuff, buffer_f32);
+					var _x  = buffer_read(temp_buff, buffer_f32);
+					var _y  = buffer_read(temp_buff, buffer_f32);
+					var _z  = buffer_read(temp_buff, buffer_f32);
+					var xup = buffer_read(temp_buff, buffer_f32);
+					var yup = buffer_read(temp_buff, buffer_f32);
+					var zup = buffer_read(temp_buff, buffer_f32);
+					var R   = buffer_read(temp_buff, buffer_f32);
+					var H   = buffer_read(temp_buff, buffer_f32);
 					add_shape(new colmesh_cylinder(_x, _y, _z, xup, yup, zup, R, H));
 					break;
 				case eColMeshShape.Torus:
-					var _x  = buffer_read(tempBuff, buffer_f32);
-					var _y  = buffer_read(tempBuff, buffer_f32);
-					var _z  = buffer_read(tempBuff, buffer_f32);
-					var xup = buffer_read(tempBuff, buffer_f32);
-					var yup = buffer_read(tempBuff, buffer_f32);
-					var zup = buffer_read(tempBuff, buffer_f32);
-					var R   = buffer_read(tempBuff, buffer_f32);
-					var r   = buffer_read(tempBuff, buffer_f32);
+					var _x  = buffer_read(temp_buff, buffer_f32);
+					var _y  = buffer_read(temp_buff, buffer_f32);
+					var _z  = buffer_read(temp_buff, buffer_f32);
+					var xup = buffer_read(temp_buff, buffer_f32);
+					var yup = buffer_read(temp_buff, buffer_f32);
+					var zup = buffer_read(temp_buff, buffer_f32);
+					var R   = buffer_read(temp_buff, buffer_f32);
+					var r   = buffer_read(temp_buff, buffer_f32);
 					add_shape(new colmesh_torus(_x, _y, _z, xup, yup, zup, R, r));
 					break;
 				case eColMeshShape.Cube:
-					var _x    = buffer_read(tempBuff, buffer_f32);
-					var _y    = buffer_read(tempBuff, buffer_f32);
-					var _z    = buffer_read(tempBuff, buffer_f32);
-					var halfW = buffer_read(tempBuff, buffer_f32);
-					var halfL = buffer_read(tempBuff, buffer_f32);
-					var halfH = buffer_read(tempBuff, buffer_f32);
+					var _x    = buffer_read(temp_buff, buffer_f32);
+					var _y    = buffer_read(temp_buff, buffer_f32);
+					var _z    = buffer_read(temp_buff, buffer_f32);
+					var halfW = buffer_read(temp_buff, buffer_f32);
+					var halfL = buffer_read(temp_buff, buffer_f32);
+					var halfH = buffer_read(temp_buff, buffer_f32);
 					add_shape(new colmesh_cube(_x, _y, _z, halfW * 2, halfW * 2, halfH * 2));
 					break;
 				case eColMeshShape.Block:
 					var M = array_create(16);
-					M[0]  = buffer_read(tempBuff, buffer_f32);
-					M[1]  = buffer_read(tempBuff, buffer_f32);
-					M[2]  = buffer_read(tempBuff, buffer_f32);
-					M[4]  = buffer_read(tempBuff, buffer_f32);
-					M[5]  = buffer_read(tempBuff, buffer_f32);
-					M[6]  = buffer_read(tempBuff, buffer_f32);
-					M[8]  = buffer_read(tempBuff, buffer_f32);
-					M[9]  = buffer_read(tempBuff, buffer_f32);
-					M[10] = buffer_read(tempBuff, buffer_f32);
-					M[12] = buffer_read(tempBuff, buffer_f32);
-					M[13] = buffer_read(tempBuff, buffer_f32);
-					M[14] = buffer_read(tempBuff, buffer_f32);
+					M[0]  = buffer_read(temp_buff, buffer_f32);
+					M[1]  = buffer_read(temp_buff, buffer_f32);
+					M[2]  = buffer_read(temp_buff, buffer_f32);
+					M[4]  = buffer_read(temp_buff, buffer_f32);
+					M[5]  = buffer_read(temp_buff, buffer_f32);
+					M[6]  = buffer_read(temp_buff, buffer_f32);
+					M[8]  = buffer_read(temp_buff, buffer_f32);
+					M[9]  = buffer_read(temp_buff, buffer_f32);
+					M[10] = buffer_read(temp_buff, buffer_f32);
+					M[12] = buffer_read(temp_buff, buffer_f32);
+					M[13] = buffer_read(temp_buff, buffer_f32);
+					M[14] = buffer_read(temp_buff, buffer_f32);
 					M[15] = 1;
 					add_shape(new colmesh_block(M));
 					break;
@@ -1272,18 +1223,18 @@ function Colmesh() : ColmeshShape() constructor {
 		}
 
 		// Read subdivision
-		var num = buffer_read(tempBuff, buffer_u32);
+		var num = buffer_read(temp_buff, buffer_u32);
 		if (num >= 0 and version == 3) {
-			region_size = buffer_read(tempBuff, buffer_f32);
-			originX	= buffer_read(tempBuff, buffer_f32);
-			originY	= buffer_read(tempBuff, buffer_f32);
-			originZ	= buffer_read(tempBuff, buffer_f32);
+			region_size = buffer_read(temp_buff, buffer_f32);
+			origin_x	= buffer_read(temp_buff, buffer_f32);
+			origin_y	= buffer_read(temp_buff, buffer_f32);
+			origin_z	= buffer_read(temp_buff, buffer_f32);
 			sp_hash = ds_map_create();
 			repeat num {
 				var region = ds_list_create();
-				var key = buffer_read(tempBuff, buffer_u64);
-				repeat buffer_read(tempBuff, buffer_u32) {
-					var shape = shape_list[| buffer_read(tempBuff, buffer_u32)];
+				var key = buffer_read(temp_buff, buffer_u64);
+				repeat buffer_read(temp_buff, buffer_u32) {
+					var shape = shape_list[| buffer_read(temp_buff, buffer_u32)];
 					if (is_struct(shape)) {
 						if (shape.type == eColMeshShape.Dynamic or shape.type == eColMeshShape.None) {
 							continue;
@@ -1297,26 +1248,26 @@ function Colmesh() : ColmeshShape() constructor {
 
 		// Clean up and return result
 		colmesh_debug_message("Script colmesh.read_from_buffer: Read colmesh from buffer in " + string(current_time - debugTime) + " milliseconds");
-		buffer_delete(tempBuff);
+		buffer_delete(temp_buff);
 		return true;
 	}
 	
 	/// @function move(x, y, z)
-	/// @description This does not make sense for a triangle, so we can just return false here and now
-	static move = function(_x, _y, _z) {
+	/// @description This does not make sense for a triangle, so we can just return false here
+	static move = function(x, y, z) {
 		return false;
 	}
 	
-	/// @function get_regions(minMax)
-	static get_regions = function(minMax) {
-		static ret = array_create(6);
-		ret[0] = floor((minMax[0] - originX) / region_size) - 1;
-		ret[1] = floor((minMax[1] - originY) / region_size) - 1;
-		ret[2] = floor((minMax[2] - originZ) / region_size) - 1;
-		ret[3] = floor((minMax[3] - originX) / region_size);
-		ret[4] = floor((minMax[4] - originY) / region_size);
-		ret[5] = floor((minMax[5] - originZ) / region_size);
-		return ret;
+	/// @function get_regions(min_max)
+	static get_regions = function(min_max) {
+		static regs = array_create(6);
+		regs[0] = floor((min_max[0] - origin_x) / region_size) - 1;
+		regs[1] = floor((min_max[1] - origin_y) / region_size) - 1;
+		regs[2] = floor((min_max[2] - origin_z) / region_size) - 1;
+		regs[3] = floor((min_max[3] - origin_x) / region_size);
+		regs[4] = floor((min_max[4] - origin_y) / region_size);
+		regs[5] = floor((min_max[5] - origin_z) / region_size);
+		return regs;
 	}
 
 	#endregion

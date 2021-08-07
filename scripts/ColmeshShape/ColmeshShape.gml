@@ -774,14 +774,14 @@ function colmesh_sphere(_x, _y, _z, radius) : ColmeshShape() constructor
 		/*
 			Returns the AABB of the shape as an array with six values
 		*/
-		static minMax = array_create(6);
-		minMax[0] = x - R;
-		minMax[1] = y - R;
-		minMax[2] = z - R;
-		minMax[3] = x + R;
-		minMax[4] = y + R;
-		minMax[5] = z + R;
-		return minMax;
+		static min_max = array_create(6);
+		min_max[0] = x - R;
+		min_max[1] = y - R;
+		min_max[2] = z - R;
+		min_max[3] = x + R;
+		min_max[4] = y + R;
+		min_max[5] = z + R;
+		return min_max;
 	}
 	
 	/// @function check_aabb(minx, miny, minz, maxx, maxy, maxz)
@@ -1012,14 +1012,14 @@ function colmesh_capsule(_x, _y, _z, _xup, _yup, _zup, radius, height) : Colmesh
 		/*
 			Returns the AABB of the shape as an array with six values
 		*/
-		static minMax = array_create(6);
-		minMax[0] = x - R + H * min(0, xup);
-		minMax[1] = y - R + H * min(0, yup);
-		minMax[2] = z - R + H * min(0, zup);
-		minMax[3] = x + R + H * max(0, xup);
-		minMax[4] = y + R + H * max(0, yup);
-		minMax[5] = z + R + H * max(0, zup);
-		return minMax;
+		static min_max = array_create(6);
+		min_max[0] = x - R + H * min(0, xup);
+		min_max[1] = y - R + H * min(0, yup);
+		min_max[2] = z - R + H * min(0, zup);
+		min_max[3] = x + R + H * max(0, xup);
+		min_max[4] = y + R + H * max(0, yup);
+		min_max[5] = z + R + H * max(0, zup);
+		return min_max;
 	}
 	
 	/// @function check_aabb(minx, miny, minz, maxx, maxy, maxz)
@@ -1280,14 +1280,14 @@ function colmesh_cylinder(_x, _y, _z, _xup, _yup, _zup, radius, height) : Colmes
 		/*
 			Returns the AABB of the shape as an array with six values
 		*/
-		static minMax = array_create(6);
-		minMax[0] = x - R + H * min(0, xup);
-		minMax[1] = y - R + H * min(0, yup);
-		minMax[2] = z - R + H * min(0, zup);
-		minMax[3] = x + R + H * max(0, xup);
-		minMax[4] = y + R + H * max(0, yup);
-		minMax[5] = z + R + H * max(0, zup);
-		return minMax;
+		static min_max = array_create(6);
+		min_max[0] = x - R + H * min(0, xup);
+		min_max[1] = y - R + H * min(0, yup);
+		min_max[2] = z - R + H * min(0, zup);
+		min_max[3] = x + R + H * max(0, xup);
+		min_max[4] = y + R + H * max(0, yup);
+		min_max[5] = z + R + H * max(0, zup);
+		return min_max;
 	}
 	
 	/// @function check_aabb(minx, miny, minz, maxx, maxy, maxz)
@@ -1654,21 +1654,21 @@ function colmesh_unfinished_cone(_x, _y, _z, _xup, _yup, _zup, radius, height) :
 		/*
 			Returns the AABB of the shape as an array with six values
 		*/
-		static minMax = array_create(6);
-		minMax[0] = x - R + H * min(0, xup);
-		minMax[1] = y - R + H * min(0, yup);
-		minMax[2] = z - R + H * min(0, zup);
-		minMax[3] = x + R + H * max(0, xup);
-		minMax[4] = y + R + H * max(0, yup);
-		minMax[5] = z + R + H * max(0, zup);
-		return minMax;
+		static min_max = array_create(6);
+		min_max[0] = x - R + H * min(0, xup);
+		min_max[1] = y - R + H * min(0, yup);
+		min_max[2] = z - R + H * min(0, zup);
+		min_max[3] = x + R + H * max(0, xup);
+		min_max[4] = y + R + H * max(0, yup);
+		min_max[5] = z + R + H * max(0, zup);
+		return min_max;
 	}
 	
 	/// @function check_aabb(minx, miny, minz, maxx, maxy, maxz)
 	static check_aabb = function(minx, miny, minz, maxx, maxy, maxz)
 	{
-		var minMax = get_min_max();
-		if (minMax[0] < maxx and minMax[1] < maxy and minMax[2] < maxz and minMax[3] > minx and minMax[4] > miny and minMax[5] > minz)
+		var min_max = get_min_max();
+		if (min_max[0] < maxx and min_max[1] < maxy and min_max[2] < maxz and min_max[3] > minx and min_max[4] > miny and min_max[5] > minz)
 		{
 			return true;
 		}
@@ -1990,15 +1990,15 @@ function colmesh_torus(_x, _y, _z, _xup, _yup, _zup, _R, _r) : ColmeshShape() co
 		/*
 			Returns the AABB of the shape as an array with six values
 		*/
-		static minMax = array_create(6);
+		static min_max = array_create(6);
 		var rr = R + r;
-		minMax[0] = x - rr;
-		minMax[1] = y - rr;
-		minMax[2] = z - rr;
-		minMax[3] = x + rr;
-		minMax[4] = y + rr;
-		minMax[5] = z + rr;
-		return minMax;
+		min_max[0] = x - rr;
+		min_max[1] = y - rr;
+		min_max[2] = z - rr;
+		min_max[3] = x + rr;
+		min_max[4] = y + rr;
+		min_max[5] = z + rr;
+		return min_max;
 	}
 	
 	/// @function check_aabb(minx, miny, minz, maxx, maxy, maxz)
@@ -2279,15 +2279,15 @@ function colmesh_disk(_x, _y, _z, _xup, _yup, _zup, _R, _r) : ColmeshShape() con
 		/*
 			Returns the AABB of the shape as an array with six values
 		*/
-		static minMax = array_create(6);
+		static min_max = array_create(6);
 		var rr = R + r;
-		minMax[0] = x - rr;
-		minMax[1] = y - rr;
-		minMax[2] = z - rr;
-		minMax[3] = x + rr;
-		minMax[4] = y + rr;
-		minMax[5] = z + rr;
-		return minMax;
+		min_max[0] = x - rr;
+		min_max[1] = y - rr;
+		min_max[2] = z - rr;
+		min_max[3] = x + rr;
+		min_max[4] = y + rr;
+		min_max[5] = z + rr;
+		return min_max;
 	}
 	
 	/// @function check_aabb(minx, miny, minz, maxx, maxy, maxz)
@@ -2558,14 +2558,14 @@ function colmesh_cube(_x, _y, _z, xsize, ysize, zsize) : ColmeshShape() construc
 		/*
 			Returns the AABB of the shape as an array with six values
 		*/
-		static minMax = array_create(6);
-		minMax[0] = x - halfX;
-		minMax[1] = y - halfY;
-		minMax[2] = z - halfZ;
-		minMax[3] = x + halfX;
-		minMax[4] = y + halfY;
-		minMax[5] = z + halfZ;
-		return minMax;
+		static min_max = array_create(6);
+		min_max[0] = x - halfX;
+		min_max[1] = y - halfY;
+		min_max[2] = z - halfZ;
+		min_max[3] = x + halfX;
+		min_max[4] = y + halfY;
+		min_max[5] = z + halfZ;
+		return min_max;
 	}
 	
 	/// @function check_aabb(minx, miny, minz, maxx, maxy, maxz)
@@ -2968,17 +2968,17 @@ function colmesh_block(M) : ColmeshShape() constructor
 		/*
 			Returns the AABB of the shape as an array with six values
 		*/
-		static minMax = array_create(6);
+		static min_max = array_create(6);
 		var dx = abs(xto) + abs(xsi) + abs(xup);
 		var dy = abs(yto) + abs(ysi) + abs(yup);
 		var dz = abs(zto) + abs(zsi) + abs(zup);
-		minMax[0] = x - dx;
-		minMax[1] = y - dy;
-		minMax[2] = z - dz;
-		minMax[3] = x + dx;
-		minMax[4] = y + dy;
-		minMax[5] = z + dz;
-		return minMax;
+		min_max[0] = x - dx;
+		min_max[1] = y - dy;
+		min_max[2] = z - dz;
+		min_max[3] = x + dx;
+		min_max[4] = y + dy;
+		min_max[5] = z + dz;
+		return min_max;
 	}
 	
 	/// @function check_aabb(minx, miny, minz, maxx, maxy, maxz)
@@ -3496,7 +3496,7 @@ function colmesh_dynamic(_shape, _colMesh, _M, _shapeInd) : ColmeshShape() const
 		/*
 			Returns the AABB of the shape as an array with six values
 		*/
-		static minMax = array_create(6);
+		static min_max = array_create(6);
 		if (shape.type == eColMeshShape.Mesh)
 		{
 			var mm = array_create(6);
@@ -3519,13 +3519,13 @@ function colmesh_dynamic(_shape, _colMesh, _M, _shapeInd) : ColmeshShape() const
 		var dx = abs(M[0] * xs) + abs(M[4] * ys) + abs(M[8] * zs);
 		var dy = abs(M[1] * xs) + abs(M[5] * ys) + abs(M[9] * zs);
 		var dz = abs(M[2] * xs) + abs(M[6] * ys) + abs(M[10]* zs);
-		minMax[0] = tx - dx;
-		minMax[1] = ty - dy;
-		minMax[2] = tz - dz;
-		minMax[3] = tx + dx;
-		minMax[4] = ty + dy;
-		minMax[5] = tz + dz;
-		return minMax;
+		min_max[0] = tx - dx;
+		min_max[1] = ty - dy;
+		min_max[2] = tz - dz;
+		min_max[3] = tx + dx;
+		min_max[4] = ty + dy;
+		min_max[5] = tz + dz;
+		return min_max;
 	}
 	
 	/// @function cast_ray(ox, oy, oz)
@@ -3692,8 +3692,8 @@ function colmesh_dynamic(_shape, _colMesh, _M, _shapeInd) : ColmeshShape() const
 		if (shape.type == eColMeshShape.Mesh)
 		{
 			//Special case if this dynamic contains a mesh
-			var slopeAngle = (slope >= 1) ? 0 : darccos(slope);
-			shape.displace_capsule(CM_COL[0], CM_COL[1], CM_COL[2], _xup, _yup, _zup, radius / scale, height / scale, slopeAngle, fast);
+			var slope_angle = (slope >= 1) ? 0 : darccos(slope);
+			shape.displace_capsule(CM_COL[0], CM_COL[1], CM_COL[2], _xup, _yup, _zup, radius / scale, height / scale, slope_angle, fast);
 			if (CM_COL[6])
 			{
 				CM_COL[6] = max(temp[6], _xup * CM_COL[3] + _yup * CM_COL[4] + _zup * CM_COL[5]);
