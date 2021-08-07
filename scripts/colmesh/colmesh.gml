@@ -73,8 +73,8 @@ function Colmesh() : ColmeshShape() constructor {
 		origin_z = (minimum[2] + maximum[2]) * .5;
 		
 		// Subdivide
-		var shapeNum = ds_list_size(shape_list);
-		for (var i = 0; i < shapeNum; i++){
+		var shape_num = ds_list_size(shape_list);
+		for (var i = 0; i < shape_num; i++){
 			add_shape_to_subdiv(shape_list[| i]);
 		}
 		colmesh_debug_message("colmesh.subdivide: Generated spatial hash with " + string(ds_map_size(sp_hash)) + " regions in " + string((get_timer() - debugTime) / 1000) + " milliseconds");
@@ -374,26 +374,28 @@ function Colmesh() : ColmeshShape() constructor {
 		return false;
 	}
 	
-	/// @function add_triangle(V[9])
+	/// @function add_triangle(triangle[9])
 	/// @description Add a single triangle to the colmesh
-	static add_triangle = function(V){
-		var shapeNum = ds_list_size(shape_list);
-		if (array_length(triangles) <= shapeNum){
-			array_resize(triangles, shapeNum + 1);
+	static add_triangle = function(t){
+		var shape_num = ds_list_size(shape_list);
+		if (array_length(triangles) <= shape_num){
+			array_resize(triangles, shape_num + 1);
 		}
 		// Construct normal vector
-		var nx = (V[4] - V[1]) * (V[8] - V[2]) - (V[5] - V[2]) * (V[7] - V[1]);
-		var ny = (V[5] - V[2]) * (V[6] - V[0]) - (V[3] - V[0]) * (V[8] - V[2]);
-		var nz = (V[3] - V[0]) * (V[7] - V[1]) - (V[4] - V[1]) * (V[6] - V[0]);
+		var nx = (t[4] - t[1]) * (t[8] - t[2]) - (t[5] - t[2]) * (t[7] - t[1]);
+		var ny = (t[5] - t[2]) * (t[6] - t[0]) - (t[3] - t[0]) * (t[8] - t[2]);
+		var nz = (t[3] - t[0]) * (t[7] - t[1]) - (t[4] - t[1]) * (t[6] - t[0]);
 		var l = sqrt(dot_product_3d(nx, ny, nz, nx, ny, nz));
 		if (l <= 0){ return false; }
 		l = 1 / l;
-		var tri = array_create(12);
-		array_copy(tri, 0, V, 0, 9);
-		tri[9]  = nx * l;
-		tri[10] = ny * l;
-		tri[11] = nz * l;
-		add_shape(tri);
+		
+		// Create a new triangle that includes normal data
+		var new_t = array_create(12);
+		array_copy(new_t, 0, t, 0, 9);
+		new_t[9]  = nx * l;
+		new_t[10] = ny * l;
+		new_t[11] = nz * l;
+		add_shape(new_t);
 		return -1;
 	}
 	
@@ -409,7 +411,7 @@ function Colmesh() : ColmeshShape() constructor {
 	
 	#endregion
 	
-	/// @function displace_capsule(x, y, z, [xup], [yup], [zup], radius, height, slope_angle, fast*, executeColFunc*)
+	/// @function displace_capsule(x, y, z, [xup], [yup], [zup], radius, height, slope_angle, [fast=true], [execute_col_func=false])
 	/// @param {real} x
 	/// @param {real} y
 	/// @param {real} z
@@ -421,7 +423,8 @@ function Colmesh() : ColmeshShape() constructor {
 	/// @param {real} slope_angle - Slope is given in degrees, and is the maximum slope angle allowed before the capsule starts sliding downhill
 	/// @param {boolean} [fast] - If false, will process in 2 passes: The first pass sorts through all triangles in the region, and checks if there is a potential collision. The second pass makes the capsule avoid triangles, starting with the triangles that cause the greatest displacement.
 	/// @description Pushes a capsule out of a collision mesh
-	static displace_capsule = function(x, y, z, xup = 0, yup = 0, zup = 1, radius, height, slope_angle, fast = false, executeColFunc){
+	/// @returns {struct} collision_data
+	static displace_capsule = function(x, y, z, xup = 0, yup = 0, zup = 1, radius, height, slope_angle, fast = true, execute_col_func = false){
 		
 		// This will first use get_region to get a list containing all shapes the capsule potentially could collide with
 		
@@ -429,10 +432,10 @@ function Colmesh() : ColmeshShape() constructor {
 			CM_CALLING_OBJECT = other;
 		}
 		if (is_undefined(fast)){fast = false;}
-		var AABB = colmesh_capsule_get_aabb(x, y, z, xup, yup, zup, fast ? radius * CM_FIRST_PASS_RADIUS : radius, height);
-		var region = get_region(AABB);
+		var aabb = colmesh_capsule_get_aabb(x, y, z, xup, yup, zup, fast ? radius * CM_FIRST_PASS_RADIUS : radius, height);
+		var region = get_region(aabb);
 		
-		var coll_array = region_displace_capsule(region, x, y, z, xup, yup, zup, radius, height, slope_angle, fast, executeColFunc);
+		var coll_array = region_displace_capsule(region, x, y, z, xup, yup, zup, radius, height, slope_angle, fast, execute_col_func);
 	
 		// Transform array into struct
 		return {
@@ -449,7 +452,7 @@ function Colmesh() : ColmeshShape() constructor {
 	
 	/// @function region_displace_capsule(region, x, y, z, xup, yup, zup, radius, height, slope_angle, [fast=true], [execute_col_func=false])
 	/// @description Pushes a capsule out of a collision mesh
-	static region_displace_capsule = function(region, x, y, z, xup, yup, zup, radius, height, slope_angle, _fast = true, execute_col_func = false) {	
+	static region_displace_capsule = function(region, x, y, z, xup, yup, zup, radius, height, slope_angle, fast = true, execute_col_func = false) {	
 			
 		// Since dynamic shapes could potentially contain the colmesh itself, this script also needs a recursion counter to avoid infinite loops.
 		// You can change the maximum number of recursive calls by changing the CM_MAX_RECURSION macro.
@@ -465,9 +468,7 @@ function Colmesh() : ColmeshShape() constructor {
 		}
 		var success = false;
 		var i = ds_list_size(region);
-		var fast = (is_undefined(_fast) ? false : _fast);
 		var slope = ((slope_angle <= 0) ? 1 : dcos(slope_angle));
-		var executeColFunc = (is_undefined(execute_col_func) ? false : execute_col_func);
 		
 		// p is the center of the sphere for which we're doing collision checking. 
 		// If height is larger than 0, this will be overwritten by the closest point to the shape along the central axis of the capsule
@@ -479,7 +480,7 @@ function Colmesh() : ColmeshShape() constructor {
 			repeat i {
 				var shape = get_shape(region[| --i]);
 				if (shape.type == eColMeshShape.Trigger){
-					if (executeColFunc and is_method(shape.colFunc)){
+					if (execute_col_func and is_method(shape.colFunc)){
 						++CM_RECURSION;
 						if (shape.capsule_collision(CM_COL[0], CM_COL[1], CM_COL[2], xup, yup, zup, radius, height)){
 							shape.colFunc(other.id);
@@ -525,7 +526,7 @@ function Colmesh() : ColmeshShape() constructor {
 			var shapeInd = region[| --i];
 			var shape = get_shape(shapeInd);
 			if (shape.type == eColMeshShape.Trigger){
-				if (executeColFunc and is_method(shape.colFunc)){
+				if (execute_col_func and is_method(shape.colFunc)){
 					++CM_RECURSION;
 					if (shape.capsule_collision(CM_COL[0], CM_COL[1], CM_COL[2], xup, yup, zup, radius, height)){
 						shape.colFunc(other.id);
@@ -974,12 +975,12 @@ function Colmesh() : ColmeshShape() constructor {
 	static write_to_buffer = function(saveBuff){
 		var debugTime = current_time;
 		var temp_buff = buffer_create(1, buffer_grow, 1);
-		var shapeNum = ds_list_size(shape_list);
+		var shape_num = ds_list_size(shape_list);
 		
 		// Write shape list
-		buffer_write(temp_buff, buffer_u32, shapeNum);
+		buffer_write(temp_buff, buffer_u32, shape_num);
 		buffer_write(temp_buff, buffer_u32, array_length(triangles));
-		for (var i = 0; i < shapeNum; i++) {
+		for (var i = 0; i < shape_num; i++) {
 			with get_shape(shape_list[| i]) {
 				if (type == eColMeshShape.Trigger) {
 					// Do not write triggers objects
@@ -1132,10 +1133,10 @@ function Colmesh() : ColmeshShape() constructor {
 		}
 		
 		// Read shape list
-		var shapeNum = buffer_read(temp_buff, buffer_u32);
+		var shape_num = buffer_read(temp_buff, buffer_u32);
 		var triNum = buffer_read(temp_buff, buffer_u32);
 		array_resize(triangles, triNum);
-		for (var i = 0; i < shapeNum; i++){
+		for (var i = 0; i < shape_num; i++){
 			var type = buffer_read(temp_buff, buffer_u8);
 			switch (type){
 				case eColMeshShape.Mesh:

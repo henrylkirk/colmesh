@@ -85,7 +85,7 @@
     {"roomId":{"name":"rmColmeshDemo4","path":"rooms/rmColmeshDemo4/rmColmeshDemo4.yy",},},
   ],
   "Folders": [
-    {"folderPath":"folders/Collision/Colmesh/scripts.yy","order":0,"resourceVersion":"1.0","name":"scripts","tags":[],"resourceType":"GMFolder",},
+    {"folderPath":"folders/Collision/Colmesh/Supplementary scripts.yy","order":0,"resourceVersion":"1.0","name":"Supplementary scripts","tags":[],"resourceType":"GMFolder",},
     {"folderPath":"folders/Demo.yy","order":14,"resourceVersion":"1.0","name":"Demo","tags":[],"resourceType":"GMFolder",},
     {"folderPath":"folders/Demo/Demo 1 - Simple mesh.yy","order":0,"resourceVersion":"1.0","name":"Demo 1 - Simple mesh","tags":[],"resourceType":"GMFolder",},
     {"folderPath":"folders/Demo/Demo 2 - Primitives.yy","order":3,"resourceVersion":"1.0","name":"Demo 2 - Primitives","tags":[],"resourceType":"GMFolder",},
