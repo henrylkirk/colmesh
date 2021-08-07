@@ -3,7 +3,7 @@ size = 64;
 z = -200;
 M = matrix_build(x, y, z, 0, 0, current_time / 50, 1, 1, 1);
 
-subMesh = new colmesh();
+subMesh = new Colmesh();
 
 shape = global.room_colmesh.add_dynamic(subMesh, M);
 

@@ -258,8 +258,8 @@ function colmesh__addUnique(r1, r2)
 	return true;
 }
 	
-/// @function colmesh__displace(nx, ny, nz, xup, yup, zup, r, slope)
-function colmesh__displace(nx, ny, nz, xup, yup, zup, _r, slope)
+/// @function colmesh_displace(nx, ny, nz, xup, yup, zup, r, slope)
+function colmesh_displace(nx, ny, nz, xup, yup, zup, _r, slope)
 {
 	/*
 		A supplementary function, not meant to be used by itself.
@@ -430,7 +430,7 @@ function colmesh__triangle_displace_sphere(triangle, x, y, z, xup, yup, zup, hei
 		var _nz = t2 - u2 * a;
 		var d = colmesh_vector_magnitude(_nx, _ny, _nz);
 		if (d <= 0 or d > radius){return false;}
-		colmesh__displace(_nx / d, _ny / d, _nz / d, xup, yup, zup, radius - d, slope);
+		colmesh_displace(_nx / d, _ny / d, _nz / d, xup, yup, zup, radius - d, slope);
 		return true;
 	}
 	else
@@ -457,7 +457,7 @@ function colmesh__triangle_displace_sphere(triangle, x, y, z, xup, yup, zup, hei
 			var _nz = t2 - u2 * a;
 			var d = colmesh_vector_magnitude(_nx, _ny, _nz);
 			if (d <= 0 or d > radius){return false;}
-			colmesh__displace(_nx / d, _ny / d, _nz / d, xup, yup, zup, radius - d, slope);
+			colmesh_displace(_nx / d, _ny / d, _nz / d, xup, yup, zup, radius - d, slope);
 			return true;
 		}
 		else
@@ -481,13 +481,13 @@ function colmesh__triangle_displace_sphere(triangle, x, y, z, xup, yup, zup, hei
 				var _nz = t2 - u2 * a;
 				var d = colmesh_vector_magnitude(_nx, _ny, _nz);
 				if (d <= 0 or d > radius){return false;}
-				colmesh__displace(_nx / d, _ny / d, _nz / d, xup, yup, zup, radius - d, slope);
+				colmesh_displace(_nx / d, _ny / d, _nz / d, xup, yup, zup, radius - d, slope);
 				return true;
 			}
 		}
 	}
 	var s = sign(D);
-	colmesh__displace(nx * s, ny * s, nz * s, xup, yup, zup, radius - abs(D), slope);
+	colmesh_displace(nx * s, ny * s, nz * s, xup, yup, zup, radius - abs(D), slope);
 	return true;
 }
 

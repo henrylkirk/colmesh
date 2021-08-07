@@ -16,7 +16,7 @@ global.disableDraw = false;
 global.drawText = true;
 global.demo_text = "";
 
-global.room_colmesh = new colmesh();
+global.room_colmesh = new Colmesh();
 
 global.lightDir = [0, 0, -1];
 global.camX = 0;

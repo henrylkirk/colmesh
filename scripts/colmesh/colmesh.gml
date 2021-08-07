@@ -41,21 +41,21 @@ global.ColMeshCol = array_create(7);
 global.ColMeshDebugShapes = array_create(eColMeshShape.Num, -1);
 global.ColMeshTransformQueueMap = ds_map_create();
 
-/// @function colmesh
+/// @function Colmesh
 /// @description Creates an empty ColMesh
-function colmesh() : colmesh_shapes() constructor {
-	spHash = -1;
+function Colmesh() : ColmeshShape() constructor {
+	sp_hash = -1; // used for a ds map
 	originX = 0;
 	originY = 0;
 	originZ = 0;
 	triangle = -1;
 	triangles = [];
-	regionSize = 0;
-	tempList  = ds_list_create();	//Temporary list used for collision
-	shapeList = ds_list_create();	//List containing all the shapes of the colmesh
+	region_size = 0;
+	temp_list  = ds_list_create();	// Temporary list used for collision
+	shape_list = ds_list_create();	// List containing all the shapes of the colmesh
 	minimum = array_create(3);
 	maximum = array_create(3);
-	priority = array_create(CM_MAX_RECURSION, -1); //An array containing a ds priority for each level of recursion
+	priority = array_create(CM_MAX_RECURSION, -1); // An array containing a ds priority for each level of recursion
 	
 	/// @function subdivide(region_size)
 	/// @description Subdivide the colmesh into smaller regions, and save those regions to a ds_map. If the colmesh has already been subdivided, that is cleared first. A smaller region size will result in more regions, but fewer collision shapes per region.
@@ -66,23 +66,23 @@ function colmesh() : colmesh_shapes() constructor {
 		clear_subdiv();
 		
 		// Update subdivision parameters
-		spHash = ds_map_create();
-		regionSize = region_size;
+		sp_hash = ds_map_create();
+		region_size = region_size;
 		originX = (minimum[0] + maximum[0]) * .5;
 		originY = (minimum[1] + maximum[1]) * .5;
 		originZ = (minimum[2] + maximum[2]) * .5;
 		
 		// Subdivide
-		var shapeNum = ds_list_size(shapeList);
+		var shapeNum = ds_list_size(shape_list);
 		for (var i = 0; i < shapeNum; i++){
-			add_shape_to_subdiv(shapeList[| i]);
+			add_shape_to_subdiv(shape_list[| i]);
 		}
-		colmesh_debug_message("colmesh.subdivide: Generated spatial hash with " + string(ds_map_size(spHash)) + " regions in " + string((get_timer() - debugTime) / 1000) + " milliseconds");
+		colmesh_debug_message("colmesh.subdivide: Generated spatial hash with " + string(ds_map_size(sp_hash)) + " regions in " + string((get_timer() - debugTime) / 1000) + " milliseconds");
 	}
 	
-	/// @function add_shape_to_subdiv(shape, regions*, precise*)
+	/// @function add_shape_to_subdiv(shape, [regions], [precise])
 	static add_shape_to_subdiv = function(shape, regions, precise){
-		if (spHash < 0){exit;}
+		if (sp_hash < 0){ exit; }
 		var struct = get_shape(shape);
 		if (is_undefined(precise)){ precise = true; }
 		if (is_undefined(regions)){ regions = get_regions(struct.get_min_max()); }
@@ -94,20 +94,20 @@ function colmesh() : colmesh_shapes() constructor {
 		repeat xNum {
 			++xx;
 			var yy = regions[1];
-			var _x = (xx + .5) * regionSize + originX;
+			var _x = (xx + .5) * region_size + originX;
 			repeat yNum {
 				++yy;
 				var zz = regions[2];
-				var _y = (yy + .5) * regionSize + originY;
+				var _y = (yy + .5) * region_size + originY;
 				repeat zNum {
 					++zz;
-					var _z = (zz + .5) * regionSize + originZ;
-					if (!precise or struct.intersects_cube(regionSize * .5, _x, _y, _z)){
+					var _z = (zz + .5) * region_size + originZ;
+					if (!precise or struct.intersects_cube(region_size * .5, _x, _y, _z)){
 						var key = colmesh_get_key(xx, yy, zz);
-						var list = spHash[? key];
+						var list = sp_hash[? key];
 						if (is_undefined(list)){
 							list = ds_list_create();
-							spHash[? key] = list;
+							sp_hash[? key] = list;
 						}
 						ds_list_add(list, shape);
 					}
@@ -118,7 +118,7 @@ function colmesh() : colmesh_shapes() constructor {
 	
 	/// @function remove_shape_from_subdiv(shape, regions*)
 	static remove_shape_from_subdiv = function(shape, regions) {
-		if (spHash < 0){return false;}
+		if (sp_hash < 0){return false;}
 		if (is_undefined(regions)){ regions = get_regions(get_shape(shape).get_min_max()); }
 		var xNum = regions[3] - regions[0];
 		var yNum = regions[4] - regions[1];
@@ -133,7 +133,7 @@ function colmesh() : colmesh_shapes() constructor {
 				repeat zNum {
 					++zz;
 					var key = colmesh_get_key(xx, yy, zz);
-					var list = spHash[? key];
+					var list = sp_hash[? key];
 					if (is_undefined(list)){
 						continue;
 					}
@@ -142,7 +142,7 @@ function colmesh() : colmesh_shapes() constructor {
 					ds_list_delete(list, ind);
 					if (ds_list_empty(list)){
 						ds_list_destroy(list);
-						ds_map_delete(spHash, key);
+						ds_map_delete(sp_hash, key);
 					}
 				}
 			}
@@ -152,14 +152,14 @@ function colmesh() : colmesh_shapes() constructor {
 	/// @function clear_subdiv()
 	/// @description Clears any data structures related to the subdivision of the colmesh
 	static clear_subdiv = function(){
-		if (spHash >= 0){
-			var region = ds_map_find_first(spHash);
+		if (sp_hash >= 0){
+			var region = ds_map_find_first(sp_hash);
 			while (!is_undefined(region)){
-				ds_list_destroy(spHash[? region]);
-				region = ds_map_find_next(spHash, region);
+				ds_list_destroy(sp_hash[? region]);
+				region = ds_map_find_next(sp_hash, region);
 			}
-			ds_map_destroy(spHash);
-			spHash = -1;
+			ds_map_destroy(sp_hash);
+			sp_hash = -1;
 		}
 		
 		// Delete any queue lists that have been created in instances colliding with the colmesh
@@ -179,8 +179,8 @@ function colmesh() : colmesh_shapes() constructor {
 		triangles = [];
 		minimum = [ 99999,  99999,  99999];
 		maximum = [-99999, -99999, -99999];
-		ds_list_clear(tempList);
-		ds_list_clear(shapeList);
+		ds_list_clear(temp_list);
+		ds_list_clear(shape_list);
 		for (var i = 0; i < CM_MAX_RECURSION; i++) {
 			if (priority[i] < 0) break;
 			ds_priority_destroy(priority[i]);
@@ -192,29 +192,32 @@ function colmesh() : colmesh_shapes() constructor {
 	/// @description Destroys the colmesh
 	static destroy = function() {
 		clear();
-		ds_list_destroy(tempList);
-		ds_list_destroy(shapeList);
+		ds_list_destroy(temp_list);
+		ds_list_destroy(shape_list);
+		if ds_exists(sp_hash, ds_type_map) {
+			ds_map_destroy(sp_hash);
+		}
 	}
 	
 	/// @function get_region(AABB[6])
+	/// @description Returns a list containing all the shapes in the regions the AABB of the given capsule touches. If the colmesh is not subdivided, this will return a list of all the shapes in the colmesh.
 	static get_region = function(AABB)  {
-		//Returns a list containing all the shapes in the regions the AABB of the given capsule touches.
-		//If the colmesh is not subdivided, this will return a list of all the shapes in the colmesh.
+
 		var minx = AABB[0], miny = AABB[1], minz = AABB[2], maxx = AABB[3], maxy = AABB[4], maxz = AABB[5];
 		if (minx > maximum[0] or miny > maximum[1] or minz > maximum[2] or maxx < minimum[0] or maxy < minimum[1] or maxz < minimum[2]) {
 			// If the capsule is fully outside the AABB of the colmesh, return undefined
 			return undefined;
 		}
 		
-		ds_list_clear(tempList);
-		if (spHash < 0) {
-			var i = ds_list_size(shapeList);
+		ds_list_clear(temp_list);
+		if (sp_hash < 0) {
+			var i = ds_list_size(shape_list);
 			repeat i {
-				var shape = shapeList[| --i];
-				if (!get_shape(shape).check_aabb(minx, miny, minz, maxx, maxy, maxz)){continue;} //Only add the shape to the list if its AABB intersects the capsule AABB
-				ds_list_add(tempList, shape);
+				var shape = shape_list[| --i];
+				if (!get_shape(shape).check_aabb(minx, miny, minz, maxx, maxy, maxz)){ continue; } // Only add the shape to the list if its AABB intersects the capsule AABB
+				ds_list_add(temp_list, shape);
 			}
-			return tempList;
+			return temp_list;
 		}
 		
 		var regions = get_regions(AABB);
@@ -233,7 +236,7 @@ function colmesh() : colmesh_shapes() constructor {
 					
 					// Check if the region exists
 					var key = colmesh_get_key(xx, yy, zz);
-					var region = spHash[? key];
+					var region = sp_hash[? key];
 					if (is_undefined(region)){continue;}
 					
 					// The region exists! Check all the shapes in the region and see if their AABB intersects the AABB of the capsule
@@ -241,19 +244,19 @@ function colmesh() : colmesh_shapes() constructor {
 					repeat i {
 						var shape = region[| --i];
 						if (!get_shape(shape).check_aabb(minx, miny, minz, maxx, maxy, maxz)){continue;} //Only add the shape to the list if its AABB intersects the capsule AABB
-						if (ds_list_find_index(tempList, shape) >= 0){continue;} //Make sure the shape hasn't already been added to the list
-						ds_list_add(tempList, shape);
+						if (ds_list_find_index(temp_list, shape) >= 0){continue;} //Make sure the shape hasn't already been added to the list
+						ds_list_add(temp_list, shape);
 					}
 				}
 			}
 		}
-		return tempList;
+		return temp_list;
 	}
 	
 	#region Add shapes
 	
 	/// @function add_shape(shape)
-	/// @param shape - Look in colmesh_shapes for a list of all the shapes that can be added
+	/// @param shape - Look in ColmeshShape for a list of all the shapes that can be added
 	/// @description Adds the given shape to the ColMesh
 	static add_shape = function(shape){
 		// Typical usage:
@@ -264,7 +267,7 @@ function colmesh() : colmesh_shapes() constructor {
 			// Add the shape to the subdivision. Dynamic shapes take care of this themselves.
 			add_shape_to_subdiv(s);
 		}
-		ds_list_add(shapeList, shape);
+		ds_list_add(shape_list, shape);
 		return shape;
 	}
 	
@@ -290,13 +293,13 @@ function colmesh() : colmesh_shapes() constructor {
 	/// @function add_dynamic(shape, M)
 	/// @description Adds a dynamic shape to the ColMesh
 	static add_dynamic = function(shape, M){
-		//A dynamic is a special kind of shape container that can be moved, scaled and rotated dynamically.
-		//Look in colmesh_shapes for a list of all the shapes that can be added.
+		// A dynamic is a special kind of shape container that can be moved, scaled and rotated dynamically.
+		// Look in ColmeshShape for a list of all the shapes that can be added.
 			
-		//You can also supply a whole different colmesh to a dynamic.
-		//Dynamics will not be saved when using colmesh.save or colmesh.write_to_buffer.
+		// You can also supply a whole different colmesh to a dynamic.
+		// Dynamics will not be saved when using colmesh.save or colmesh.write_to_buffer.
 			
-		//Scaling must be uniform, ie. the same for all dimensions. Non-uniform scaling and shearing is automatically removed from the matrix.
+		// Scaling must be uniform, ie. the same for all dimensions. Non-uniform scaling and shearing is automatically removed from the matrix.
 			
 		//Typical usage:
 		//	//Create event
@@ -304,9 +307,9 @@ function colmesh() : colmesh_shapes() constructor {
 		//	dynamic = global.room_colmesh.add_dynamic(new colmesh_sphere(0, 0, 0, radius), M); //Add a dynamic sphere to the colmesh, and save it to a variable called "dynamic"
 				
 		//	//Step event
-		//	M = matrix_build(x, y, z, xangle, yangle, zangle, size, size, size); //Update the matrix
-		//	dynamic.setMatrix(M, true); //"moving" should only be true if the orientation is updated every step
-		return add_shape(new colmesh_dynamic(shape, self, M, ds_list_size(shapeList)));
+		//	M = matrix_build(x, y, z, xangle, yangle, zangle, size, size, size); // Update the matrix
+		//	dynamic.setMatrix(M, true); // "moving" should only be true if the orientation is updated every step
+		return add_shape(new colmesh_dynamic(shape, self, M, ds_list_size(shape_list)));
 	}
 	
 	/// @function add_mesh(mesh, [matrix])
@@ -374,7 +377,7 @@ function colmesh() : colmesh_shapes() constructor {
 	/// @function add_triangle(V[9])
 	/// @description Add a single triangle to the colmesh
 	static add_triangle = function(V){
-		var shapeNum = ds_list_size(shapeList);
+		var shapeNum = ds_list_size(shape_list);
 		if (array_length(triangles) <= shapeNum){
 			array_resize(triangles, shapeNum + 1);
 		}
@@ -397,10 +400,10 @@ function colmesh() : colmesh_shapes() constructor {
 	/// @function remove_shape(shape)
 	/// @description Removes the given shape from the ColMesh. Cannot remove a mesh that has been added with colmesh.add_mesh.
 	static remove_shape = function(shape){
-		var ind = ds_list_find_index(shapeList, shape);
+		var ind = ds_list_find_index(shape_list, shape);
 		if (ind < 0){ return false; }
 		remove_shape_from_subdiv(shape);
-		ds_list_delete(shapeList, ind);
+		ds_list_delete(shape_list, ind);
 		return true;
 	}
 	
@@ -666,7 +669,7 @@ function colmesh() : colmesh_shapes() constructor {
 		ret[2] = z;
 		repeat i {
 			var shapeInd = abs(region[| --i]);
-			var shape = get_shape(shapeList[| shapeInd]);
+			var shape = get_shape(shape_list[| shapeInd]);
 			var p = shape.get_closest_point(x, y, z);
 			var d = colmesh_vector_square(p[0] - x, p[1] - y, p[2] - z);
 			if (d < minD) {
@@ -685,9 +688,9 @@ function colmesh() : colmesh_shapes() constructor {
 	/// @description Casts a ray from (x1, y1, z1) to (x2, y2, z2)
 	/// @returns {array} ray - An array with the following format: [x, y, z, nX, nY, nZ, success], returns false if no intersection
 	static cast_ray_ext = function(x1, y1, z1, x2, y2, z2, executeRayFunc) {
-		if (spHash < 0) {
+		if (sp_hash < 0) {
 			// This ColMesh has not been subdivided. Cast a ray against all the shapes it contains
-			return region_cast_ray(shapeList, x1, y1, z1, x2, y2, z2, executeRayFunc);
+			return region_cast_ray(shape_list, x1, y1, z1, x2, y2, z2, executeRayFunc);
 		}
 		if (!constrain_ray(x1, y1, z1, x2, y2, z2)){
 			// The ray is fully outside the borders of this ColMesh
@@ -709,9 +712,9 @@ function colmesh() : colmesh_shapes() constructor {
 		var incx = abs(idx) + (idx == 0);
 		var incy = abs(idy) + (idy == 0);
 		var incz = abs(idz) + (idz == 0);
-		var ox = (x1 - originX) / regionSize;
-		var oy = (y1 - originY) / regionSize;
-		var oz = (z1 - originZ) / regionSize;
+		var ox = (x1 - originX) / region_size;
+		var oy = (y1 - originY) / region_size;
+		var oz = (z1 - originZ) / region_size;
 		var currX = ox, currY = oy, currZ = oz;
 		var key = colmesh_get_key(floor(currX), floor(currY), floor(currZ));
 		var prevKey = key;
@@ -755,8 +758,8 @@ function colmesh() : colmesh_shapes() constructor {
 			}
 			
 			// Check for ray mesh intersections in the current region
-			t = min(1, _t * regionSize);
-			var region = spHash[? prevKey];
+			t = min(1, _t * region_size);
+			var region = sp_hash[? prevKey];
 			if (!is_undefined(region)){
 				if (is_array(colmesh__region_cast_ray(region, x1, y1, z1, x1 + ldx * t, y1 + ldy * t, z1 + ldz * t, executeRayFunc))){
 					if (CM_RECURSION == 0){
@@ -991,7 +994,7 @@ function colmesh() : colmesh_shapes() constructor {
 		var buff = buffer_load(path);
 		if (buff < 0)
 		{
-			colmesh_debug_message("colmesh.load: Could not find file " + string(path));
+			colmesh_debug_message("Colmesh.load: Could not find file " + string(path));
 			return false;
 		}
 		var success = read_from_buffer(buff);
@@ -1006,20 +1009,20 @@ function colmesh() : colmesh_shapes() constructor {
 		//This will not save dynamic shapes!
 		var debugTime = current_time;
 		var tempBuff = buffer_create(1, buffer_grow, 1);
-		var shapeNum = ds_list_size(shapeList);
+		var shapeNum = ds_list_size(shape_list);
 		
 		//Write shape list
 		buffer_write(tempBuff, buffer_u32, shapeNum);
 		buffer_write(tempBuff, buffer_u32, array_length(triangles));
 		for (var i = 0; i < shapeNum; i ++)
 		{
-			with get_shape(shapeList[| i])
+			with get_shape(shape_list[| i])
 			{
 				if (type == eColMeshShape.Trigger)
 				{
 					//Do not write triggers objects
 					buffer_write(tempBuff, buffer_u8, eColMeshShape.None);
-					colmesh_debug_message("Error in function colmesh.write_to_buffer: Trying to save a trigger. Triggers cannot be saved to file!");
+					colmesh_debug_message("Error in function Colmesh.write_to_buffer: Trying to save a trigger. Triggers cannot be saved to file!");
 					continue;
 				}
 				buffer_write(tempBuff, buffer_u8, type);
@@ -1094,18 +1097,18 @@ function colmesh() : colmesh_shapes() constructor {
 		}
 
 		//Write subdivision to buffer
-		if (spHash >= 0)
+		if (sp_hash >= 0)
 		{
-			buffer_write(tempBuff, buffer_u32, ds_map_size(spHash));
-			buffer_write(tempBuff, buffer_f32, regionSize);
+			buffer_write(tempBuff, buffer_u32, ds_map_size(sp_hash));
+			buffer_write(tempBuff, buffer_f32, region_size);
 			buffer_write(tempBuff, buffer_f32, originX);
 			buffer_write(tempBuff, buffer_f32, originY);
 			buffer_write(tempBuff, buffer_f32, originZ);
 			
-			var key = ds_map_find_first(spHash);
+			var key = ds_map_find_first(sp_hash);
 			while (!is_undefined(key))
 			{
-				var region = spHash[? key];
+				var region = sp_hash[? key];
 				var num = ds_list_size(region);
 				var n = num;
 				buffer_write(tempBuff, buffer_u64, key);
@@ -1114,10 +1117,10 @@ function colmesh() : colmesh_shapes() constructor {
 				repeat n
 				{
 					var shapeInd = region[| --n];
-					buffer_write(tempBuff, buffer_u32, ds_list_find_index(shapeList, shapeInd));
+					buffer_write(tempBuff, buffer_u32, ds_list_find_index(shape_list, shapeInd));
 				}
 				buffer_poke(tempBuff, numPos, buffer_u32, num);
-				key = ds_map_find_next(spHash, key);
+				key = ds_map_find_next(sp_hash, key);
 			}
 		}
 		else
@@ -1131,7 +1134,7 @@ function colmesh() : colmesh_shapes() constructor {
 		buffer_write(saveBuff, buffer_u64, buffSize);
 		buffer_copy(tempBuff, 0, buffSize, saveBuff, buffer_tell(saveBuff));
 		buffer_seek(saveBuff, buffer_seek_relative, buffSize);
-		colmesh_debug_message("Script colmesh.write_to_buffer: Wrote colmesh to buffer in " + string(current_time - debugTime) + " milliseconds");
+		colmesh_debug_message("Script Colmesh.write_to_buffer: Wrote colmesh to buffer in " + string(current_time - debugTime) + " milliseconds");
 
 		//Clean up
 		buffer_delete(tempBuff);
@@ -1159,18 +1162,18 @@ function colmesh() : colmesh_shapes() constructor {
 				break;
 			case "ColMesh v2":
 				version = 2;
-				regionSize = buffer_read(tempBuff, buffer_f32);
+				region_size = buffer_read(tempBuff, buffer_f32);
 				buffer_seek(tempBuff, buffer_seek_relative, 36);
-				subdivide(regionSize);
+				subdivide(region_size);
 				break;
 			case "ColMesh":
 				version = 1;
-				regionSize = buffer_read(tempBuff, buffer_f32);
+				region_size = buffer_read(tempBuff, buffer_f32);
 				buffer_seek(tempBuff, buffer_seek_relative, 54);
-				subdivide(regionSize);
+				subdivide(region_size);
 				break;
 			default:
-				colmesh_debug_message("ERROR in script colmesh.read_from_buffer: Could not find colmesh in buffer.");
+				colmesh_debug_message("ERROR in script Colmesh.read_from_buffer: Could not find colmesh in buffer.");
 				return false;
 		}
 		
@@ -1271,16 +1274,16 @@ function colmesh() : colmesh_shapes() constructor {
 		// Read subdivision
 		var num = buffer_read(tempBuff, buffer_u32);
 		if (num >= 0 and version == 3) {
-			regionSize = buffer_read(tempBuff, buffer_f32);
+			region_size = buffer_read(tempBuff, buffer_f32);
 			originX	= buffer_read(tempBuff, buffer_f32);
 			originY	= buffer_read(tempBuff, buffer_f32);
 			originZ	= buffer_read(tempBuff, buffer_f32);
-			spHash = ds_map_create();
+			sp_hash = ds_map_create();
 			repeat num {
 				var region = ds_list_create();
 				var key = buffer_read(tempBuff, buffer_u64);
 				repeat buffer_read(tempBuff, buffer_u32) {
-					var shape = shapeList[| buffer_read(tempBuff, buffer_u32)];
+					var shape = shape_list[| buffer_read(tempBuff, buffer_u32)];
 					if (is_struct(shape)) {
 						if (shape.type == eColMeshShape.Dynamic or shape.type == eColMeshShape.None) {
 							continue;
@@ -1288,7 +1291,7 @@ function colmesh() : colmesh_shapes() constructor {
 					}
 					ds_list_add(region, shape);
 				}
-				spHash[? key] = region;
+				sp_hash[? key] = region;
 			}
 		}
 
@@ -1307,12 +1310,12 @@ function colmesh() : colmesh_shapes() constructor {
 	/// @function get_regions(minMax)
 	static get_regions = function(minMax) {
 		static ret = array_create(6);
-		ret[0] = floor((minMax[0] - originX) / regionSize) - 1;
-		ret[1] = floor((minMax[1] - originY) / regionSize) - 1;
-		ret[2] = floor((minMax[2] - originZ) / regionSize) - 1;
-		ret[3] = floor((minMax[3] - originX) / regionSize);
-		ret[4] = floor((minMax[4] - originY) / regionSize);
-		ret[5] = floor((minMax[5] - originZ) / regionSize);
+		ret[0] = floor((minMax[0] - originX) / region_size) - 1;
+		ret[1] = floor((minMax[1] - originY) / region_size) - 1;
+		ret[2] = floor((minMax[2] - originZ) / region_size) - 1;
+		ret[3] = floor((minMax[3] - originX) / region_size);
+		ret[4] = floor((minMax[4] - originY) / region_size);
+		ret[5] = floor((minMax[5] - originZ) / region_size);
 		return ret;
 	}
 

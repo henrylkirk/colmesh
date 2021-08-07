@@ -14,8 +14,8 @@ global.demo_text = "You can add the following primitives to a ColMesh:"
 */
 
 //Create collision mesh from level model
-var regionSize = 120; //<-- You need to define the size of the subdivision regions. Play around with it and see what value fits your model best. This is a list that stores all the triangles in a region in space. A larger value makes colmesh generation faster, but slows down collision detection. A too low value increases memory usage and generation time.
-global.room_colmesh.subdivide(regionSize); //You can subdivide your colmesh and still add more objects to it! Any objects added after subdividing will still be added in the same way as if you had added them before subdividing.
+var region_size = 120; //<-- You need to define the size of the subdivision regions. Play around with it and see what value fits your model best. This is a list that stores all the triangles in a region in space. A larger value makes colmesh generation faster, but slows down collision detection. A too low value increases memory usage and generation time.
+global.room_colmesh.subdivide(region_size); //You can subdivide your colmesh and still add more objects to it! Any objects added after subdividing will still be added in the same way as if you had added them before subdividing.
 
 //Create base platform
 block = global.room_colmesh.add_shape(new colmesh_block(matrix_build(room_width / 2, room_height / 2, -50, 0, 0, 0, room_width / 2, room_height / 2, 50)));
