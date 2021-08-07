@@ -3,7 +3,7 @@
 /// @param {real} [height] - The height of the capsule collider
 /// @param {real} [radius] - The radius of the capsule collider
 /// @param {boolean} [fast=true] - If false, use precise collision checks
-/// @description A helper struct for use with colmesh
+/// @description A helper struct for use with Colmesh
 function ColmeshCollider(id, height = 16, radius = height * 0.5, fast = true) constructor {
 	self.height = height;
 	self.radius = radius;

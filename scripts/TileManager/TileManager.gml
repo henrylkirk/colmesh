@@ -44,7 +44,7 @@ function TileManager(_tile_size) constructor {
 	}
 	
 	/// @function tile_layer_to_colmesh
-	/// @param colmesh
+	/// @param Colmesh
 	/// @param {string} tile_layer_name
 	static tile_layer_to_colmesh = function(_colmesh, _tile_layer_name){
 		var lay_id = layer_get_id(_tile_layer_name);
@@ -69,12 +69,12 @@ function TileManager(_tile_size) constructor {
 	}
 	
 	/// @function add_colmesh_at_grid
-	/// @param colmesh
+	/// @param Colmesh
 	/// @param tile_type - enum describing the tile type
 	/// @param cell_x
 	/// @param cell_y
 	/// @param cell_z
-	/// @description Add a given mesh or shape to the level colmesh
+	/// @description Add a given mesh or shape to the level Colmesh
 	static add_colmesh_at_grid = function(_colmesh, _tile_type, cx, cy, cz) {
 		var tx = cx * tile_size + h_tile_size;
 		var ty = cy * tile_size + h_tile_size;
@@ -258,7 +258,7 @@ function TileManager(_tile_size) constructor {
 				break;
 		}
 		
-		// Add it to level's colmesh
+		// Add it to level's Colmesh
 		if is_string(mesh_or_shape) { // mesh
 			_colmesh.add_mesh(mesh_or_shape, matrix_build(tx, ty, tz, orientation_array[0], orientation_array[1], orientation_array[2], xscale, yscale, zscale));
 		} else if is_struct(mesh_or_shape) { // shape

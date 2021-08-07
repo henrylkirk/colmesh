@@ -1,15 +1,15 @@
 /*
-	ColMesh - 3D Collisions Made Easy!
+	Colmesh - 3D Collisions Made Easy!
 	TheSnidr 2021
 	
 	License
-	The ColMesh system is licensed under a CreativeCommons Attribution 4.0 International License
+	The Colmesh system is licensed under a CreativeCommons Attribution 4.0 International License
 		https://creativecommons.org/licenses/by/4.0/
 	This means you are free to use it in both personal and commercial projects, free of charge.
 	Appropriate credit is required.
 
-	What is a ColMesh?
-	A ColMesh is a collection of 3D primitives and triangle meshes against which you can cast rays and do collision checks. It is basically an easy-to-use 3D collision system for GMS 2.3.
+	What is a Colmesh?
+	A Colmesh is a collection of 3D primitives and triangle meshes against which you can cast rays and do collision checks. It is basically an easy-to-use 3D collision system for GMS 2.3.
 
 	What does it do?
 	It will push your player out of level geometry.
@@ -32,7 +32,7 @@ enum eColMeshShape {
 function ColmeshShape() constructor {
 	/*
 		This is the parent struct for all the other possible collision shapes!
-		This is also the parent struct for the ColMesh itself. Weird, huh?
+		This is also the parent struct for the Colmesh itself. Weird, huh?
 		That is because of some optimizations for triangle meshes. It's much faster to read
 		triangle info from a ds_grid than it is to store every triangle as its own struct, 
 		so triangles are only saved as indices, and read from the ds_grid when necessary.
@@ -49,7 +49,7 @@ function ColmeshShape() constructor {
 	/// @description Marks this shape as a trigger
 	static set_trigger = function(solid, col_func, ray_func){
 		// You can give the shape custom collision functions.
-		//These custom functions are NOT saved when writing the ColMesh to a buffer
+		//These custom functions are NOT saved when writing the Colmesh to a buffer
 		//You have access to the following global variables in the custom functions:
 		//	CM_COL - An array containing the current position of the calling object
 		//	CM_CALLING_OBJECT - The instance that is currently checking for collisions
@@ -412,7 +412,7 @@ function ColmeshShape() constructor {
 	{
 		/*
 			A supplementary function, not meant to be used by itself.
-			Used by colmesh.getClosestPoint
+			Used by Colmesh.getClosestPoint
 		*/
 		static ret = array_create(3);
 		gml_pragma("forceinline");
@@ -662,7 +662,7 @@ function ColmeshShape() constructor {
 			A crude way of drawing the collision shapes in the given region.
 			Useful for debugging.
 			
-			Since dynamic shapes may contain the colmesh itself, this script needs a recursion counter.
+			Since dynamic shapes may contain the Colmesh itself, this script needs a recursion counter.
 		*/
 		if (is_undefined(region))
 		{
@@ -816,7 +816,7 @@ function colmesh_sphere(_x, _y, _z, radius) : ColmeshShape() constructor
 	{
 		/*
 			A supplementary function, not meant to be used by itself.
-			Used by colmesh.cast_ray
+			Used by Colmesh.cast_ray
 			Changes the global array CM_RAY if the ray intersects the shape
 		*/
 		var ray = colmesh_cast_ray_sphere(x, y, z, R, ox, oy, oz, CM_RAY[0], CM_RAY[1], CM_RAY[2]);
@@ -846,7 +846,7 @@ function colmesh_sphere(_x, _y, _z, radius) : ColmeshShape() constructor
 	{
 		/*
 			A supplementary function, not meant to be used by itself.
-			Used by colmesh.getClosestPoint
+			Used by Colmesh.getClosestPoint
 		*/
 		static ret = array_create(3);
 		var dx = _x - x;
@@ -1078,7 +1078,7 @@ function colmesh_capsule(_x, _y, _z, _xup, _yup, _zup, radius, height) : Colmesh
 	{
 		/*
 			A supplementary function, not meant to be used by itself.
-			Used by colmesh.cast_ray
+			Used by Colmesh.cast_ray
 			Changes the global array CM_RAY if the ray intersects the shape
 		*/
 		/*	Algorithm created by TheSnidr	*/
@@ -1137,7 +1137,7 @@ function colmesh_capsule(_x, _y, _z, _xup, _yup, _zup, radius, height) : Colmesh
 	{
 		/*
 			A supplementary function, not meant to be used by itself.
-			Used by colmesh.getClosestPoint
+			Used by Colmesh.getClosestPoint
 		*/
 		gml_pragma("forceinline");
 		static ret = array_create(3);
@@ -1376,7 +1376,7 @@ function colmesh_cylinder(_x, _y, _z, _xup, _yup, _zup, radius, height) : Colmes
 	{
 		/*
 			A supplementary function, not meant to be used by itself.
-			Used by colmesh.cast_ray
+			Used by Colmesh.cast_ray
 			Changes the global array CM_RAY if the ray intersects the shape
 		*/
 		/*	Algorithm created by TheSnidr	*/
@@ -1461,7 +1461,7 @@ function colmesh_cylinder(_x, _y, _z, _xup, _yup, _zup, radius, height) : Colmes
 	{
 		/*
 			A supplementary function, not meant to be used by itself.
-			Used by colmesh.getClosestPoint
+			Used by Colmesh.getClosestPoint
 		*/
 		gml_pragma("forceinline");
 		static ret = array_create(3);
@@ -1739,7 +1739,7 @@ function colmesh_unfinished_cone(_x, _y, _z, _xup, _yup, _zup, radius, height) :
 	{
 		/*
 			A supplementary function, not meant to be used by itself.
-			Used by colmesh.cast_ray
+			Used by Colmesh.cast_ray
 			Changes the global array CM_RAY if the ray intersects the shape
 		*/
 		/*	Algorithm created by TheSnidr	*/
@@ -1823,7 +1823,7 @@ function colmesh_unfinished_cone(_x, _y, _z, _xup, _yup, _zup, radius, height) :
 	{
 		/*
 			A supplementary function, not meant to be used by itself.
-			Used by colmesh.getClosestPoint
+			Used by Colmesh.getClosestPoint
 		*/
 		gml_pragma("forceinline");
 		static ret = array_create(3);
@@ -2076,7 +2076,7 @@ function colmesh_torus(_x, _y, _z, _xup, _yup, _zup, _R, _r) : ColmeshShape() co
 	{
 		/*
 			A supplementary function, not meant to be used by itself.
-			Used by colmesh.cast_ray
+			Used by Colmesh.cast_ray
 			Changes the global array CM_RAY if the ray intersects the shape
 		*/
 		/*
@@ -2142,7 +2142,7 @@ function colmesh_torus(_x, _y, _z, _xup, _yup, _zup, _R, _r) : ColmeshShape() co
 	{
 		/*
 			A supplementary function, not meant to be used by itself.
-			Used by colmesh.getClosestPoint
+			Used by Colmesh.getClosestPoint
 		*/
 		gml_pragma("forceinline");
 		static ret = array_create(3);
@@ -2361,7 +2361,7 @@ function colmesh_disk(_x, _y, _z, _xup, _yup, _zup, _R, _r) : ColmeshShape() con
 	{
 		/*
 			A supplementary function, not meant to be used by itself.
-			Used by colmesh.cast_ray
+			Used by Colmesh.cast_ray
 			Changes the global array CM_RAY if the ray intersects the shape
 		*/
 		/*
@@ -2429,7 +2429,7 @@ function colmesh_disk(_x, _y, _z, _xup, _yup, _zup, _R, _r) : ColmeshShape() con
 	{
 		/*
 			A supplementary function, not meant to be used by itself.
-			Used by colmesh.getClosestPoint
+			Used by Colmesh.getClosestPoint
 		*/
 		gml_pragma("forceinline");
 		static ret = array_create(3);
@@ -2640,7 +2640,7 @@ function colmesh_cube(_x, _y, _z, xsize, ysize, zsize) : ColmeshShape() construc
 	{
 		/*
 			A supplementary function, not meant to be used by itself.
-			Used by colmesh.cast_ray
+			Used by Colmesh.cast_ray
 			Changes the global array CM_RAY if the ray intersects the shape
 		*/
 		//Algorithm created by TheSnidr
@@ -2736,7 +2736,7 @@ function colmesh_cube(_x, _y, _z, xsize, ysize, zsize) : ColmeshShape() construc
 	{
 		/*
 			A supplementary function, not meant to be used by itself.
-			Used by colmesh.getClosestPoint
+			Used by Colmesh.getClosestPoint
 		*/
 		static ret = array_create(3);
 		
@@ -3057,7 +3057,7 @@ function colmesh_block(M) : ColmeshShape() constructor
 	{
 		/*
 			A supplementary function, not meant to be used by itself.
-			Used by colmesh.cast_ray
+			Used by Colmesh.cast_ray
 			Changes the global array CM_RAY if the ray intersects the shape
 		*/
 		//Algorithm created by TheSnidr
@@ -3161,7 +3161,7 @@ function colmesh_block(M) : ColmeshShape() constructor
 	{
 		/*
 			A supplementary function, not meant to be used by itself.
-			Used by colmesh.getClosestPoint
+			Used by Colmesh.getClosestPoint
 		*/
 		static ret = array_create(3);
 		
@@ -3424,7 +3424,7 @@ function colmesh_dynamic(_shape, _colMesh, _M, _shapeInd) : ColmeshShape() const
 	static setMatrix = function(_M, _moving) 
 	{	
 		/*	
-			This script lets you make it seem like a colmesh instance has been transformed.
+			This script lets you make it seem like a Colmesh instance has been transformed.
 			What really happens though, is that the collision shape is transformed by the inverse of the given matrix, 
 			then it performs collision checks, and then it is transformed back. This is an efficient process.
 			This script creates a new matrix from the given matrix, making sure that all the vectors are perpendicular, 
@@ -3534,7 +3534,7 @@ function colmesh_dynamic(_shape, _colMesh, _M, _shapeInd) : ColmeshShape() const
 	{
 		/*
 			A supplementary function, not meant to be used by itself.
-			Used by colmesh.cast_ray
+			Used by Colmesh.cast_ray
 			Changes the global array CM_RAY if the ray intersects the shape
 		*/
 		//Make a copy of the ray, since the ray casting process might change this
@@ -3588,7 +3588,7 @@ function colmesh_dynamic(_shape, _colMesh, _M, _shapeInd) : ColmeshShape() const
 	{
 		/*
 			A supplementary function, not meant to be used by itself.
-			Used by colmesh.getClosestPoint
+			Used by Colmesh.getClosestPoint
 		*/
 		if (shape.type == eColMeshShape.Mesh)
 		{
@@ -3794,7 +3794,7 @@ function colmesh_dynamic(_shape, _colMesh, _M, _shapeInd) : ColmeshShape() const
 function colmesh_none() constructor
 {
 	/*
-		This is a failsafe object for when loading a ColMesh that contains dynamic objects
+		This is a failsafe object for when loading a Colmesh that contains dynamic objects
 	*/
 	type = eColMeshShape.None;
 	static capsule_collision = function(){return false;}

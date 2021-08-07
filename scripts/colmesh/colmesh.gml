@@ -1,15 +1,15 @@
 /*
-	ColMesh - 3D Collisions Made Easy!
+	Colmesh - 3D Collisions Made Easy!
 	TheSnidr 2021
 	
 	License
-	The ColMesh system is licensed under a CreativeCommons Attribution 4.0 International License.
+	The Colmesh system is licensed under a CreativeCommons Attribution 4.0 International License.
 		https://creativecommons.org/licenses/by/4.0/
 	This means you are free to use it in both personal and commercial projects, free of charge.
 	Appropriate credit is required.
 	
-	What is a ColMesh?
-	A ColMesh is a collection of 3D primitives and triangle meshes against which you can cast rays and do collision checks. It is basically an easy-to-use 3D collision system for GMS 2.3.
+	What is a Colmesh?
+	A Colmesh is a collection of 3D primitives and triangle meshes against which you can cast rays and do collision checks. It is basically an easy-to-use 3D collision system for GMS 2.3.
 	
 	What does it do?
 	It will push your player out of level geometry.
@@ -24,15 +24,15 @@
 		www.TheSnidr.com
 */
 
-#macro CM_DEBUG true	// Set to false if you don't want the ColMesh system to output debug messages
-#macro CM_MAX_RECURSION 8	// The maximum recursion depth. Applies when you place a ColMesh inside itself
+#macro CM_DEBUG true	// Set to false if you don't want the Colmesh system to output debug messages
+#macro CM_MAX_RECURSION 8	// The maximum recursion depth. Applies when you place a Colmesh inside itself
 #macro CM_FIRST_PASS_RADIUS 1.2 // The radius for the first pass when doing precise collision checking. 
 #macro CM_COL global.ColMeshCol // A global array that is used for returning a position after collision
 #macro CM_RAY global.ColMeshRay // A global array that is used for ray casting
 #macro CM_TRANSFORM global.ColMeshTransformQueue // The calling object's transformation queue
-#macro CM_TRANSFORM_MAP global.ColMeshTransformQueueMap // A map containing the transformation stacks of objects colliding with the colmesh
+#macro CM_TRANSFORM_MAP global.ColMeshTransformQueueMap // A map containing the transformation stacks of objects colliding with the Colmesh
 #macro CM_RECURSION global.ColMeshRecursionCounter // A global variable counting number of recursions
-#macro CM_CALLING_OBJECT global.ColMeshCallingObject // A global variable storing the instance that is currently using either colmesh.displace_capsule or colmesh.cast_ray
+#macro CM_CALLING_OBJECT global.ColMeshCallingObject // A global variable storing the instance that is currently using either Colmesh.displace_capsule or Colmesh.cast_ray
 global.ColMeshCallingObject = -1;
 global.ColMeshTransformQueue = -1;
 global.ColMeshRecursionCounter = 0;
@@ -42,7 +42,7 @@ global.ColMeshDebugShapes = array_create(eColMeshShape.Num, -1);
 global.ColMeshTransformQueueMap = ds_map_create();
 
 /// @function Colmesh()
-/// @description Creates an empty ColMesh
+/// @description Creates an empty Colmesh
 function Colmesh() : ColmeshShape() constructor {
 	sp_hash = -1; // used for a ds map
 	origin_x = 0;
@@ -52,13 +52,13 @@ function Colmesh() : ColmeshShape() constructor {
 	triangles = [];
 	region_size = 0;
 	temp_list  = ds_list_create();	// Temporary list used for collision
-	shape_list = ds_list_create();	// List containing all the shapes of the colmesh
+	shape_list = ds_list_create();	// List containing all the shapes of the Colmesh
 	minimum = array_create(3);
 	maximum = array_create(3);
 	priority = array_create(CM_MAX_RECURSION, -1); // An array containing a ds priority for each level of recursion
 	
 	/// @function subdivide(region_size)
-	/// @description Subdivide the colmesh into smaller regions, and save those regions to a ds_map. If the colmesh has already been subdivided, that is cleared first. A smaller region size will result in more regions, but fewer collision shapes per region.
+	/// @description Subdivide the Colmesh into smaller regions, and save those regions to a ds_map. If the Colmesh has already been subdivided, that is cleared first. A smaller region size will result in more regions, but fewer collision shapes per region.
 	static subdivide = function(region_size){
 		var debugTime = get_timer();
 		
@@ -77,7 +77,7 @@ function Colmesh() : ColmeshShape() constructor {
 		for (var i = 0; i < shape_num; i++){
 			add_shape_to_subdiv(shape_list[| i]);
 		}
-		colmesh_debug_message("colmesh.subdivide: Generated spatial hash with " + string(ds_map_size(sp_hash)) + " regions in " + string((get_timer() - debugTime) / 1000) + " milliseconds");
+		colmesh_debug_message("Colmesh.subdivide: Generated spatial hash with " + string(ds_map_size(sp_hash)) + " regions in " + string((get_timer() - debugTime) / 1000) + " milliseconds");
 	}
 	
 	/// @function add_shape_to_subdiv(shape, [regions], [precise])
@@ -150,7 +150,7 @@ function Colmesh() : ColmeshShape() constructor {
 	}
 	
 	/// @function clear_subdiv()
-	/// @description Clears any data structures related to the subdivision of the colmesh
+	/// @description Clears any data structures related to the subdivision of the Colmesh
 	static clear_subdiv = function(){
 		if (sp_hash >= 0){
 			var region = ds_map_find_first(sp_hash);
@@ -162,7 +162,7 @@ function Colmesh() : ColmeshShape() constructor {
 			sp_hash = -1;
 		}
 		
-		// Delete any queue lists that have been created in instances colliding with the colmesh
+		// Delete any queue lists that have been created in instances colliding with the Colmesh
 		var key = ds_map_find_first(CM_TRANSFORM_MAP);
 		while (!is_undefined(key)){
 			ds_queue_destroy(CM_TRANSFORM_MAP[? key]);
@@ -189,7 +189,7 @@ function Colmesh() : ColmeshShape() constructor {
 	}
 	
 	/// @function destroy()
-	/// @description Destroys the colmesh
+	/// @description Destroys the Colmesh
 	static destroy = function() {
 		clear();
 		ds_list_destroy(temp_list);
@@ -200,12 +200,12 @@ function Colmesh() : ColmeshShape() constructor {
 	}
 	
 	/// @function get_region(aabb[6])
-	/// @description Returns a list containing all the shapes in the regions the aabb of the given capsule touches. If the colmesh is not subdivided, this will return a list of all the shapes in the colmesh.
+	/// @description Returns a list containing all the shapes in the regions the aabb of the given capsule touches. If the Colmesh is not subdivided, this will return a list of all the shapes in the Colmesh.
 	static get_region = function(aabb)  {
 
 		var minx = aabb[0], miny = aabb[1], minz = aabb[2], maxx = aabb[3], maxy = aabb[4], maxz = aabb[5];
 		if (minx > maximum[0] or miny > maximum[1] or minz > maximum[2] or maxx < minimum[0] or maxy < minimum[1] or maxz < minimum[2]) {
-			// If the capsule is fully outside the aabb of the colmesh, return undefined
+			// If the capsule is fully outside the aabb of the Colmesh, return undefined
 			return undefined;
 		}
 		
@@ -256,7 +256,7 @@ function Colmesh() : ColmeshShape() constructor {
 	
 	/// @function add_shape(shape)
 	/// @param shape - Look in ColmeshShape for a list of all the shapes that can be added
-	/// @description Adds the given shape to the ColMesh
+	/// @description Adds the given shape to the Colmesh
 	static add_shape = function(shape){
 		// Typical usage:
 		// global.room_colmesh.add_shape(new colmesh_sphere(x, y, z, radius));
@@ -287,20 +287,20 @@ function Colmesh() : ColmeshShape() constructor {
 	}
 	
 	/// @function add_dynamic(shape, M)
-	/// @description Adds a dynamic shape to the ColMesh
+	/// @description Adds a dynamic shape to the Colmesh
 	static add_dynamic = function(shape, M){
 		// A dynamic is a special kind of shape container that can be moved, scaled and rotated dynamically.
 		// Look in ColmeshShape for a list of all the shapes that can be added.
 			
-		// You can also supply a whole different colmesh to a dynamic.
-		// Dynamics will not be saved when using colmesh.save or colmesh.write_to_buffer.
+		// You can also supply a whole different Colmesh to a dynamic.
+		// Dynamics will not be saved when using Colmesh.save or Colmesh.write_to_buffer.
 			
 		// Scaling must be uniform, ie. the same for all dimensions. Non-uniform scaling and shearing is automatically removed from the matrix.
 			
 		//Typical usage:
 		//	//Create event
 		//	M = matrix_build(x, y, z, xangle, yangle, zangle, size, size, size); //Create a matrix
-		//	dynamic = global.room_colmesh.add_dynamic(new colmesh_sphere(0, 0, 0, radius), M); //Add a dynamic sphere to the colmesh, and save it to a variable called "dynamic"
+		//	dynamic = global.room_colmesh.add_dynamic(new colmesh_sphere(0, 0, 0, radius), M); //Add a dynamic sphere to the Colmesh, and save it to a variable called "dynamic"
 				
 		//	//Step event
 		//	M = matrix_build(x, y, z, xangle, yangle, zangle, size, size, size); // Update the matrix
@@ -310,8 +310,8 @@ function Colmesh() : ColmeshShape() constructor {
 	
 	/// @function add_mesh(mesh, [matrix])
 	/// @param {obj} mesh - Should be either a path to an OBJ file, an array containing buffers, or a buffer containing vertex info
-	/// @description Adds a mesh to the colmesh
-	/// @returns void - This script does not return anything. The mesh as a whole does not have a handle. Triangles are added to the colmesh individually.
+	/// @description Adds a mesh to the Colmesh
+	/// @returns void - This script does not return anything. The mesh as a whole does not have a handle. Triangles are added to the Colmesh individually.
 	static add_mesh = function(mesh, M){
 		
 		// "mesh" should be in the following format:
@@ -320,7 +320,7 @@ function Colmesh() : ColmeshShape() constructor {
 		// UV coords, 2x4 bytes
 		// Colour, 4 bytes
 			
-		// Matrix is an optional argument in case you'd like to transform your mesh before adding it to the ColMesh
+		// Matrix is an optional argument in case you'd like to transform your mesh before adding it to the Colmesh
 		var load = false;
 		if (is_string(mesh)){
 			load = true;
@@ -371,7 +371,7 @@ function Colmesh() : ColmeshShape() constructor {
 	}
 	
 	/// @function add_triangle(triangle[9])
-	/// @description Add a single triangle to the colmesh
+	/// @description Add a single triangle to the Colmesh
 	static add_triangle = function(t){
 		var shape_num = ds_list_size(shape_list);
 		if (array_length(triangles) <= shape_num){
@@ -396,7 +396,7 @@ function Colmesh() : ColmeshShape() constructor {
 	}
 	
 	/// @function remove_shape(shape)
-	/// @description Removes the given shape from the ColMesh. Cannot remove a mesh that has been added with colmesh.add_mesh.
+	/// @description Removes the given shape from the Colmesh. Cannot remove a mesh that has been added with Colmesh.add_mesh.
 	static remove_shape = function(shape){
 		var ind = ds_list_find_index(shape_list, shape);
 		if (ind < 0){ return false; }
@@ -450,7 +450,7 @@ function Colmesh() : ColmeshShape() constructor {
 	/// @description Pushes a capsule out of a collision mesh
 	static region_displace_capsule = function(region, x, y, z, xup, yup, zup, radius, height, slope_angle, fast = true, execute_col_func = false) {	
 			
-		// Since dynamic shapes could potentially contain the colmesh itself, this script also needs a recursion counter to avoid infinite loops.
+		// Since dynamic shapes could potentially contain the Colmesh itself, this script also needs a recursion counter to avoid infinite loops.
 		// You can change the maximum number of recursive calls by changing the CM_MAX_RECURSION macro.
 
 		CM_COL[0] = x;
@@ -571,7 +571,7 @@ function Colmesh() : ColmeshShape() constructor {
 	}
 	
 	/// @function capsule_collision(x, y, z, xup, yup, zup, radius, height)
-	/// @description Returns whether or not the given capsule collides with the colmesh
+	/// @description Returns whether or not the given capsule collides with the Colmesh
 	static capsule_collision = function(x, y, z, xup, yup, zup, radius, height) {
 		var aabb = colmesh_capsule_get_aabb(x, y, z, xup, yup, zup, radius, height);
 		var region = get_region(aabb);
@@ -643,7 +643,7 @@ function Colmesh() : ColmeshShape() constructor {
 	}
 	
 	/// @function get_nearest_point(x, y, z)
-	/// @description Returns the nearest point on the colmesh to the given point. Only checks the region the point is in
+	/// @description Returns the nearest point on the Colmesh to the given point. Only checks the region the point is in
 	static get_nearest_point = function(x, y, z) {
 		var aabb = colmesh_capsule_get_aabb(x, y, z, 0, 0, 1, 0, 0);
 		return region_get_nearest_point(get_region(aabb), x, y, z);
@@ -686,11 +686,11 @@ function Colmesh() : ColmeshShape() constructor {
 	/// @returns {array} ray - An array with the following format: [x, y, z, nX, nY, nZ, success], returns false if no intersection
 	static cast_ray_ext = function(x1, y1, z1, x2, y2, z2, executeRayFunc) {
 		if (sp_hash < 0) {
-			// This ColMesh has not been subdivided. Cast a ray against all the shapes it contains
+			// This Colmesh has not been subdivided. Cast a ray against all the shapes it contains
 			return region_cast_ray(shape_list, x1, y1, z1, x2, y2, z2, executeRayFunc);
 		}
 		if (!constrain_ray(x1, y1, z1, x2, y2, z2)){
-			// The ray is fully outside the borders of this ColMesh
+			// The ray is fully outside the borders of this Colmesh
 			return false;
 		}
 		
@@ -771,7 +771,7 @@ function Colmesh() : ColmeshShape() constructor {
 	}
 	
 	/// @function region_cast_ray(region, x1, y1, z1, x2, y2, z2, [execute_ray_func])
-	/// @description This ray casting method is faster than the regular colmesh raycasting one, but it will only cast a ray onto the shapes in the current region, and is as such a "short-range" ray
+	/// @description This ray casting method is faster than the regular Colmesh raycasting one, but it will only cast a ray onto the shapes in the current region, and is as such a "short-range" ray
 	/// @returns {array/boolean} intersection - If there was an intersection, it returns an array with the following format: [x, y, z, nX, nY, nZ, success]. Returns false if there was no intersection.
 	static region_cast_ray = function(region, x1, y1, z1, x2, y2, z2, execute_ray_func = false) {
 		return colmesh_region_cast_ray(region, x1, y1, z1, x2, y2, z2, execute_ray_func);
@@ -795,7 +795,7 @@ function Colmesh() : ColmeshShape() constructor {
 	/// @function get_shape(shape)
 	static get_shape = function(shape){
 		// If the given shape is a real value, it must contain a triangle index. 
-		// It will then load that triangle into the colmesh, and return the index of the colmesh.
+		// It will then load that triangle into the Colmesh, and return the index of the Colmesh.
 		// If it does not contain a real, the given shape is returned.
 		if is_array(shape) {	
 			triangle = shape; 
@@ -805,7 +805,7 @@ function Colmesh() : ColmeshShape() constructor {
 	}
 	
 	/// @function constrain_ray(x1, y1, z1, x2, y2, z2)
-	/// @description This method will truncate the ray from (x1, y1, z1) to (x2, y2, z2) so that it fits inside the bounding box of the colmesh. Returns false if the ray is fully outside the bounding box
+	/// @description This method will truncate the ray from (x1, y1, z1) to (x2, y2, z2) so that it fits inside the bounding box of the Colmesh. Returns false if the ray is fully outside the bounding box
 	static constrain_ray = function(x1, y1, z1, x2, y2, z2) {
 
 		// Convert from world coordinates to local coordinates
@@ -940,10 +940,10 @@ function Colmesh() : ColmeshShape() constructor {
 	#region Saving and loading
 	
 	/// @function save(path)
-	/// @description Saves the colmesh to a file.
+	/// @description Saves the Colmesh to a file.
 	static save = function(path) {
 		// This function will not work in HTML5.
-		// For HTML5 you need to create a buffer, write the colmesh to it with colmesh.write_to_buffer, and save it with buffer_save_async.
+		// For HTML5 you need to create a buffer, write the Colmesh to it with Colmesh.write_to_buffer, and save it with buffer_save_async.
 		var buff = buffer_create(1, buffer_grow, 1);
 		write_to_buffer(buff);
 		buffer_resize(buff, buffer_tell(buff));
@@ -952,10 +952,10 @@ function Colmesh() : ColmeshShape() constructor {
 	}
 	
 	/// @function load(path)
-	/// @description Loads the colmesh from a file.
+	/// @description Loads the Colmesh from a file.
 	static load = function(path) {
 		// This function will not work in HTML5.
-		// For HTML5 you need to load a buffer asynchronously, and read from that using colmesh.read_from_buffer.
+		// For HTML5 you need to load a buffer asynchronously, and read from that using Colmesh.read_from_buffer.
 		var buff = buffer_load(path);
 		if (buff < 0) {
 			colmesh_debug_message("Colmesh.load: Could not find file " + string(path));
@@ -1083,11 +1083,11 @@ function Colmesh() : ColmeshShape() constructor {
 
 		// Write to savebuff
 		var buff_size = buffer_tell(temp_buff);
-		buffer_write(saveBuff, buffer_string, "ColMesh v3");
+		buffer_write(saveBuff, buffer_string, "Colmesh v3");
 		buffer_write(saveBuff, buffer_u64, buff_size);
 		buffer_copy(temp_buff, 0, buff_size, saveBuff, buffer_tell(saveBuff));
 		buffer_seek(saveBuff, buffer_seek_relative, buff_size);
-		colmesh_debug_message("Script Colmesh.write_to_buffer: Wrote colmesh to buffer in " + string(current_time - debugTime) + " milliseconds");
+		colmesh_debug_message("Script Colmesh.write_to_buffer: Wrote Colmesh to buffer in " + string(current_time - debugTime) + " milliseconds");
 
 		// Clean up
 		buffer_delete(temp_buff);
@@ -1099,7 +1099,7 @@ function Colmesh() : ColmeshShape() constructor {
 		var debugTime = current_time;
 		clear();
 		
-		// Make sure this is a colmesh
+		// Make sure this is a Colmesh
 		var version = 3;
 		var header_text = buffer_read(load_buff, buffer_string);
 		var buff_size = buffer_read(load_buff, buffer_u64);
@@ -1108,23 +1108,23 @@ function Colmesh() : ColmeshShape() constructor {
 		buffer_seek(load_buff, buffer_seek_relative, buff_size);
 		
 		switch header_text {
-			case "ColMesh v3":
+			case "Colmesh v3":
 				version = 3;
 				break;
-			case "ColMesh v2":
+			case "Colmesh v2":
 				version = 2;
 				region_size = buffer_read(temp_buff, buffer_f32);
 				buffer_seek(temp_buff, buffer_seek_relative, 36);
 				subdivide(region_size);
 				break;
-			case "ColMesh":
+			case "Colmesh":
 				version = 1;
 				region_size = buffer_read(temp_buff, buffer_f32);
 				buffer_seek(temp_buff, buffer_seek_relative, 54);
 				subdivide(region_size);
 				break;
 			default:
-				colmesh_debug_message("ERROR in script Colmesh.read_from_buffer: Could not find colmesh in buffer.");
+				colmesh_debug_message("ERROR in script Colmesh.read_from_buffer: Could not find Colmesh in buffer.");
 				return false;
 		}
 		
@@ -1244,7 +1244,7 @@ function Colmesh() : ColmeshShape() constructor {
 		}
 
 		// Clean up and return result
-		colmesh_debug_message("Script colmesh.read_from_buffer: Read colmesh from buffer in " + string(current_time - debugTime) + " milliseconds");
+		colmesh_debug_message("Script Colmesh.read_from_buffer: Read Colmesh from buffer in " + string(current_time - debugTime) + " milliseconds");
 		buffer_delete(temp_buff);
 		return true;
 	}

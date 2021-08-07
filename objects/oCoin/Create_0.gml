@@ -12,18 +12,18 @@ radius = 10;
 z = ray[2] + radius;
 zstart = z;
 
-//Create a collision function for the coin, telling it to destroy itself and remove its shape from the level ColMesh
+//Create a collision function for the coin, telling it to destroy itself and remove its shape from the level Colmesh
 col_func = function()
 {
 	global.coins ++;					 //Increment the global variable "coins"
 	instance_destroy();					 //This will destroy the current instance of oCoin
-	global.room_colmesh.remove_shape(shape);	 //"shape" is oCoin's shape variable. Remove it from the ColMesh
+	global.room_colmesh.remove_shape(shape);	 //"shape" is oCoin's shape variable. Remove it from the Colmesh
 	audio_play_sound(sndCoin, 0, false); //Play coin pickup sound
 }
 
 //Create a spherical collision shape for the coin
 //Give the coin the collision function we created. 
-//The collision function will be executed if the player collides with the coin, using colmesh.displace_capsule.
+//The collision function will be executed if the player collides with the coin, using Colmesh.displace_capsule.
 shape = global.room_colmesh.add_trigger(new colmesh_sphere(x, y, z, radius), col_func);
 
 

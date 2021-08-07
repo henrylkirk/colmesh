@@ -180,7 +180,7 @@ function colmesh_load_obj_to_buffer(filename)
 function colmesh_convert_smf(model)
 {
 	//This script was requested by somebody on the forums.
-	//Creates a ColMesh-compatible buffer from an SMF model.
+	//Creates a Colmesh-compatible buffer from an SMF model.
 	//Remember to destroy the buffer after you're done using it!
 	var mBuff = model.mBuff;
 	var num = array_length(mBuff);
@@ -188,7 +188,7 @@ function colmesh_convert_smf(model)
 	var newBuff = buffer_create(1, buffer_grow, 1);
 	var size = 0;
 	
-	//Convert to ColMesh-compatible format
+	//Convert to Colmesh-compatible format
 	var num = array_length(mBuff);
 	var SMFbytesPerVert = 44;
 	var targetBytesPerVert = 36;
@@ -295,7 +295,7 @@ function colmesh__triangle_cast_ray(triangle, ox, oy, oz)
 {
 	/*
 		A supplementary function, not meant to be used by itself.
-		Used by colmesh.cast_ray
+		Used by Colmesh.cast_ray
 	*/
 	gml_pragma("forceinline");
 	var dx = CM_RAY[0] - ox;
@@ -494,7 +494,7 @@ function colmesh__triangle_displace_sphere(triangle, x, y, z, xup, yup, zup, hei
 
 function colmesh_region_cast_ray(region, x1, y1, z1, x2, y2, z2, _executeRayFunc)
 {
-	//This ray casting script is faster than the regular colmesh raycasting script.
+	//This ray casting script is faster than the regular Colmesh raycasting script.
 	//However, it will only cast a ray onto the shapes in the current region, and is as such a "short-range" ray.
 	//If there was an intersection, it returns an array with the following format:
 	//	[x, y, z, nX, nY, nZ, success]

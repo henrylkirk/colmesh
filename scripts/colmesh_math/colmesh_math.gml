@@ -1,5 +1,5 @@
 /*
-	Some math scripts that are used by the ColMesh system.
+	Some math scripts that are used by the Colmesh system.
 */
 
 /// @function colmesh_vector_magnitude(x, y, z)

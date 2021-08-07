@@ -1,4 +1,4 @@
-/// @description Setup colmesh system
+/// @description Setup Colmesh system
 
 if variable_global_exists("global.room_colmesh") {
 	exit;

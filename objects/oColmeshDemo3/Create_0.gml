@@ -1,7 +1,7 @@
 /// @description
 event_inherited();
 
-global.demo_text = "You can combine triangle meshes and primitives into one ColMesh."
+global.demo_text = "You can combine triangle meshes and primitives into one Colmesh."
 	+ "\nUse this to your advantage! In this demo, for example, the red shapes are"
 	+ "\npart of a triangle mesh, while the central sphere is a primitive"
 	+ "\nCollision checking against a primitive is much faster than against a triangle mesh!";
@@ -18,9 +18,9 @@ buffer_delete(mbuffLevel);
 	oColmeshSystem controls the global.room_colmesh, and makes sure it's cleared.
 */
 
-// First check if a cached ColMesh exists
+// First check if a cached Colmesh exists
 if (!global.room_colmesh.load("Demo3Cache.cm")) {
-	//If a cache does not exist, generate a colmesh from an OBJ file, subdivide it, and save a cache
+	//If a cache does not exist, generate a Colmesh from an OBJ file, subdivide it, and save a cache
 	global.room_colmesh.add_mesh("CoronaColmesh.obj"); //Notice how I supply a path to an OBJ file. I could have instead used the mbuffLevel that I created earlier in this event
 	global.room_colmesh.add_shape(new colmesh_sphere(0, 0, 0, 400));
 	global.room_colmesh.subdivide(100);

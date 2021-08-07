@@ -1,7 +1,7 @@
 /// @description
 event_inherited();
 
-global.demo_text = "You can add the following primitives to a ColMesh:"
+global.demo_text = "You can add the following primitives to a Colmesh:"
 	+ "\nSphere, axis-aligned cube, block, capsule, cylinder, torus, with more to come!"
 	+ "\nThe player also seems to be casting a ray from his nose, that stops whenever it hits something..."
 	+ "\nRay casting is exact against all primitives except the torus and disk, which use an approximation";
@@ -14,8 +14,8 @@ global.demo_text = "You can add the following primitives to a ColMesh:"
 */
 
 //Create collision mesh from level model
-var region_size = 120; //<-- You need to define the size of the subdivision regions. Play around with it and see what value fits your model best. This is a list that stores all the triangles in a region in space. A larger value makes colmesh generation faster, but slows down collision detection. A too low value increases memory usage and generation time.
-global.room_colmesh.subdivide(region_size); //You can subdivide your colmesh and still add more objects to it! Any objects added after subdividing will still be added in the same way as if you had added them before subdividing.
+var region_size = 120; //<-- You need to define the size of the subdivision regions. Play around with it and see what value fits your model best. This is a list that stores all the triangles in a region in space. A larger value makes Colmesh generation faster, but slows down collision detection. A too low value increases memory usage and generation time.
+global.room_colmesh.subdivide(region_size); //You can subdivide your Colmesh and still add more objects to it! Any objects added after subdividing will still be added in the same way as if you had added them before subdividing.
 
 //Create base platform
 block = global.room_colmesh.add_shape(new colmesh_block(matrix_build(room_width / 2, room_height / 2, -50, 0, 0, 0, room_width / 2, room_height / 2, 50)));

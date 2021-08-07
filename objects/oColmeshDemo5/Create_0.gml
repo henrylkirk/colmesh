@@ -1,8 +1,8 @@
 /// @description
 event_inherited();
 
-global.demo_text = "This demo shows how you can create a ColMesh from an OBJ file!"
-	+ "\nIt also shows how you can push the player out of the ColMesh,"
+global.demo_text = "This demo shows how you can create a Colmesh from an OBJ file!"
+	+ "\nIt also shows how you can push the player out of the Colmesh,"
 	+ "\nand how you can use the collision system to collect coins";
 	
 //Load the level model to a vertex buffer
@@ -31,9 +31,9 @@ buffer_delete(mbuffLevel);
 var hw = room_width * 0.5;
 var hh = room_height * 0.5;
 
-//First check if a cached ColMesh exists
+//First check if a cached Colmesh exists
 //if (!global.room_colmesh.load("Demo5Cache.cm")){
-	// No cache found, add flat ground to colmesh
+	// No cache found, add flat ground to Colmesh
 	global.room_colmesh.add_shape(
 		new colmesh_block(colmesh_matrix_build(hw, hh, -16, 0, 0, 0, hw, hh, 16))
 	);
@@ -48,7 +48,7 @@ house_mesh = global.room_colmesh.add_mesh(
 	colmesh_matrix_build(house_x, house_y, house_z, 0, 0, 0, 10, 10, 10)
 );
 
-// Add tile shapes to colmesh
+// Add tile shapes to Colmesh
 tile_manager = new TileManager(TILE_SIZE);
 tile_manager.tile_layer_to_colmesh(global.room_colmesh, "tiles_collision");
 
