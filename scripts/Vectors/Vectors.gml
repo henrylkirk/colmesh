@@ -1,6 +1,6 @@
 /// @function Vector2
-/// @param {real} [x]
-/// @param {real} [y]
+/// @param {real} [x=0]
+/// @param {real} [y=0]
 /// @description Create a 2 dimensional vector
 function Vector2(x = 0, y = 0) constructor {
 	self.x = x;
@@ -192,23 +192,23 @@ function Vector2(x = 0, y = 0) constructor {
 	/// @param {real} [y]
 	/// @returns Direction of the given Vector2(s)
 	static direction_to = function(){
-		var _x, _y;
+		var ox, oy;
 		if argument_count == 2 {
-			_x = argument[0];
-			_y = argument[1];
+			ox = argument[0];
+			oy = argument[1];
 		} else if instanceof(argument[0]) == "Vector2" {
-			_x = argument[0].x;
-			_y = argument[0].y;
+			ox = argument[0].x;
+			oy = argument[0].y;
 		} else {
-			throw "Invalid argument(s) provided";
+			throw "ERROR Vector2.direction_to: Invalid argument(s) provided";
 		}
-		return point_direction(x, y, _x, _y);
+		return point_direction(x, y, ox, oy);
 	}
 
-	/// @function angle
-	/// @description Get the direction of this Vector2 in degrees
+	/// @function get_angle
+	/// @description Get the direction/angle of this Vector2 in degrees
 	/// @returns {real} angle
-	static angle = function(){
+	static get_angle = function(){
 		return point_direction(0, 0, x, y);
 	}
 
@@ -296,9 +296,9 @@ function Vector2(x = 0, y = 0) constructor {
 }
 
 /// @function Vector3
-/// @param {real} [x]
-/// @param {real} [y]
-/// @param {real} [z]
+/// @param {real} [x=0]
+/// @param {real} [y=0]
+/// @param {real} [z=0]
 /// @description Create a 3 dimensional vector (inherits from Vector2)
 function Vector3(x = 0, y = 0, z = 0) : Vector2(x, y) constructor {
 	self.z = z;
@@ -316,7 +316,7 @@ function Vector3(x = 0, y = 0, z = 0) : Vector2(x, y) constructor {
 			y += o;
 			z += o;
 		} else {
-			throw "Invalid argument provided";
+			throw "ERROR Vector3.add: Invalid argument(s) provided";
 		}
 		return self;
 	}
@@ -341,13 +341,14 @@ function Vector3(x = 0, y = 0, z = 0) : Vector2(x, y) constructor {
 			y -= o;
 			z -= o;
 		} else {
-			throw "Invalid argument provided";
+			throw "ERROR Vector3.subtract: Invalid argument(s) provided";
 		}
 		return self;
 	}
 
 	/// @function multiply(other)
 	/// @description Multiply two Vector3 structs or by a real number
+	/// @returns {Vector3} self
 	static multiply = function(o){
 		if instanceof(o) == "Vector3" {
 			x *= o.x;
@@ -358,18 +359,20 @@ function Vector3(x = 0, y = 0, z = 0) : Vector2(x, y) constructor {
 			y *= o;
 			z *= o;
 		} else {
-			throw "Invalid argument provided";
+			throw "ERROR Vector3.multiply: Invalid argument(s) provided";
 		}
+		return self;
 	}
 
 	/// @function normalize()
 	/// @description Normalize a scalar to Vector3
+	/// @returns {Vector3} self
     static normalize = function() {
         if ((x != 0) or (y != 0) or (z != 0)) {
-            var _factor = 1/sqrt(sqr(x) + sqr(y) + sqr(z));
-            x *= _factor;
-            y *= _factor;
-			z *= _factor;
+            var factor = 1/sqrt(sqr(x) + sqr(y) + sqr(z));
+            x *= factor;
+            y *= factor;
+			z *= factor;
         }
 		return self;
     }
@@ -427,7 +430,7 @@ function Vector3(x = 0, y = 0, z = 0) : Vector2(x, y) constructor {
 	/// @function cross(other)
 	/// @param {Vector3} other
 	///	@description The sign of the 3D cross product tells you whether specific vector is on the left or right side of the first one (Direction of first one being front)
-	/// @returns {Vector3} cross_product - The cross product
+	/// @returns {Vector3} cross_product - The cross product with the provided Vector3
 	static cross = function(o){
 		return new Vector3(
 			y * o.z - z * o.y,
