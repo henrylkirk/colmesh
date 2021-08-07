@@ -11,9 +11,28 @@ function ColmeshCollider(id, height = 16, radius = height * 0.5, fast = true) co
 	static slope_angle = 40; // the angle of slopes it can traverse
 	self.id = id; // store owner instance id
 	
-	/// @function step
-	static step = function(){
-		with id {			
+	/// @function move(vx, vy, vz)
+	static move = function(vx, vy, vz){
+		with id {
+			
+			// Apply friction
+			var fric = is_on_ground ? friction_ground : friction_air;
+			velocity.x = ((x - prev_position.x) * fric) + vx;
+			velocity.y = ((y - prev_position.y) * fric) + vy;
+			velocity.z = ((z - prev_position.z) * (0.99) - mass) + vz;
+
+			velocity.x = clamp(velocity.x, -velocity_max.x, velocity_max.x);
+			velocity.y = clamp(velocity.y, -velocity_max.y, velocity_max.y);
+			velocity.z = clamp(velocity.z, -velocity_max.z, velocity_max.z);
+			
+			// Save previous position
+			prev_position.set(x, y, z);
+			
+			// Apply velocity to position
+			x += velocity.x;
+			y += velocity.y;
+			z += velocity.z;
+			
 			if !other.fast {
 				// Cast a short-range ray from the previous position to the current position to avoid going through geometry
 				// Only cast ray if there's a risk that we've gone through geometry
