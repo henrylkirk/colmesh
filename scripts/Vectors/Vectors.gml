@@ -1,22 +1,26 @@
 /// @function Vector2
-/// @param {real} x
-/// @param {real} y
+/// @param {real} [x]
+/// @param {real} [y]
 /// @description Create a 2 dimensional vector
-function Vector2(_x, _y) constructor {
-	x = _x;
-	y = _y;
+function Vector2(x = 0, y = 0) constructor {
+	self.x = x;
+	self.y = y;
 
 	/// @function add
 	/// @description Add a Vector2 or real number to this Vector2
 	/// @param {Vector2/real} _other
+	/// @param {real} [add_y] - If two real arguments are provided, add each component
 	/// @returns {Vector2} self
 	static add = function(_other){
 		if instanceof(_other) == "Vector2" {
 		    x += _other.x;
 		    y += _other.y;
-		} else if is_real(_other) {
-			x += _other;
-		    y += _other;
+		} else if argument_count == 2 {
+			x += argument[0];
+			y += argument[1];
+		} else if is_real(argument[0]) {
+			x += argument[0];
+			y += argument[0];
 		} else {
 			throw "Invalid argument provided";
 		}
@@ -116,8 +120,7 @@ function Vector2(_x, _y) constructor {
 	/// @returns {Vector2} self
     static normalize = function() {
         if ((x != 0) or (y != 0)) {
-            var _factor = 1/sqrt(sqr(x) + sqr(y));
-			multiply(_factor);
+			multiply(1/sqrt(sqr(x) + sqr(y)));
         }
 		return self;
     }
@@ -250,15 +253,28 @@ function Vector2(_x, _y) constructor {
 	static dot = function(_other) {
 		return x * _other.y - y * _other.x;
 	}
+	
+	/// @function to_array
+	static to_array = function(){
+		return [x, y];
+	}
+	
+	/// @function clamp_value
+	/// @param {real} value
+	/// @description Use this vector as a range to clamp a value between
+	static clamp_value = function(value){
+		return clamp(value, x, y);
+	}
+
 }
 
 /// @function Vector3
+/// @param {real} [x]
+/// @param {real} [y]
+/// @param {real} [z]
 /// @description Create a 3 dimensional vector (inherits from Vector2)
-/// @param {real} x
-/// @param {real} y
-/// @param {real} z
-function Vector3(_x, _y, _z) : Vector2(_x, _y) constructor {
-	z = _z;
+function Vector3(x = 0, y = 0, z = 0) : Vector2(x, y) constructor {
+	self.z = z;
 
 	/// @function add
 	/// @param {Vector3/real} other
@@ -319,7 +335,7 @@ function Vector3(_x, _y, _z) : Vector2(_x, _y) constructor {
 		}
 	}
 
-	/// @function normalize
+	/// @function normalize()
 	/// @description Normalize a scalar to Vector3
     static normalize = function() {
         if ((x != 0) or (y != 0) or (z != 0)) {
@@ -382,6 +398,11 @@ function Vector3(_x, _y, _z) : Vector2(_x, _y) constructor {
 			z * _other.x - x * _other.z,
 			x * _other.y - y * _other.x
 		);
+	}
+	
+	/// @function to_array
+	static to_array = function(){
+		return [x, y, z];
 	}
 
 }

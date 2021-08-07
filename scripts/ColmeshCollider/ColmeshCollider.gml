@@ -13,7 +13,7 @@ function ColmeshCollider(id, height = 16, radius = height * 0.5, fast = true) co
 	
 	/// @function step
 	static step = function(){
-		with id {
+		with id {			
 			if !other.fast {
 				// Cast a short-range ray from the previous position to the current position to avoid going through geometry
 				// Only cast ray if there's a risk that we've gone through geometry
@@ -47,6 +47,7 @@ function ColmeshCollider(id, height = 16, radius = height * 0.5, fast = true) co
 			//if is_struct(ray) {
 			//	z_ground = ray.z;
 			//}
+			
 		}
 	}
 	

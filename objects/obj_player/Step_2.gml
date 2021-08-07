@@ -10,9 +10,9 @@
 //    velocity.multiply(friction_air, friction_air, 1);
 //}
 
-// Apply velocity to position
-x += velocity.x;
-y += velocity.y;
+//// Apply velocity to position
+//x += velocity.x;
+//y += velocity.y;
 //z += velocity.z;
 
 // Move collider

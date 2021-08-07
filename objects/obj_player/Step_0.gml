@@ -1,15 +1,21 @@
+// Apply friction
 var fric = is_on_ground ? friction_ground : friction_air;
 velocity.x = (x - prev_position.x) * fric;
 velocity.y = (y - prev_position.y) * fric;
-velocity.z = (z - prev_position.z) * (0.99);
+velocity.z = (z - prev_position.z) * (0.99) - mass;
 
+velocity.x = clamp(velocity.x, -velocity_max.x, velocity_max.x);
+velocity.y = clamp(velocity.y, -velocity_max.y, velocity_max.y);
+velocity.z = clamp(velocity.z, -velocity_max.z, velocity_max.z);
+
+// Jump
+jump = keyboard_check_pressed(vk_space);
+velocity.z += (jump * is_on_ground * 15); // apply gravity and jumping
+
+// Save previous position
 prev_position.set(x, y, z);
 
-jump = keyboard_check_pressed(vk_space);
-//z += velocity.z + (jump * is_on_ground * 15) - 1; // Apply gravity in z-direction
-z += velocity.z + (jump * is_on_ground * 15) - 1; // Apply gravity in z-direction
-
-// Movement
+// XY movement
 var v = keyboard_check(ord("S")) - keyboard_check(ord("W"));
 var h = keyboard_check(ord("D")) - keyboard_check(ord("A"));
 if (v != 0 and h != 0){	// If walking diagonally, divide the input vector by its own length
@@ -28,6 +34,12 @@ if (z < -400) {
 	prev_position.set(x, y, z);
 }
 
+// Apply velocity to position
+x += velocity.x;
+y += velocity.y;
+z += velocity.z;
+
+// Update collider
 collider.step();
 
 // Set demo text

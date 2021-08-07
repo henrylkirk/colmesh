@@ -25,10 +25,9 @@
   ],
   "properties": [
     {"varType":0,"value":"0","rangeEnabled":false,"rangeMin":0.0,"rangeMax":10.0,"listItems":[],"multiselect":false,"filters":[],"resourceVersion":"1.0","name":"z","tags":[],"resourceType":"GMObjectProperty",},
-    {"varType":0,"value":"4","rangeEnabled":false,"rangeMin":0.0,"rangeMax":10.0,"listItems":[],"multiselect":false,"filters":[],"resourceVersion":"1.0","name":"mass","tags":[],"resourceType":"GMObjectProperty",},
-    {"varType":0,"value":"0.7","rangeEnabled":false,"rangeMin":0.0,"rangeMax":10.0,"listItems":[],"multiselect":false,"filters":[],"resourceVersion":"1.0","name":"friction_air","tags":[],"resourceType":"GMObjectProperty",},
-    {"varType":0,"value":"0.45","rangeEnabled":false,"rangeMin":0.0,"rangeMax":10.0,"listItems":[],"multiselect":false,"filters":[],"resourceVersion":"1.0","name":"friction_ground","tags":[],"resourceType":"GMObjectProperty",},
-    {"varType":0,"value":"1","rangeEnabled":false,"rangeMin":0.0,"rangeMax":10.0,"listItems":[],"multiselect":false,"filters":[],"resourceVersion":"1.0","name":"grav","tags":[],"resourceType":"GMObjectProperty",},
+    {"varType":0,"value":"1","rangeEnabled":true,"rangeMin":0.0,"rangeMax":1.0,"listItems":[],"multiselect":false,"filters":[],"resourceVersion":"1.0","name":"mass","tags":[],"resourceType":"GMObjectProperty",},
+    {"varType":0,"value":"0.7","rangeEnabled":true,"rangeMin":0.0,"rangeMax":1.0,"listItems":[],"multiselect":false,"filters":[],"resourceVersion":"1.0","name":"friction_air","tags":[],"resourceType":"GMObjectProperty",},
+    {"varType":0,"value":"0.45","rangeEnabled":true,"rangeMin":0.0,"rangeMax":1.0,"listItems":[],"multiselect":false,"filters":[],"resourceVersion":"1.0","name":"friction_ground","tags":[],"resourceType":"GMObjectProperty",},
     {"varType":3,"value":"0","rangeEnabled":false,"rangeMin":0.0,"rangeMax":10.0,"listItems":[],"multiselect":false,"filters":[],"resourceVersion":"1.0","name":"enable_z_bounce","tags":[],"resourceType":"GMObjectProperty",},
   ],
   "overriddenProperties": [],
