@@ -7,44 +7,50 @@ function Vector2(x = 0, y = 0) constructor {
 	self.y = y;
 
 	/// @function add
-	/// @description Add a Vector2 or real number to this Vector2
-	/// @param {Vector2/real} _other
-	/// @param {real} [add_y] - If two real arguments are provided, add each component
+	/// @param {Vector2/real} x/vector - Either a real number or a vector to add
+	/// @param {real} [y] - If two real arguments are provided, add each component
+	/// @description Add a Vector2 or one or two real numbers to this Vector2
 	/// @returns {Vector2} self
-	static add = function(_other){
-		if instanceof(_other) == "Vector2" {
-		    x += _other.x;
-		    y += _other.y;
+	static add = function(o){
+		if instanceof(o) == "Vector2" {
+		    x += o.x;
+		    y += o.y;
 		} else if argument_count == 2 {
 			x += argument[0];
 			y += argument[1];
-		} else if is_real(argument[0]) {
-			x += argument[0];
-			y += argument[0];
+		} else if is_real(o) {
+			x += o;
+			y += o;
 		} else {
-			throw "Invalid argument provided";
+			throw "ERROR Vector2.add: Invalid argument(s) provided";
 		}
 		return self;
 	}
 
 	/// @function subtract
-	/// @description Subtract another Vector2 or real number from self
-	/// @param {Vector2/real} _other
+	/// @param {Vector2/real} x/vector
+	/// @param {real} [y] - If two real arguments are provided, subtract each component
+	/// @description Add a Vector2 or one or two real numbers to this Vector2
 	/// @returns {Vector2} self
-	static subtract = function(_other){
-		if instanceof(_other) == "Vector2" {
-		    x -= _other.x;
-		    y -= _other.y;
-		} else if is_real(_other) {
-			x -= _other;
-			y -= _other;
+	static subtract = function(o){
+		if instanceof(o) == "Vector2" {
+		    x -= o.x;
+		    y -= o.y;
+		} else if argument_count == 2 {
+			x -= argument[0];
+			y -= argument[1];
+		} else if is_real(o) {
+			x -= o;
+			y -= o;
 		} else {
-			throw "Invalid argument provided";
+			throw "ERROR Vector2.subtract: Invalid argument(s) provided";
 		}
 		return self;
 	}
 
 	/// @function set
+	/// @param {real/Vector2} [x/other] - Either another Vector2 to copy from, or a real x value
+	/// @param {real} [y] - Must be provided if x is provided for first argument
 	/// @description Set the Vector's values
 	/// @returns {Vector2} self
 	static set = function(){
@@ -55,12 +61,12 @@ function Vector2(x = 0, y = 0) constructor {
 			x = argument[0];
 			y = argument[1];
 		} else {
-			throw "Invalid argument provided";
+			throw "ERROR Vector2.set: Invalid argument(s) provided";
 		}
 		return self;
 	}
 
-	/// @function copy
+	/// @function copy()
 	/// @description Create a new vector with the same values as this one
 	/// @returns {Vector2} new_vector
 	static copy = function(){
@@ -68,79 +74,96 @@ function Vector2(x = 0, y = 0) constructor {
 	}
 
 	/// @function equals
-	/// @param {Vector2} other
+	/// @param {real/Vector2} x/vector
+	/// @param {real} [y]
 	/// @returns {boolean} equals
-	/// @description Check if two Vector2's have the same values
-	static equals = function(_other) {
-		return (x == _other.x and y == _other.y);
+	/// @description Check if two Vector2's have the same values, or whether this vector is equal to two real numbers
+	static equals = function() {
+		if argument_count == 1 { // A vector - check if each component is equal
+			return (x == argument[0].x) and (y == argument[0].y);
+		} else if is_real(argument[0]) and is_real(argument[1]) { // Two real numbers
+			return (x == argument[0]) and (y == argument[1]);
+		} else {
+			throw "ERROR Vector2.equals: Invalid argument(s) provided";
+		}
 	}
 
 	/// @function divide
-	/// @description Divide two Vector2 structs or multiply by a real
-	/// @param {Vector2/real} other
+	/// @param {Vector2/real} x/other_vector
+	/// @param {real} [y]
+	/// @description Divide two Vector2 structs or divide by one or two real numbers
 	/// @returns {Vector2} self
-	static divide = function(_other){
-		if instanceof(_other) == "Vector2" {
-			x /= _other.x;
-			y /= _other.y;
-		} else if is_real(_other) {
-			x /= _other;
-			y /= _other;
+	static divide = function(o){
+		if instanceof(o) == "Vector2" {
+			x /= o.x;
+			y /= o.y;
+		} else if argument_count == 2 {
+			x /= argument[0];
+			y /= argument[1];
+		} else if is_real(o) {
+			x /= o;
+			y /= o;
 		} else {
-			throw "Invalid argument provided";
+			throw "ERROR Vector2.divide: Invalid argument(s) provided";
 		}
 		return self;
 	}
 
 	/// @function multiply
-	/// @description Multiply two Vector2 structs
+	/// @param {Vector2/real} x/other_vector
+	/// @param {real} [y]
+	/// @description Multiply two Vector2 structs or multiply by one or two real numbers
 	/// @returns {Vector2} self
-	static multiply = function(_other){
-		if instanceof(_other) == "Vector2" {
-		    x *= _other.x;
-		    y *= _other.y;
-		} else if is_real(_other) {
-			x *= _other;
-			y *= _other;
+	static multiply = function(o){
+		if instanceof(o) == "Vector2" {
+		    x *= o.x;
+		    y *= o.y;
+		} else if argument_count == 2 {
+			x *= argument[0];
+			y *= argument[1];
+		} else if is_real(o) {
+			x *= o;
+			y *= o;
 		} else {
-			throw "Invalid argument provided";
+			throw "ERROR Vector2.multiply: Invalid argument(s) provided";
 		}
 		return self;
 	}
 
-	/// @function length
+	/// @function length()
 	/// @description Get the length of a Vector2
 	/// @returns {real} length
 	static length = function(){
-		return point_distance(0,0,x,y);
+		return point_distance(0, 0, x, y);
 	}
 
-	/// @function normalize
+	/// @function normalize()
 	/// @description Normalize a scalar
 	/// @returns {Vector2} self
     static normalize = function() {
         if ((x != 0) or (y != 0)) {
-			multiply(1/sqrt(sqr(x) + sqr(y)));
+			multiply(1 / sqrt(sqr(x) + sqr(y)));
         }
 		return self;
     }
 
 	/// @function set_magnitude
+	/// @param {real} scalar
 	/// @description Set the Vector's magnitude
 	/// @returns {Vector2} self
-	static set_magnitude = function(_scalar) {
+	static set_magnitude = function(scal) {
         normalize();
-        multiply(_scalar);
+        multiply(scal);
 		return self;
     }
 
 	/// @function limit
-	/// @description Returns the vector with a maximum length by limiting its length
 	/// @param {real} limit
+	/// @description Returns the vector with a maximum length by limiting its length
 	/// @returns {Vector2} self
-    static limit = function(_limit) {
-		if(length() > _limit) {
-			set_magnitude(_limit);
+    static limit = function(lim) {
+		if(length() > lim) {
+			set_magnitude(lim);
 		}
 		return self;
     }
@@ -148,20 +171,20 @@ function Vector2(x = 0, y = 0) constructor {
 	/// @function distance_to
 	/// @param {Vector2/real} other/x
 	/// @param {real} [y]
-	/// @description Get the distance between two Vector2s
-	/// @returns The distance between self and other Vector
+	/// @description Get the distance between two Vectors
+	/// @returns {real} distance - The distance between self and other
 	static distance_to = function(){
-		var _x, _y;
+		var ox, oy;
 		if argument_count == 2 {
-			_x = argument[0];
-			_y = argument[1];
+			ox = argument[0];
+			oy = argument[1];
 		} else if instanceof(argument[0]) == "Vector2" {
-			_x = argument[0].x;
-			_y = argument[0].y;
+			ox = argument[0].x;
+			oy = argument[0].y;
 		} else {
 			throw "Invalid argument(s) provided";
 		}
-		return point_distance(x, y, _x, _y);
+		return point_distance(x, y, ox, oy);
 	}
 
 	/// @function direction_to
@@ -190,51 +213,43 @@ function Vector2(x = 0, y = 0) constructor {
 	}
 
 	/// @function rotate_add
-	/// @param {real} angle - The angle in degrees to add
+	/// @param {real} rot_angle - The angle in degrees to add
 	/// @param {real} [origin_x=0]
 	/// @param {real} [origin_y=0]
 	/// @returns {Vector2} self
 	/// @description Rotate a vector around a point or the origin
-	static rotate_add = function(_angle, _origin_x, _origin_y){
-		_origin_x = is_real(_origin_x) ? _origin_x : 0;
-		_origin_y = is_real(_origin_y) ? _origin_y : 0;
-
-		var theta = point_direction(_origin_x, _origin_y, x, y);
-
-		return rotate_set(theta+_angle, _origin_x, _origin_y);
+	static rotate_add = function(rot_angle, origin_x = 0, origin_y = 0){
+		var theta = point_direction(origin_x, origin_y, x, y);
+		return rotate_set(theta+rot_angle, origin_x, origin_y);
 	}
 
 	/// @function rotate_set
-	/// @param {real} angle - The angle in degrees to set
+	/// @param {real} rot_angle - The angle in degrees to set
 	/// @param {real} [origin_x=0]
 	/// @param {real} [origin_y=0]
 	/// @returns {Vector2} self
 	/// @description Rotate a vector around a point or the origin
-	static rotate_set = function(_angle, _origin_x, _origin_y){
-		_origin_x = is_real(_origin_x) ? _origin_x : 0;
-		_origin_y = is_real(_origin_y) ? _origin_y : 0;
-
+	static rotate_set = function(rot_angle, origin_x = 0, origin_y = 0){
 		// Convert to polar
-		var r = point_distance(_origin_x, _origin_y, x, y);
+		var r = point_distance(origin_x, origin_y, x, y);
 
 		// Convert back and apply
-		x = _origin_x + lengthdir_x(r, _angle);
-		y = _origin_y + lengthdir_y(r, _angle);
+		x = origin_x + lengthdir_x(r, rot_angle);
+		y = origin_y + lengthdir_y(r, rot_angle);
 
 		return self;
 	}
 
 	/// @function to_string
 	/// @param {boolean} [round_values=false]
-	static to_string = function(_round_values){
-		_round_values = !is_undefined(_round_values) ? _round_values : false;
+	static to_string = function(round_values = false){
 		var names = variable_struct_get_names(self);
 		var len = variable_struct_names_count(self);
 		var result_string = instanceof(self)+"{";
 		for (var i = 0; i < len; i++) {
 			result_string += names[i] + ": ";
 			var val = variable_instance_get(self, names[i]);
-			if _round_values {
+			if round_values {
 				val = round(val);
 			}
 			result_string += string(val);
@@ -250,18 +265,30 @@ function Vector2(x = 0, y = 0) constructor {
 	/// @param {Vector2} other
 	///	@description Find the dot product
 	/// @returns {real} The scalar dot product
-	static dot = function(_other) {
-		return x * _other.y - y * _other.x;
+	static dot = function(o) {
+		return x * o.y - y * o.x;
 	}
 	
-	/// @function to_array
+	/// @function to_array()
+	/// @description Return this Vector as an array
 	static to_array = function(){
 		return [x, y];
+	}
+	
+	/// @function to_list()
+	/// @description Return this Vector as a ds_list
+	/// @returns {ds_list} vector_as_list
+	static to_list = function(){
+		var l = ds_list_create();
+		ds_list_insert(l, 0, x);
+		ds_list_insert(l, 1, y);
+		return l;
 	}
 	
 	/// @function clamp_value
 	/// @param {real} value
 	/// @description Use this vector as a range to clamp a value between
+	/// @returns {real} clamped_value
 	static clamp_value = function(value){
 		return clamp(value, x, y);
 	}
@@ -279,15 +306,15 @@ function Vector3(x = 0, y = 0, z = 0) : Vector2(x, y) constructor {
 	/// @function add
 	/// @param {Vector3/real} other
 	/// @description Add two Vector3 structs
-	static add = function(_other){
-		if instanceof(_other) == "Vector3" {
-		    x += _other.x;
-		    y += _other.y;
-			z += _other.z;
-		} else if is_real(_other) {
-			x += _other;
-			y += _other;
-			z += _other;
+	static add = function(o){
+		if instanceof(o) == "Vector3" {
+		    x += o.x;
+		    y += o.y;
+			z += o.z;
+		} else if is_real(o) {
+			x += o;
+			y += o;
+			z += o;
 		} else {
 			throw "Invalid argument provided";
 		}
@@ -304,32 +331,32 @@ function Vector3(x = 0, y = 0, z = 0) : Vector2(x, y) constructor {
 	/// @function subtract
 	/// @param {Vector3/real} other
 	/// @description Subtract two Vector3 structs
-	static subtract = function(_other){
-		if instanceof(_other) == "Vector3" {
-		    x -= _other.x;
-		    y -= _other.y;
-			z -= _other.z;
-		} else if is_real(_other) {
-			x -= _other;
-			y -= _other;
-			z -= _other;
+	static subtract = function(o){
+		if instanceof(o) == "Vector3" {
+		    x -= o.x;
+		    y -= o.y;
+			z -= o.z;
+		} else if is_real(o) {
+			x -= o;
+			y -= o;
+			z -= o;
 		} else {
 			throw "Invalid argument provided";
 		}
 		return self;
 	}
 
-	/// @function multiply
-	/// @description Multiply two Vector3 structs
-	static multiply = function(_other){
-		if instanceof(_other) == "Vector3" {
-			x *= _other.x;
-			y *= _other.y;
-			z *= _other.z;
-		} else if is_real(_other) {
-			x *= _other;
-			y *= _other;
-			z *= _other;
+	/// @function multiply(other)
+	/// @description Multiply two Vector3 structs or by a real number
+	static multiply = function(o){
+		if instanceof(o) == "Vector3" {
+			x *= o.x;
+			y *= o.y;
+			z *= o.z;
+		} else if is_real(o) {
+			x *= o;
+			y *= o;
+			z *= o;
 		} else {
 			throw "Invalid argument provided";
 		}
@@ -355,54 +382,83 @@ function Vector3(x = 0, y = 0, z = 0) : Vector2(x, y) constructor {
 	}
 
 	/// @function set
+	/// @param {real/Vector3} x/other_vector
+	/// @param {real} [y]
+	/// @param {real} [z]
 	/// @description Set the Vector's values
 	/// @returns {Vector3} self
 	static set = function(){
-		if argument_count == 1 {
+		if instanceof(argument[0]) == "Vector3" {
 			x = argument[0].x;
 			y = argument[0].y;
 			z = argument[0].z;
-		} else {
+		} else if argument_count == 1 {
+			x = argument[0];
+			y = argument[0];
+			z = argument[0];
+		} else if argument_count == 3 {
 			x = argument[0];
 			y = argument[1];
 			z = argument[2];
+		} else {
+			throw "ERROR Vector3.set: Invalid argument(s) provided";
 		}
 		return self;
 	}
 
 	/// @function rotate
 	/// @param {Vector3} axis - The vector representing the axis of rotation
-	/// @param {real} angle - The angle in degrees
+	/// @param {real} rot_angle - The angle in degrees
 	/// @returns {Vector3} self
 	/// @description Rotates the point (x,y,z) around the vector [a,b,c] using Rodrigues' Rotation Formula
-	static rotate = function(_axis, _angle) {
+	static rotate = function(axis, rot_angle) {
 		var c, s, d, rx, ry, rz;
-		c = dcos(_angle);
-		s = dsin(_angle);
-		d = (1 - c) * (_axis.x * x + _axis.y * y + _axis.z * z);
+		c = dcos(rot_angle);
+		s = dsin(rot_angle);
+		d = (1 - c) * (axis.x * x + axis.y * y + axis.z * z);
 
-		rx = x * c + _axis.x * d + (_axis.y * z - _axis.z * y) * s;
-		ry = y * c + _axis.y * d + (_axis.z * x - _axis.x * z) * s;
-		rz = z * c + _axis.z * d + (_axis.x * y - _axis.y * x) * s;
+		rx = x * c + axis.x * d + (axis.y * z - axis.z * y) * s;
+		ry = y * c + axis.y * d + (axis.z * x - axis.x * z) * s;
+		rz = z * c + axis.z * d + (axis.x * y - axis.y * x) * s;
 
 		return set(rx, ry, rz);
 	}
 
-	/// @function cross
+	/// @function cross(other)
 	/// @param {Vector3} other
 	///	@description The sign of the 3D cross product tells you whether specific vector is on the left or right side of the first one (Direction of first one being front)
-	/// @returns {real} The cross product
-	static cross = function(_other){
+	/// @returns {Vector3} cross_product - The cross product
+	static cross = function(o){
 		return new Vector3(
-			y * _other.z - z * _other.y,
-			z * _other.x - x * _other.z,
-			x * _other.y - y * _other.x
+			y * o.z - z * o.y,
+			z * o.x - x * o.z,
+			x * o.y - y * o.x
 		);
 	}
 	
-	/// @function to_array
+	/// @function to_array()
+	/// @description Return this Vector as an array
+	/// @returns {array} vector_as_array
 	static to_array = function(){
 		return [x, y, z];
+	}
+	
+	/// @function to_list()
+	/// @description Return this Vector as a ds_list
+	/// @returns {ds_list} vector_as_list
+	static to_list = function(){
+		var l = ds_list_create();
+		ds_list_insert(l, 0, x);
+		ds_list_insert(l, 1, y);
+		ds_list_insert(l, 2, z);
+		return l;
+	}
+	
+	/// @function dot(other)
+	/// @description Find the dot product between this Vector3 and another
+	/// @returns {real} dot_product
+	static dot = function(o){
+		return dot_product_3d(x, y, z, o.x, o.y, o.z);
 	}
 
 }

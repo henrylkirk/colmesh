@@ -321,9 +321,9 @@ function ColmeshShape() constructor {
 					var _ny = t1 - u1 * a;
 					var _nz = t2 - u2 * a;
 					var d = dot_product_3d(_nx, _ny, _nz, _nx, _ny, _nz);
-					if (d >= radius * radius){return false;}
+					if (d >= radius * radius){ return false; }
 					d = sqrt(d);
-					if (d <= 0){return false;}
+					if (d <= 0){ return false; }
 					colmesh_displace(_nx / d, _ny / d, _nz / d, xup, yup, zup, radius - d, slope);
 					return true;
 				}
@@ -335,8 +335,7 @@ function ColmeshShape() constructor {
 	}
 	
 	/// @function get_priority(x, y, z, maxR)
-	static get_priority = function(x, y, z, maxR)
-	{
+	static get_priority = function(x, y, z, maxR) {
 		/*
 			A supplementary function, not meant to be used by itself.
 			Returns -1 if the shape is too far away
@@ -365,13 +364,11 @@ function ColmeshShape() constructor {
 		var cx = t2 * u1 - t1 * u2;
 		var cy = t0 * u2 - t2 * u0;
 		var cz = t1 * u0 - t0 * u1;
-		if (dot_product_3d(cx, cy, cz, nx, ny, nz) < 0)
-		{
+		if (dot_product_3d(cx, cy, cz, nx, ny, nz) < 0){
 			var a = clamp(dot_product_3d(u0, u1, u2, t0, t1, t2) / dot_product_3d(u0, u1, u2, u0, u1, u2), 0, 1);
 			return colmesh_vector_square(u0 * a - t0, u1 * a - t1, u2 * a - t2);
-		}
-		else
-		{	//Check second edge
+		} else {
+			// Check second edge
 			var v3x = triangle[6];
 			var v3y = triangle[7];
 			var v3z = triangle[8];
@@ -384,8 +381,7 @@ function ColmeshShape() constructor {
 			var cx = t2 * u1 - t1 * u2;
 			var cy = t0 * u2 - t2 * u0;
 			var cz = t1 * u0 - t0 * u1;
-			if (dot_product_3d(cx, cy, cz, nx, ny, nz) < 0)
-			{
+			if (dot_product_3d(cx, cy, cz, nx, ny, nz) < 0){
 				var a = clamp(dot_product_3d(u0, u1, u2, t0, t1, t2) / dot_product_3d(u0, u1, u2, u0, u1, u2), 0, 1);
 				return colmesh_vector_square(u0 * a - t0, u1 * a - t1, u2 * a - t2);
 			}
