@@ -1,17 +1,17 @@
 
 function colmesh_capsule_get_aabb(x, y, z, xup, yup, zup, radius, height)
 {
-	static AABB = array_create(6);
+	static aabb = array_create(6);
 	xup *= height;
 	yup *= height;
 	zup *= height;
-	AABB[0] = x + min(xup, 0) - radius;
-	AABB[1] = y + min(yup, 0) - radius;
-	AABB[2] = z + min(zup, 0) - radius;
-	AABB[3] = x + max(xup, 0) + radius;
-	AABB[4] = y + max(yup, 0) + radius;
-	AABB[5] = z + max(zup, 0) + radius;
-	return AABB;
+	aabb[0] = x + min(xup, 0) - radius;
+	aabb[1] = y + min(yup, 0) - radius;
+	aabb[2] = z + min(zup, 0) - radius;
+	aabb[3] = x + max(xup, 0) + radius;
+	aabb[4] = y + max(yup, 0) + radius;
+	aabb[5] = z + max(zup, 0) + radius;
+	return aabb;
 }
 function colmesh_debug_message(str)
 {

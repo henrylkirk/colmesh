@@ -41,7 +41,7 @@ global.ColMeshCol = array_create(7);
 global.ColMeshDebugShapes = array_create(eColMeshShape.Num, -1);
 global.ColMeshTransformQueueMap = ds_map_create();
 
-/// @function Colmesh
+/// @function Colmesh()
 /// @description Creates an empty ColMesh
 function Colmesh() : ColmeshShape() constructor {
 	sp_hash = -1; // used for a ds map
@@ -116,7 +116,7 @@ function Colmesh() : ColmeshShape() constructor {
 		}
 	}
 	
-	/// @function remove_shape_from_subdiv(shape, regions*)
+	/// @function remove_shape_from_subdiv(shape, [regions])
 	static remove_shape_from_subdiv = function(shape, regions) {
 		if (sp_hash < 0){return false;}
 		if (is_undefined(regions)){ regions = get_regions(get_shape(shape).get_min_max()); }
@@ -172,7 +172,7 @@ function Colmesh() : ColmeshShape() constructor {
 	}
 	
 	/// @function clear()
-	/// @description Clears all info from the colmesh
+	/// @description Clears all info from the Colmesh
 	static clear = function(){
 		clear_subdiv();
 		var h = 99999;
@@ -199,13 +199,13 @@ function Colmesh() : ColmeshShape() constructor {
 		}
 	}
 	
-	/// @function get_region(AABB[6])
-	/// @description Returns a list containing all the shapes in the regions the AABB of the given capsule touches. If the colmesh is not subdivided, this will return a list of all the shapes in the colmesh.
-	static get_region = function(AABB)  {
+	/// @function get_region(aabb[6])
+	/// @description Returns a list containing all the shapes in the regions the aabb of the given capsule touches. If the colmesh is not subdivided, this will return a list of all the shapes in the colmesh.
+	static get_region = function(aabb)  {
 
-		var minx = AABB[0], miny = AABB[1], minz = AABB[2], maxx = AABB[3], maxy = AABB[4], maxz = AABB[5];
+		var minx = aabb[0], miny = aabb[1], minz = aabb[2], maxx = aabb[3], maxy = aabb[4], maxz = aabb[5];
 		if (minx > maximum[0] or miny > maximum[1] or minz > maximum[2] or maxx < minimum[0] or maxy < minimum[1] or maxz < minimum[2]) {
-			// If the capsule is fully outside the AABB of the colmesh, return undefined
+			// If the capsule is fully outside the aabb of the colmesh, return undefined
 			return undefined;
 		}
 		
@@ -214,13 +214,13 @@ function Colmesh() : ColmeshShape() constructor {
 			var i = ds_list_size(shape_list);
 			repeat i {
 				var shape = shape_list[| --i];
-				if (!get_shape(shape).check_aabb(minx, miny, minz, maxx, maxy, maxz)){ continue; } // Only add the shape to the list if its AABB intersects the capsule AABB
+				if (!get_shape(shape).check_aabb(minx, miny, minz, maxx, maxy, maxz)){ continue; } // Only add the shape to the list if its aabb intersects the capsule aabb
 				ds_list_add(temp_list, shape);
 			}
 			return temp_list;
 		}
 		
-		var regions = get_regions(AABB);
+		var regions = get_regions(aabb);
 		var xNum = regions[3] - regions[0];
 		var yNum = regions[4] - regions[1];
 		var zNum = regions[5] - regions[2];
@@ -233,17 +233,16 @@ function Colmesh() : ColmeshShape() constructor {
 				var zz = regions[2];
 				repeat (zNum) {
 					++zz;
-					
 					// Check if the region exists
 					var key = colmesh_get_key(xx, yy, zz);
 					var region = sp_hash[? key];
 					if (is_undefined(region)){continue;}
 					
-					// The region exists! Check all the shapes in the region and see if their AABB intersects the AABB of the capsule
+					// The region exists! Check all the shapes in the region and see if their aabb intersects the aabb of the capsule
 					var i = ds_list_size(region);
 					repeat i {
 						var shape = region[| --i];
-						if (!get_shape(shape).check_aabb(minx, miny, minz, maxx, maxy, maxz)){continue;} //Only add the shape to the list if its AABB intersects the capsule AABB
+						if (!get_shape(shape).check_aabb(minx, miny, minz, maxx, maxy, maxz)){continue;} //Only add the shape to the list if its aabb intersects the capsule aabb
 						if (ds_list_find_index(temp_list, shape) >= 0){continue;} //Make sure the shape hasn't already been added to the list
 						ds_list_add(temp_list, shape);
 					}
@@ -271,22 +270,19 @@ function Colmesh() : ColmeshShape() constructor {
 		return shape;
 	}
 	
-	/// @function add_trigger(shape, solid, colFunc*, rayFunc*)
+	/// @function add_trigger(shape, solid, [col_func], [rayFunc])
+	/// @param {ColmeshShape} shape - The shape to give custom collision functions (not saved when writing the Colmesh to a buffer)
+	/// @param {boolean} solid
+	/// @param {function} [col_func] - Custom collision function
+	/// @param {function} [ray_func] - Custom function that is executed if a ray hits the shape
 	/// @description Create a trigger object. This will not displace the player.
-	static add_trigger = function(shape, solid, colFunc, rayFunc){
-		// You can give the shape custom collision functions.
-		// These custom functions are NOT saved when writing the ColMesh to a buffer
+	static add_trigger = function(shape, solid, col_func, ray_func){
 		// You have access to the following global variables in the custom functions:
 		// CM_COL - An array containing the current position of the calling object
 		// CM_CALLING_OBJECT - The instance that is currently checking for collisions
-			
-		// colFunc lets you give the shape a custom collision function.
-		// This is useful for example for collisions with collectible objects like coins and powerups.
-		
-		// rayFunc lets you give the shape a custom function that is executed if a ray hits the shape.
 		
 		add_shape(shape);
-		shape.set_trigger(solid, colFunc, rayFunc);
+		shape.set_trigger(solid, col_func, ray_func);
 		return shape;
 	}
 	
@@ -480,10 +476,10 @@ function Colmesh() : ColmeshShape() constructor {
 			repeat i {
 				var shape = get_shape(region[| --i]);
 				if (shape.type == eColMeshShape.Trigger){
-					if (execute_col_func and is_method(shape.colFunc)){
+					if (execute_col_func and is_method(shape.col_func)){
 						++CM_RECURSION;
 						if (shape.capsule_collision(CM_COL[0], CM_COL[1], CM_COL[2], xup, yup, zup, radius, height)){
-							shape.colFunc(other.id);
+							shape.col_func(other.id);
 						}
 						--CM_RECURSION;
 					}
@@ -526,10 +522,10 @@ function Colmesh() : ColmeshShape() constructor {
 			var shapeInd = region[| --i];
 			var shape = get_shape(shapeInd);
 			if (shape.type == eColMeshShape.Trigger){
-				if (execute_col_func and is_method(shape.colFunc)){
+				if (execute_col_func and is_method(shape.col_func)){
 					++CM_RECURSION;
 					if (shape.capsule_collision(CM_COL[0], CM_COL[1], CM_COL[2], xup, yup, zup, radius, height)){
-						shape.colFunc(other.id);
+						shape.col_func(other.id);
 					}
 					--CM_RECURSION;
 				}
@@ -577,8 +573,8 @@ function Colmesh() : ColmeshShape() constructor {
 	/// @function capsule_collision(x, y, z, xup, yup, zup, radius, height)
 	/// @description Returns whether or not the given capsule collides with the colmesh
 	static capsule_collision = function(x, y, z, xup, yup, zup, radius, height) {
-		var AABB = colmesh_capsule_get_aabb(x, y, z, xup, yup, zup, radius, height);
-		var region = get_region(AABB);
+		var aabb = colmesh_capsule_get_aabb(x, y, z, xup, yup, zup, radius, height);
+		var region = get_region(aabb);
 		return colmesh_region_capsule_collision(region, x, y, z, xup, yup, zup, radius, height);
 	}
 	
@@ -785,15 +781,15 @@ function Colmesh() : ColmeshShape() constructor {
 	
 	#region Supplementaries
 	
-	/// @function expand_boundaries(AABB[6])
+	/// @function expand_boundaries(aabb[6])
 	/// @description Expands the boundaries of the Colmesh. This will only come into effect once the Colmesh is subdivided.
-	static expand_boundaries = function(AABB){
-		minimum[0] = min(minimum[0], AABB[0]);
-		minimum[1] = min(minimum[1], AABB[1]);
-		minimum[2] = min(minimum[2], AABB[2]);
-		maximum[0] = max(maximum[0], AABB[3]);
-		maximum[1] = max(maximum[1], AABB[4]);
-		maximum[2] = max(maximum[2], AABB[5]);
+	static expand_boundaries = function(aabb){
+		minimum[0] = min(minimum[0], aabb[0]);
+		minimum[1] = min(minimum[1], aabb[1]);
+		minimum[2] = min(minimum[2], aabb[2]);
+		maximum[0] = max(maximum[0], aabb[3]);
+		maximum[1] = max(maximum[1], aabb[4]);
+		maximum[2] = max(maximum[2], aabb[5]);
 	}
 	
 	/// @function get_shape(shape)

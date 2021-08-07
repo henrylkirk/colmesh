@@ -42,26 +42,27 @@ function ColmeshShape() constructor {
 	type = eColMeshShape.Mesh;
 	solid = true;
 	
-	/// @function set_trigger(solid, colFunc*, rayFunc*)
+	/// @function set_trigger(solid, [col_func], [rayFunc])
+	/// @param {boolean} solid
+	/// @param {function} [col_func] - Custom collision function
+	/// @param {function} [ray_func] - Custom function that is executed if a ray hits the shape
 	/// @description Marks this shape as a trigger
-	static set_trigger = function(_solid, _colFunc, _rayFunc){
-		
-		
-		//You can give the shape custom collision functions.
+	static set_trigger = function(solid, col_func, ray_func){
+		// You can give the shape custom collision functions.
 		//These custom functions are NOT saved when writing the ColMesh to a buffer
 		//You have access to the following global variables in the custom functions:
 		//	CM_COL - An array containing the current position of the calling object
 		//	CM_CALLING_OBJECT - The instance that is currently checking for collisions
 			
-		//colFunc lets you give the shape a custom collision function.
+		//col_func lets you give the shape a custom collision function.
 		//This is useful for example for collisions with collectible objects like coins and powerups.
 		
 		//rayFunc lets you give the shape a custom function that is executed if a ray hits the shape.
 		
 		type = eColMeshShape.Trigger;
-		solid = _solid;
-		colFunc = _colFunc;
-		rayFunc = _rayFunc;
+		self.solid = solid;
+		self.col_func = col_func;
+		self.rayFunc = ray_func;
 	}
 	
 	#region Shared functions
@@ -107,7 +108,7 @@ function ColmeshShape() constructor {
 	}
 	
 	/// @function check_aabb(minx, miny, minz, maxx, maxy, maxz)
-	/// @description Will return true if the AABB of this shape overlaps the given AABB
+	/// @description Will return true if the aabb of this shape overlaps the given aabb
 	static check_aabb = function(minx, miny, minz, maxx, maxy, maxz){
 		return (
 			min(triangle[0], triangle[3], triangle[6]) < maxx and 
@@ -501,7 +502,7 @@ function ColmeshShape() constructor {
 		*/
 		gml_pragma("forceinline");
 		/********************************************************/
-		/* AABB-triangle overlap test code                      */
+		/* aabb-triangle overlap test code                      */
 		/* by Tomas Akenine-Möller                              */
 		/* Function: int triBoxOverlap(float boxcenter[3],      */
 		/*          float boxhalfsize[3],float tri[3][3]); */
@@ -772,7 +773,7 @@ function colmesh_sphere(_x, _y, _z, radius) : ColmeshShape() constructor
 	static get_min_max = function()
 	{
 		/*
-			Returns the AABB of the shape as an array with six values
+			Returns the aabb of the shape as an array with six values
 		*/
 		static min_max = array_create(6);
 		min_max[0] = x - R;
@@ -1010,7 +1011,7 @@ function colmesh_capsule(_x, _y, _z, _xup, _yup, _zup, radius, height) : Colmesh
 	static get_min_max = function()
 	{
 		/*
-			Returns the AABB of the shape as an array with six values
+			Returns the aabb of the shape as an array with six values
 		*/
 		static min_max = array_create(6);
 		min_max[0] = x - R + H * min(0, xup);
@@ -1278,7 +1279,7 @@ function colmesh_cylinder(_x, _y, _z, _xup, _yup, _zup, radius, height) : Colmes
 	static get_min_max = function()
 	{
 		/*
-			Returns the AABB of the shape as an array with six values
+			Returns the aabb of the shape as an array with six values
 		*/
 		static min_max = array_create(6);
 		min_max[0] = x - R + H * min(0, xup);
@@ -1652,7 +1653,7 @@ function colmesh_unfinished_cone(_x, _y, _z, _xup, _yup, _zup, radius, height) :
 	static get_min_max = function()
 	{
 		/*
-			Returns the AABB of the shape as an array with six values
+			Returns the aabb of the shape as an array with six values
 		*/
 		static min_max = array_create(6);
 		min_max[0] = x - R + H * min(0, xup);
@@ -1988,7 +1989,7 @@ function colmesh_torus(_x, _y, _z, _xup, _yup, _zup, _R, _r) : ColmeshShape() co
 	static get_min_max = function()
 	{
 		/*
-			Returns the AABB of the shape as an array with six values
+			Returns the aabb of the shape as an array with six values
 		*/
 		static min_max = array_create(6);
 		var rr = R + r;
@@ -2277,7 +2278,7 @@ function colmesh_disk(_x, _y, _z, _xup, _yup, _zup, _R, _r) : ColmeshShape() con
 	static get_min_max = function()
 	{
 		/*
-			Returns the AABB of the shape as an array with six values
+			Returns the aabb of the shape as an array with six values
 		*/
 		static min_max = array_create(6);
 		var rr = R + r;
@@ -2556,7 +2557,7 @@ function colmesh_cube(_x, _y, _z, xsize, ysize, zsize) : ColmeshShape() construc
 	static get_min_max = function()
 	{
 		/*
-			Returns the AABB of the shape as an array with six values
+			Returns the aabb of the shape as an array with six values
 		*/
 		static min_max = array_create(6);
 		min_max[0] = x - halfX;
@@ -2966,7 +2967,7 @@ function colmesh_block(M) : ColmeshShape() constructor
 	static get_min_max = function()
 	{
 		/*
-			Returns the AABB of the shape as an array with six values
+			Returns the aabb of the shape as an array with six values
 		*/
 		static min_max = array_create(6);
 		var dx = abs(xto) + abs(xsi) + abs(xup);
@@ -3311,7 +3312,7 @@ function colmesh_block(M) : ColmeshShape() constructor
 			A supplementary function, not meant to be used by itself.
 			Returns true if the shape intersects the given axis-aligned cube
 		*/
-		//First check if the nearest point in the AABB to the cube is inside the cube
+		//First check if the nearest point in the aabb to the cube is inside the cube
 		var dx = bX - x;
 		var dy = bY - y;
 		var dz = bZ - z;
@@ -3325,7 +3326,7 @@ function colmesh_block(M) : ColmeshShape() constructor
 		var bz = dot_product_3d(xx, yy, zz, inv2, inv6, inv10);
 		if (max(abs(bx), abs(by), abs(bz)) < 1) return true;
 		
-		//Then check if the nearest point in the cube is inside the AABB
+		//Then check if the nearest point in the cube is inside the aabb
 		var bx = clamp(dot_product_3d(dx, dy, dz, inv0, inv4, inv8),  -1, 1);
 		var by = clamp(dot_product_3d(dx, dy, dz, inv1, inv5, inv9),  -1, 1);
 		var bz = clamp(dot_product_3d(dx, dy, dz, inv2, inv6, inv10), -1, 1);
@@ -3494,7 +3495,7 @@ function colmesh_dynamic(_shape, _colMesh, _M, _shapeInd) : ColmeshShape() const
 	static get_min_max = function()
 	{
 		/*
-			Returns the AABB of the shape as an array with six values
+			Returns the aabb of the shape as an array with six values
 		*/
 		static min_max = array_create(6);
 		if (shape.type == eColMeshShape.Mesh)
