@@ -467,8 +467,8 @@ function colmesh_region_cast_ray(region, x1, y1, z1, x2, y2, z2, _executeRayFunc
 		--CM_RECURSION;
 		if (ray){
 			if (shape.type == eColMeshShape.Trigger){
-				if (executeRayFunc and is_method(shape.rayFunc)){
-					shape.rayFunc();
+				if (executeRayFunc and is_method(shape.ray_func)){
+					shape.ray_func();
 				}
 			}
 			if (!shape.solid){

@@ -38,7 +38,7 @@ global.ColMeshTransformQueue = -1;
 global.ColMeshRecursionCounter = 0;
 global.ColMeshRay = array_create(7);
 global.ColMeshCol = array_create(7);
-global.ColMeshDebugShapes = array_create(eColMeshShape.Num, -1);
+global.colmesh_debug_shapes = array_create(eColMeshShape.Num, -1);
 global.ColMeshTransformQueueMap = ds_map_create();
 
 /// @function Colmesh()
@@ -68,9 +68,9 @@ function Colmesh() : ColmeshShape() constructor {
 		// Update subdivision parameters
 		sp_hash = ds_map_create();
 		region_size = region_size;
-		origin_x = (minimum[0] + maximum[0]) *0.5;
-		origin_y = (minimum[1] + maximum[1]) *0.5;
-		origin_z = (minimum[2] + maximum[2]) *0.5;
+		origin_x = (minimum[0] + maximum[0]) * 0.5;
+		origin_y = (minimum[1] + maximum[1]) * 0.5;
+		origin_z = (minimum[2] + maximum[2]) * 0.5;
 		
 		// Subdivide
 		var shape_num = ds_list_size(shape_list);
@@ -1180,7 +1180,7 @@ function Colmesh() : ColmeshShape() constructor {
 					var zup = buffer_read(temp_buff, buffer_f32);
 					var R   = buffer_read(temp_buff, buffer_f32);
 					var r   = buffer_read(temp_buff, buffer_f32);
-					add_shape(new colmesh_torus(_x, _y, _z, xup, yup, zup, R, r));
+					add_shape(new ColmeshTorus(_x, _y, _z, xup, yup, zup, R, r));
 					break;
 				case eColMeshShape.Cube:
 					var _x    = buffer_read(temp_buff, buffer_f32);

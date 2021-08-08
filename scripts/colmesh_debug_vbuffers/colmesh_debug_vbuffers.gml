@@ -3,6 +3,8 @@
 	These are mostly used for debugging the collision system.
 */
 
+gml_pragma("global", "colmesh_debug_vbuffers()");
+
 vertex_format_begin();
 vertex_format_add_position_3d();
 vertex_format_add_normal();
@@ -10,14 +12,19 @@ vertex_format_add_texcoord();
 vertex_format_add_color();
 global.ColMeshFormat = vertex_format_end();
 
+#region Create reusable vertex buffers
+global.ColMeshDebugShapes = array_create(eColMeshShape.Num, -1);
+global.ColMeshDebugShapes[eColMeshShape.Sphere] = colmesh_create_sphere(20, 10, 1, 1);
+global.ColMeshDebugShapes[eColMeshShape.Capsule] = colmesh_create_capsule(20, 10, 1, 1);
+global.ColMeshDebugShapes[eColMeshShape.Cylinder] = colmesh_create_cylinder(20, 1, 1);
+global.ColMeshDebugShapes[eColMeshShape.Torus] = colmesh_create_torus(20, 20, 1, 1);
+global.ColMeshDebugShapes[eColMeshShape.Block] = colmesh_create_block(1,1);
+global.ColMeshDebugShapes[eColMeshShape.Disk] = colmesh_create_disk(20, 10, 1, 1);
+#endregion
+
 /// @function colmesh_debug_draw_capsule
 function colmesh_debug_draw_capsule(x, y, z, xup, yup, zup, radius, height, colour){
-	var type = eColMeshShape.Capsule;
-	var vbuff = global.ColMeshDebugShapes[type];
-	if (vbuff < 0){
-		global.ColMeshDebugShapes[type] = colmesh_create_capsule(20, 10, 1, 1);
-		vbuff = global.ColMeshDebugShapes[type];
-	}
+	var vbuff = global.ColMeshDebugShapes[eColMeshShape.Capsule];
 	shader_set(sh_colmesh_debug);
 	shader_set_uniform_f(shader_get_uniform(sh_colmesh_debug, "u_color"), color_get_red(colour) / 255, color_get_green(colour) / 255, color_get_blue(colour) / 255, 1);
 	shader_set_uniform_f(shader_get_uniform(sh_colmesh_debug, "u_radius"), radius);
@@ -29,12 +36,7 @@ function colmesh_debug_draw_capsule(x, y, z, xup, yup, zup, radius, height, colo
 
 /// @function colmesh_debug_draw_cylinder
 function colmesh_debug_draw_cylinder(x, y, z, xup, yup, zup, radius, height, colour){
-	var type = eColMeshShape.Cylinder;
-	var vbuff = global.ColMeshDebugShapes[type];
-	if (vbuff < 0) {
-		global.ColMeshDebugShapes[type] = colmesh_create_cylinder(20, 1, 1);
-		vbuff = global.ColMeshDebugShapes[type];
-	}
+	var vbuff = global.ColMeshDebugShapes[eColMeshShape.Cylinder];
 	shader_set(sh_colmesh_debug);
 	shader_set_uniform_f(shader_get_uniform(sh_colmesh_debug, "u_color"), color_get_red(colour) / 255, color_get_green(colour) / 255, color_get_blue(colour) / 255, 1);
 	shader_set_uniform_f(shader_get_uniform(sh_colmesh_debug, "u_radius"), 0);
@@ -46,12 +48,7 @@ function colmesh_debug_draw_cylinder(x, y, z, xup, yup, zup, radius, height, col
 
 /// @function colmesh_debug_draw_sphere
 function colmesh_debug_draw_sphere(x, y, z, radius, colour){
-	var type = eColMeshShape.Sphere;
-	var vbuff = global.ColMeshDebugShapes[type];
-	if (vbuff < 0) {
-		global.ColMeshDebugShapes[type] = colmesh_create_sphere(20, 10, 1, 1);
-		vbuff = global.ColMeshDebugShapes[type];
-	}
+	var vbuff = global.ColMeshDebugShapes[eColMeshShape.Sphere];
 	shader_set(sh_colmesh_debug);
 	shader_set_uniform_f(shader_get_uniform(sh_colmesh_debug, "u_color"), color_get_red(colour) / 255, color_get_green(colour) / 255, color_get_blue(colour) / 255, 1);
 	shader_set_uniform_f(shader_get_uniform(sh_colmesh_debug, "u_radius"), radius);

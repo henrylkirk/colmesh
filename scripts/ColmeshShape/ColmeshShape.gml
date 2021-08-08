@@ -41,7 +41,7 @@ function ColmeshShape() constructor {
 	type = eColMeshShape.Mesh;
 	solid = true;
 	
-	/// @function set_trigger(solid, [col_func], [rayFunc])
+	/// @function set_trigger(solid, [col_func], [ray_func])
 	/// @param {boolean} solid
 	/// @param {function} [col_func] - Custom collision function
 	/// @param {function} [ray_func] - Custom function that is executed if a ray hits the shape
@@ -54,7 +54,7 @@ function ColmeshShape() constructor {
 		type = eColMeshShape.Trigger;
 		self.solid = solid;
 		self.col_func = col_func;
-		self.rayFunc = ray_func;
+		self.ray_func = ray_func;
 	}
 	
 	#region Shared functions
