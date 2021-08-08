@@ -1,6 +1,5 @@
-
-function colmesh_capsule_get_aabb(x, y, z, xup, yup, zup, radius, height)
-{
+/// @function colmesh_capsule_get_aabb
+function colmesh_capsule_get_aabb(x, y, z, xup, yup, zup, radius, height){
 	static aabb = array_create(6);
 	xup *= height;
 	yup *= height;
@@ -13,63 +12,51 @@ function colmesh_capsule_get_aabb(x, y, z, xup, yup, zup, radius, height)
 	aabb[5] = z + max(zup, 0) + radius;
 	return aabb;
 }
-function colmesh_debug_message(str)
-{
-	//Only show debug messages if CM_DEBUG is set to true
-	if CM_DEBUG
-	{
+
+/// @function colmesh_debug_message
+/// @description Only show debug messages if CM_DEBUG is set to true
+function colmesh_debug_message(str){
+	if CM_DEBUG {
 		show_debug_message(str);
 	}
 }
 
-function colmesh_load_obj_to_buffer(filename) 
-{
-	static read_face = function(faceList, str) 
-	{
+/// @function colmesh_load_obj_to_buffer
+function colmesh_load_obj_to_buffer(filename) {
+	static read_face = function(faceList, str) {
 		gml_pragma("forceinline");
 		str = string_delete(str, 1, string_pos(" ", str))
-		if (string_char_at(str, string_length(str)) == " ")
-		{
-			//Make sure the string doesn't end with an empty space
+		if (string_char_at(str, string_length(str)) == " "){
+			// Make sure the string doesn't end with an empty space
 			str = string_copy(str, 0, string_length(str) - 1);
 		}
 		var triNum = string_count(" ", str);
 		var vertString = array_create(triNum + 1);
-		for (var i = 0; i < triNum; i ++)
-		{
-			//Add vertices in a triangle fan
+		for (var i = 0; i < triNum; i ++){
+			// Add vertices in a triangle fan
 			vertString[i] = string_copy(str, 1, string_pos(" ", str));
 			str = string_delete(str, 1, string_pos(" ", str));
 		}
 		vertString[i--] = str;
-		while i--
-		{
-			for (var j = 2; j >= 0; j --)
-			{
+		while i-- {
+			for (var j = 2; j >= 0; j--){
 				var vstr = vertString[(i + j) * (j > 0)];
 				var v = 0, n = 0, t = 0;
-				//If the vertex contains a position, texture coordinate and normal
-				if string_count("/", vstr) == 2 and string_count("//", vstr) == 0
-				{
+				// If the vertex contains a position, texture coordinate and normal
+				if string_count("/", vstr) == 2 and string_count("//", vstr) == 0 {
 					v = abs(real(string_copy(vstr, 1, string_pos("/", vstr) - 1)));
 					vstr = string_delete(vstr, 1, string_pos("/", vstr));
 					t = abs(real(string_copy(vstr, 1, string_pos("/", vstr) - 1)));
 					n = abs(real(string_delete(vstr, 1, string_pos("/", vstr))));
-				}
-				//If the vertex contains a position and a texture coordinate
-				else if string_count("/", vstr) == 1
-				{
+				} else if string_count("/", vstr) == 1 {
+					// If the vertex contains a position and a texture coordinate
 					v = abs(real(string_copy(vstr, 1, string_pos("/", vstr) - 1)));
 					t = abs(real(string_delete(vstr, 1, string_pos("/", vstr))));
-				}
-				//If the vertex only contains a position
-				else if (string_count("/", vstr) == 0)
-				{
+				} else if (string_count("/", vstr) == 0) {
+					// If the vertex only contains a position
 					v = abs(real(vstr));
-				}
-				//If the vertex contains a position and normal
-				else if string_count("//", vstr) == 1
-				{
+				} else if string_count("//", vstr) == 1 {
+					// If the vertex contains a position and normal
 					vstr = string_replace(vstr, "//", "/");
 					v = abs(real(string_copy(vstr, 1, string_pos("/", vstr) - 1)));
 					n = abs(real(string_delete(vstr, 1, string_pos("/", vstr))));
@@ -78,17 +65,15 @@ function colmesh_load_obj_to_buffer(filename)
 			}
 		}
 	}
-	static read_line = function(str) 
-	{
+	
+	static read_line = function(str) {
 		gml_pragma("forceinline");
 		str = string_delete(str, 1, string_pos(" ", str));
 		var retNum = string_count(" ", str) + 1;
 		var ret = array_create(retNum);
-		for (var i = 0; i < retNum; i ++)
-		{
+		for (var i = 0; i < retNum; i++){
 			var pos = string_pos(" ", str);
-			if (pos == 0)
-			{
+			if (pos == 0) {
 				pos = string_length(str);
 				ret[i] = real(string_copy(str, 1, pos)); 
 				break;
@@ -102,33 +87,31 @@ function colmesh_load_obj_to_buffer(filename)
 	if (file == -1){colmesh_debug_message("Failed to load model " + string(filename)); return -1;}
 	colmesh_debug_message("Script colmesh_load_obj_to_buffer: Loading obj file " + string(filename));
 
-	//Create the necessary lists
+	// Create the necessary lists
 	var V = ds_list_create();
 	var N = ds_list_create();
 	var T = ds_list_create();
 	var F = ds_list_create();
 
-	//Read .obj as textfile
+	// Read .obj as textfile
 	var str, type;
-	while !file_text_eof(file)
-	{
+	while !file_text_eof(file) {
 		str = string_replace_all(file_text_read_string(file),"  "," ");
-		//Different types of information in the .obj starts with different headers
-		switch string_copy(str, 1, string_pos(" ", str)-1)
-		{
-			//Load vertex positions
+		// Different types of information in the .obj starts with different headers
+		switch string_copy(str, 1, string_pos(" ", str) - 1){
+			// Load vertex positions
 			case "v":
 				ds_list_add(V, read_line(str));
 				break;
-			//Load vertex normals
+			// Load vertex normals
 			case "vn":
 				ds_list_add(N, read_line(str));
 				break;
-			//Load vertex texture coordinates
+			// Load vertex texture coordinates
 			case "vt":
 				ds_list_add(T, read_line(str));
 				break;
-			//Load faces
+			// Load faces
 			case "f":
 				read_face(F, str);
 				break;
@@ -137,7 +120,7 @@ function colmesh_load_obj_to_buffer(filename)
 	}
 	file_text_close(file);
 
-	//Loop through the loaded information and generate a model
+	// Loop through the loaded information and generate a model
 	var vnt, vertNum, mbuff, vbuff, v, n, t;
 	var bytesPerVert = 3 * 4 + 3 * 4 + 2 * 4 + 4 * 1;
 	vertNum = ds_list_size(F);
@@ -177,81 +160,67 @@ function colmesh_load_obj_to_buffer(filename)
 	return mbuff
 }
 
-function colmesh_convert_smf(model)
-{
-	//This script was requested by somebody on the forums.
-	//Creates a Colmesh-compatible buffer from an SMF model.
-	//Remember to destroy the buffer after you're done using it!
+/// @function colmesh_convert_smf
+/// @description Creates a Colmesh-compatible buffer from an SMF model. Remember to destroy the buffer after you're done using it
+function colmesh_convert_smf(model){
 	var mBuff = model.mBuff;
 	var num = array_length(mBuff);
 	
 	var newBuff = buffer_create(1, buffer_grow, 1);
 	var size = 0;
 	
-	//Convert to Colmesh-compatible format
+	// Convert to Colmesh-compatible format
 	var num = array_length(mBuff);
 	var SMFbytesPerVert = 44;
 	var targetBytesPerVert = 36;
-	for (var m = 0; m < num; m ++)
-	{
+	for (var m = 0; m < num; m++){
 		var buff = mBuff[m];
 		var buff_size = buffer_get_size(buff);
 		var vertNum = buff_size div SMFbytesPerVert;
-		for (var i = 0; i < vertNum; i ++)
-		{
-			//Copy position and normal
+		for (var i = 0; i < vertNum; i++){
+			// Copy position and normal
 			buffer_copy(buff, i * SMFbytesPerVert, targetBytesPerVert, newBuff, size + i * targetBytesPerVert);
 		}
 		size += buff_size * targetBytesPerVert / SMFbytesPerVert;
 	}
-	
 	buffer_resize(newBuff, size);
 	return newBuff;
 }
-	
-function colmesh_get_key(x, y, z)
-{
-	//Returns a unique hash for any 3D integer position
-	//Based on the algorithm described here:
-	//	https://dmauro.com/post/77011214305/a-hashing-function-for-x-y-z-coordinates
+
+/// @function colmesh_get_key
+/// @description Returns a unique hash for any 3D integer position
+function colmesh_get_key(x, y, z){
+	// Based on the algorithm described here:
+	// https://dmauro.com/post/77011214305/a-hashing-function-for-x-y-z-coordinates
     x = (x >= 0) ? 2 * x : - 2 * x - 1;
     y = (y >= 0) ? 2 * y : - 2 * y - 1;
     z = (z >= 0) ? 2 * z : - 2 * z - 1;
 	
     var m = max(x, y, z)
     var hash = m * m * m + 2 * m * z + z
-    if (m == z)
-	{
+    if (m == z){
         hash += sqr(max(x, y));
 	}
-    if (y >= x)
-	{
+    if (y >= x){
         hash += x + y;
-	}
-    else
-	{
+	} else {
         hash += y;
 	}
     return hash
 }
 
-
-/// @function colmesh__addUnique(target, source)
-function colmesh__addUnique(r1, r2)
-{
-	//Adds the unique list entries from source to target list
-	if (ds_list_size(r1) == 0)
-	{	
-		//The target list is empty. Copy over the contents of r2 and call it a day
+/// @function colmesh_add_unique(target, source)
+/// @description Adds the unique list entries from source to target list
+function colmesh_add_unique(r1, r2){
+	if (ds_list_size(r1) == 0){	
+		// The target list is empty. Copy over the contents of r2 and call it a day
 		ds_list_copy(r1, r2);
 		return true;
 	}
 	var i = ds_list_size(r2);
-	repeat i
-	{
+	repeat i {
 		var shape_ind = r2[| --i];
-		if (ds_list_find_index(r1, shape_ind) < 0)
-		{
+		if (ds_list_find_index(r1, shape_ind) < 0) {
 			ds_list_add(r1, shape_ind);
 		}
 	}
@@ -259,44 +228,32 @@ function colmesh__addUnique(r1, r2)
 }
 	
 /// @function colmesh_displace(nx, ny, nz, xup, yup, zup, r, slope)
-function colmesh_displace(nx, ny, nz, xup, yup, zup, _r, slope)
-{
-	/*
-		A supplementary function, not meant to be used by itself.
-		Displaces a sphere.
-	*/
+/// @description Displaces a sphere. A supplementary function, not meant to be used by itself.
+function colmesh_displace(nx, ny, nz, xup, yup, zup, r, slope){
 	gml_pragma("forceinline");
 	var dp = nx * xup + ny * yup + nz * zup;
-	if (dp > CM_COL[6])
-	{
+	if (dp > CM_COL[6]){
 		CM_COL[@ 3] = nx;
 		CM_COL[@ 4] = ny;
 		CM_COL[@ 5] = nz;
 		CM_COL[@ 6] = dp;
 	}
-	if (dp >= slope)
-	{ 
-		//Prevent sliding
-		_r /= dp;
-		CM_COL[@ 0] += xup * _r;
-		CM_COL[@ 1] += yup * _r;
-		CM_COL[@ 2] += zup * _r;
-	}
-	else
-	{
-		CM_COL[@ 0] += nx * _r;
-		CM_COL[@ 1] += ny * _r;
-		CM_COL[@ 2] += nz * _r;
+	if (dp >= slope){ 
+		// Prevent sliding
+		r /= dp;
+		CM_COL[@ 0] += xup * r;
+		CM_COL[@ 1] += yup * r;
+		CM_COL[@ 2] += zup * r;
+	} else {
+		CM_COL[@ 0] += nx * r;
+		CM_COL[@ 1] += ny * r;
+		CM_COL[@ 2] += nz * r;
 	}
 }
 
-/// @function colmesh__triangle_cast_ray(triangle, ox, oy, oz)
-function colmesh__triangle_cast_ray(triangle, ox, oy, oz)
-{
-	/*
-		A supplementary function, not meant to be used by itself.
-		Used by Colmesh.cast_ray
-	*/
+/// @function colmesh_triangle_cast_ray(triangle, ox, oy, oz)
+/// @description Used by Colmesh.cast_ray. A supplementary function, not meant to be used by itself.
+function colmesh_triangle_cast_ray(triangle, ox, oy, oz){
 	gml_pragma("forceinline");
 	var dx = CM_RAY[0] - ox;
 	var dy = CM_RAY[1] - oy;
@@ -305,17 +262,17 @@ function colmesh__triangle_cast_ray(triangle, ox, oy, oz)
 	var ny = triangle[10];
 	var nz = triangle[11];
 	var h = dot_product_3d(dx, dy, dz, nx, ny, nz);
-	if (h == 0){return false;} //Continue if the ray is parallel to the surface of the triangle (ie. perpendicular to the triangle's normal)
+	if (h == 0){ return false; } // Continue if the ray is parallel to the surface of the triangle (ie. perpendicular to the triangle's normal)
 	var v1x = triangle[0];
 	var v1y = triangle[1];
 	var v1z = triangle[2];
 	var h = dot_product_3d(v1x - ox, v1y - oy, v1z - oz, nx, ny, nz) / h;
-	if (h < 0 or h > 1){return false;} //Continue if the intersection is too far behind or in front of the ray
+	if (h < 0 or h > 1){ return false; } // Continue if the intersection is too far behind or in front of the ray
 	var itsX = ox + dx * h;
 	var itsY = oy + dy * h;
 	var itsZ = oz + dz * h;
 
-	//Check first edge
+	// Check first edge
 	var v2x = triangle[3];
 	var v2y = triangle[4];
 	var v2z = triangle[5];
@@ -329,14 +286,13 @@ function colmesh__triangle_cast_ray(triangle, ox, oy, oz)
 	var cy = ax * bz - az * bx;
 	var cz = ay * bx - ax * by;
 	var dp = dot_product_3d(cx, cy, cz, nx, ny, nz);
-	if (dp < 0){return false;} //Continue if the intersection is outside this edge of the triangle
-	if (dp == 0)
-	{
+	if (dp < 0){ return false; } // Continue if the intersection is outside this edge of the triangle
+	if (dp == 0){
 		var t = dot_product_3d(ax, ay, az, bx, by, bz);
 		if (t < 0 or t > dot_product_3d(bx, by, bz, bx, by, bz)){return false;} //Intersection is perfectly on this triangle edge. Continue if outside triangle.
 	}
 	
-	//Check second edge
+	// Check second edge
 	var v3x = triangle[6];
 	var v3y = triangle[7];
 	var v3z = triangle[8];
@@ -350,14 +306,13 @@ function colmesh__triangle_cast_ray(triangle, ox, oy, oz)
 	var cy = ax * bz - az * bx;
 	var cz = ay * bx - ax * by;
 	var dp = dot_product_3d(cx, cy, cz, nx, ny, nz);
-	if (dp < 0){return false;} //Continue if the intersection is outside this edge of the triangle
-	if (dp == 0)
-	{
+	if (dp < 0){return false;} // Continue if the intersection is outside this edge of the triangle
+	if (dp == 0){
 		var t = dot_product_3d(ax, ay, az, bx, by, bz);
-		if (t < 0 or t > dot_product_3d(bx, by, bz, bx, by, bz)){return false;} //Intersection is perfectly on this triangle edge. Continue if outside triangle.
+		if (t < 0 or t > dot_product_3d(bx, by, bz, bx, by, bz)){ return false; } // Intersection is perfectly on this triangle edge. Continue if outside triangle.
 	}
 	
-	//Check third edge
+	// Check third edge
 	var ax = itsX - v3x;
 	var ay = itsY - v3y;
 	var az = itsZ - v3z;
@@ -368,14 +323,13 @@ function colmesh__triangle_cast_ray(triangle, ox, oy, oz)
 	var cy = ax * bz - az * bx;
 	var cz = ay * bx - ax * by;
 	var dp = dot_product_3d(cx, cy, cz, nx, ny, nz);
-	if (dp < 0){return false;} //Continue if the intersection is outside this edge of the triangle
-	if (dp == 0)
-	{
+	if (dp < 0){return false;} // Continue if the intersection is outside this edge of the triangle
+	if (dp == 0) {
 		var t = dot_product_3d(ax, ay, az, bx, by, bz);
-		if (t < 0 or t > dot_product_3d(bx, by, bz, bx, by, bz)){return false;} //Intersection is perfectly on this triangle edge. Continue if outside triangle.
+		if (t < 0 or t > dot_product_3d(bx, by, bz, bx, by, bz)){ return false; } // Intersection is perfectly on this triangle edge. Continue if outside triangle.
 	}
 	
-	//The line intersects the triangle. Save the triangle normal and intersection.
+	// The line intersects the triangle. Save the triangle normal and intersection.
 	var s = sign(h);
 	CM_RAY[0] = itsX;
 	CM_RAY[1] = itsY;
@@ -387,17 +341,12 @@ function colmesh__triangle_cast_ray(triangle, ox, oy, oz)
 	return true;
 }	
 
-/// @function colmesh__triangle_displace_sphere(triangle, x, y, z, xup, yup, zup, height, radius, slope, fast)
-function colmesh__triangle_displace_sphere(triangle, x, y, z, xup, yup, zup, height, radius, slope, fast)
-{
-	/*
-		A supplementary function, not meant to be used by itself.
-		Pushes a sphere out of the shape by changing the global array CM_COL
-		Returns true if there was a collision.
-	*/
+/// @function colmesh_triangle_displace_sphere(triangle, x, y, z, xup, yup, zup, height, radius, slope, fast)
+/// @description Pushes a sphere out of the shape by changing the global array CM_COL. Returns true if there was a collision.
+function colmesh_triangle_displace_sphere(triangle, x, y, z, xup, yup, zup, height, radius, slope, fast){
 	gml_pragma("forceinline");
 		
-	//Check first edge
+	// Check first edge
 	var nx = triangle[9];
 	var ny = triangle[10];
 	var nz = triangle[11];
@@ -408,8 +357,7 @@ function colmesh__triangle_displace_sphere(triangle, x, y, z, xup, yup, zup, hei
 	var t1 = y - v1y;
 	var t2 = z - v1z;
 	var D = dot_product_3d(t0, t1, t2, nx, ny, nz);
-	if (abs(D) > radius)
-	{
+	if (abs(D) > radius) {
 		return false;
 	}
 	var v2x = triangle[3];
@@ -422,8 +370,7 @@ function colmesh__triangle_displace_sphere(triangle, x, y, z, xup, yup, zup, hei
 	var cy = t0 * u2 - t2 * u0;
 	var cz = t1 * u0 - t0 * u1;
 	var dp = dot_product_3d(cx, cy, cz, nx, ny, nz);
-	if (dp < 0)
-	{
+	if (dp < 0) {
 		var a = clamp(dot_product_3d(u0, u1, u2, t0, t1, t2) / dot_product_3d(u0, u1, u2, u0, u1, u2), 0, 1);
 		var _nx = t0 - u0 * a;
 		var _ny = t1 - u1 * a;
@@ -432,10 +379,8 @@ function colmesh__triangle_displace_sphere(triangle, x, y, z, xup, yup, zup, hei
 		if (d <= 0 or d > radius){return false;}
 		colmesh_displace(_nx / d, _ny / d, _nz / d, xup, yup, zup, radius - d, slope);
 		return true;
-	}
-	else
-	{
-		//Check second edge
+	} else {
+		// Check second edge
 		var v3x = triangle[6];
 		var v3y = triangle[7];
 		var v3z = triangle[8];
@@ -449,8 +394,7 @@ function colmesh__triangle_displace_sphere(triangle, x, y, z, xup, yup, zup, hei
 		var cy = t0 * u2 - t2 * u0;
 		var cz = t1 * u0 - t0 * u1;
 		var dp = dot_product_3d(cx, cy, cz, nx, ny, nz);
-		if (dp < 0)
-		{
+		if (dp < 0) {
 			var a = clamp(dot_product_3d(u0, u1, u2, t0, t1, t2) / dot_product_3d(u0, u1, u2, u0, u1, u2), 0, 1);
 			var _nx = t0 - u0 * a;
 			var _ny = t1 - u1 * a;
@@ -459,10 +403,8 @@ function colmesh__triangle_displace_sphere(triangle, x, y, z, xup, yup, zup, hei
 			if (d <= 0 or d > radius){return false;}
 			colmesh_displace(_nx / d, _ny / d, _nz / d, xup, yup, zup, radius - d, slope);
 			return true;
-		}
-		else
-		{
-			//Check third edge
+		} else {
+			// Check third edge
 			var t0 = x - v3x;
 			var t1 = y - v3y;
 			var t2 = z - v3z;
@@ -473,8 +415,7 @@ function colmesh__triangle_displace_sphere(triangle, x, y, z, xup, yup, zup, hei
 			var cy = t0 * u2 - t2 * u0;
 			var cz = t1 * u0 - t0 * u1;
 			var dp = dot_product_3d(cx, cy, cz, nx, ny, nz);
-			if (dp < 0)
-			{
+			if (dp < 0) {
 				var a = clamp(dot_product_3d(u0, u1, u2, t0, t1, t2) / dot_product_3d(u0, u1, u2, u0, u1, u2), 0, 1);
 				var _nx = t0 - u0 * a;
 				var _ny = t1 - u1 * a;
@@ -491,26 +432,18 @@ function colmesh__triangle_displace_sphere(triangle, x, y, z, xup, yup, zup, hei
 	return true;
 }
 
-
-function colmesh_region_cast_ray(region, x1, y1, z1, x2, y2, z2, _executeRayFunc)
-{
-	//This ray casting script is faster than the regular Colmesh raycasting script.
-	//However, it will only cast a ray onto the shapes in the current region, and is as such a "short-range" ray.
-	//If there was an intersection, it returns an array with the following format:
-	//	[x, y, z, nX, nY, nZ, success]
-	//Returns false if there was no intersection.
+/// @function colmesh_region_cast_ray
+/// @description This ray casting script is faster than the regular Colmesh raycasting script. If there was an intersection, it returns an array with the following format: [x, y, z, nX, nY, nZ, success]. Returns false if there was no intersection.
+function colmesh_region_cast_ray(region, x1, y1, z1, x2, y2, z2, _executeRayFunc){
 	var success = false;
-	if (is_undefined(region) or (x1 == x2 and y1 == y2 and z1 == z2))
-	{
+	if (is_undefined(region) or (x1 == x2 and y1 == y2 and z1 == z2)){
 		return false;
 	}
-	if (CM_RECURSION >= CM_MAX_RECURSION)
-	{
-		//Exit the script if we've reached the recursive limit
+	if (CM_RECURSION >= CM_MAX_RECURSION){
+		// Exit the script if we've reached the recursive limit
 		return false;
 	}
-	if (CM_RECURSION == 0 and CM_CALLING_OBJECT < 0)
-	{
+	if (CM_RECURSION == 0 and CM_CALLING_OBJECT < 0){
 		CM_CALLING_OBJECT = other;
 	}
 	var executeRayFunc = (is_undefined(_executeRayFunc) ? false : _executeRayFunc);
@@ -523,65 +456,53 @@ function colmesh_region_cast_ray(region, x1, y1, z1, x2, y2, z2, _executeRayFunc
 		
 	//Loop through the shapes in the region
 	var i = ds_list_size(region);
-	repeat i
-	{
+	repeat i {
 		var shape = get_shape(region[| --i])
 		static temp = array_create(7);
-		if (!shape.solid)
-		{
+		if (!shape.solid) {
 			array_copy(temp, 0, CM_RAY, 0, 7);
 		}
 		++CM_RECURSION;
 		var ray = shape.cast_ray(x1, y1, z1);
 		--CM_RECURSION;
-		if (ray)
-		{
-			if (shape.type == eColMeshShape.Trigger)
-			{
-				if (executeRayFunc and is_method(shape.rayFunc))
-				{
+		if (ray){
+			if (shape.type == eColMeshShape.Trigger){
+				if (executeRayFunc and is_method(shape.rayFunc)){
 					shape.rayFunc();
 				}
 			}
-			if (!shape.solid)
-			{
-				//This shape is not solid. The ray should continue!
+			if (!shape.solid){
+				// This shape is not solid. The ray should continue!
 				array_copy(CM_RAY, 0, temp, 0, 7);
 				continue;
 			}
 			success = true;
 		}
 	}
-	if (CM_RECURSION == 0)
-	{
+	if (CM_RECURSION == 0){
 		CM_CALLING_OBJECT = -1;
 	}
-	if (success)
-	{
+	if (success){
 		return CM_RAY;
 	}
 	return false;
 }
 
-
-function colmesh_region_capsule_collision(region, x, y, z, xup, yup, zup, radius, height)
-{
-	//Returns whether or not the given capsule collides with the given region
-	if (is_undefined(region))
-	{
+/// @function colmesh_region_capsule_collision
+/// @description Returns whether or not the given capsule collides with the given region
+function colmesh_region_capsule_collision(region, x, y, z, xup, yup, zup, radius, height){
+	if (is_undefined(region)){
 		CM_COL[0] = x;
 		CM_COL[1] = y;
 		CM_COL[2] = z;
 		CM_COL[6] = false;
 		return CM_COL;
 	}
-	if (CM_RECURSION >= CM_MAX_RECURSION)
-	{
+	if (CM_RECURSION >= CM_MAX_RECURSION){
 		return false;
 	}
 	var i = ds_list_size(region);
-	repeat (i)
-	{
+	repeat (i) {
 		++CM_RECURSION;
 		var col = get_shape(region[| --i]).capsule_collision(x, y, z, xup, yup, zup, radius, height);
 		--CM_RECURSION;

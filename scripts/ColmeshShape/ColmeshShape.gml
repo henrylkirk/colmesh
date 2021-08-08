@@ -3067,13 +3067,9 @@ function ColmeshBlock(matrix) : ColmeshShape() constructor {
 	}
 	
 	/// @function displace_sphere(x, y, z, xup, yup, zup, height, radius, slope, fast)
+	/// @description Pushes a sphere out of the shape by changing the global array CM_COL. Returns true if there was a collision. A supplementary function, not meant to be used by itself.
 	static displace_sphere = function(_x, _y, _z, _xup, _yup, _zup, height, radius, slope, fast){
-		/*
-			A supplementary function, not meant to be used by itself.
-			Pushes a sphere out of the shape by changing the global array CM_COL
-			Returns true if there was a collision.
-		*/
-		//Find normalized block space position
+		// Find normalized block space position
 		var xx = _x - x;
 		var yy = _y - y;
 		var zz = _z - z;
