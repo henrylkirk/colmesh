@@ -26,7 +26,7 @@
 
 enum eColMeshShape {
 	// Do not change the order of these. Changing the order will break saving and loading. Add new entries before "Num".
-	Mesh, Sphere, Capsule, Cylinder, Torus, Cube, Block, Dynamic, None, Disk, Cone, Trigger, Heightmap, Num
+	Mesh, Sphere, Capsule, Cylinder, Torus, Cube, Block, Dynamic, None, Disk, Cone, Trigger, Heightmap, Dome, Num
 }
 
 /// @function ColmeshShape()
@@ -41,7 +41,7 @@ function ColmeshShape() constructor {
 	type = eColMeshShape.Mesh;
 	solid = true;
 	
-	/// @function set_trigger(solid, [col_func], [ray_func])
+	/// @function set_trigger(solid, [col_func], [rayFunc])
 	/// @param {boolean} solid
 	/// @param {function} [col_func] - Custom collision function
 	/// @param {function} [ray_func] - Custom function that is executed if a ray hits the shape
@@ -54,7 +54,7 @@ function ColmeshShape() constructor {
 		type = eColMeshShape.Trigger;
 		self.solid = solid;
 		self.col_func = col_func;
-		self.ray_func = ray_func;
+		self.rayFunc = ray_func;
 	}
 	
 	#region Shared functions
@@ -130,9 +130,7 @@ function ColmeshShape() constructor {
 			var traceZ = _z + zup * trace;
 			var p = get_closest_point(traceX, traceY, traceZ);
 			d = dot_product_3d(p[0] - _x, p[1] - _y, p[2] - _z, xup, yup, zup);
-		}
-		else
-		{
+		} else {
 			d = dot_product_3d(_x - v1x, _y - v1y, _z - v1z, xup, yup, zup);
 		}
 		d = clamp(d, 0, height);
@@ -607,17 +605,17 @@ function ColmeshShape() constructor {
 		p0 = ez * d1y - ey * d1z;
 		p1 = ez * d2y - ey * d2z;
 		rad = fez + fey;
-		if (min(p0, p1) > rad or max(p0, p1) < -rad){return false;}
+		if (min(p0, p1) > rad or max(p0, p1) < -rad){ return false; }
 
 		p0 = -ez * d1x + ex * d1z;
 		p1 = -ez * d2x + ex * d2z;
 		rad = fez + fex;
-		if (min(p0, p1) > rad or max(p0, p1) < -rad){return false;}
+		if (min(p0, p1) > rad or max(p0, p1) < -rad){ return false; }
 	
 		p1 = ey * d2x - ex * d2y;
 		p2 = ey * d3x - ex * d3y;
 		rad = fey + fex;
-		if (min(p1, p2) > rad or max(p1, p2) < -rad){return false;}
+		if (min(p1, p2) > rad or max(p1, p2) < -rad){ return false; }
 
 		return true;
 	}
@@ -884,31 +882,9 @@ function ColmeshSphere(x, y, z, radius) : ColmeshShape() constructor {
 		return (distSqr > 0);
 	}
 	
-	/// @function debug_draw(tex)
-	static debug_draw = function(tex)
-	{
-		static vbuff = global.ColMeshDebugShapes[eColMeshShape.Sphere];
-		if (vbuff < 0)
-		{
-			global.ColMeshDebugShapes[eColMeshShape.Sphere] = colmesh_create_sphere(20, 16, 1, 1);
-			vbuff = global.ColMeshDebugShapes[eColMeshShape.Sphere];
-		}
-		if (is_undefined(tex))
-		{
-			tex = -1;
-		}
-		static matrix = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
-		matrix[12] = x;
-		matrix[13] = y;
-		matrix[14] = z;
-		
-		var W = matrix_get(matrix_world);
-		shader_set_uniform_f(shader_get_uniform(shader_current(), "u_radius"), R);
-		matrix_set(matrix_world, matrix_multiply(matrix, W));
-		vertex_submit(vbuff, pr_trianglelist, tex);
-		
-		//Reset the world matrix
-		matrix_set(matrix_world, W);
+	/// @function debug_draw([tex], [enable_lighting])
+	static debug_draw = function(tex = -1, enable_lighting = false){
+		colmesh_debug_draw_sphere(x, y, z, R, c_aqua, tex, enable_lighting);
 	}
 	
 	#endregion
@@ -948,70 +924,56 @@ function ColmeshCapsule(x, y, z, _xup, _yup, _zup, radius, height) : ColmeshShap
 	}
 	
 	/// @function check_aabb(minx, miny, minz, maxx, maxy, maxz)
-	static check_aabb = function(minx, miny, minz, maxx, maxy, maxz)
-	{
-		if (x - R + H * min(0, xup) < maxx and 
+	static check_aabb = function(minx, miny, minz, maxx, maxy, maxz){
+		return (x - R + H * min(0, xup) < maxx and 
 			y - R + H * min(0, yup) < maxy and 
 			z - R + H * min(0, zup) < maxz and 
 			x + R + H * max(0, xup) > minx and 
 			y + R + H * max(0, yup) > miny and 
-			z + R + H * max(0, zup) > minz)
-		return true;
-		return false;
+			z + R + H * max(0, zup) > minz);
 	}
 	
 	/// @function capsule_get_ref(x, y, z, xup, yup, zup, height)
-	static capsule_get_ref = function(_x, _y, _z, _xup, _yup, _zup, height)
-	{	
-		/*
-			A supplementary function, not meant to be used by itself.
-			Returns the nearest point along the given capsule to the shape.
-		*/
+	/// @description Returns the nearest point along the given capsule to the shape. A supplementary function, not meant to be used by itself.
+	static capsule_get_ref = function(ox, oy, oz, o_xup, o_yup, o_zup, o_height){	
 		gml_pragma("forceinline");
 		static ret = array_create(3);
-		var upDp = dot_product_3d(_xup, _yup, _zup, xup, yup, zup);
+		var upDp = dot_product_3d(o_xup, o_yup, o_zup, xup, yup, zup);
 		
-		//If the capsules are parallel, finding the nearest point is trivial
-		if (upDp == 1)
-		{
-			var t = dot_product_3d(x - _x, y - _y, z - _z, _xup, _yup, _zup);
-			t = clamp(t, 0, height);
-			ret[0] = _x + _xup * t;
-			ret[1] = _y + _yup * t;
-			ret[2] = _z + _zup * t;
+		// If the capsules are parallel, finding the nearest point is trivial
+		if (upDp == 1){
+			var t = dot_product_3d(x - ox, y - oy, z - oz, o_xup, o_yup, o_zup);
+			t = clamp(t, 0, o_height);
+			ret[0] = x + o_xup * t;
+			ret[1] = y + o_yup * t;
+			ret[2] = z + o_zup * t;
 			return ret;
 		}
 		
-		//Find the nearest point between the central axis of each capsule. Source: http://geomalgorithms.com/a07-_distance.html
-		var dx = _x - x;
-		var dy = _y - y;
-		var dz = _z - z;
+		// Find the nearest point between the central axis of each capsule. Source: http://geomalgorithms.com/a07-_distance.html
+		var dx = ox - x;
+		var dy = oy - y;
+		var dz = oz - z;
 		var w1 = dot_product_3d(dx, dy, dz, xup, yup, zup);
-		var w2 = dot_product_3d(dx, dy, dz, _xup, _yup, _zup);
+		var w2 = dot_product_3d(dx, dy, dz, o_xup, o_yup, o_zup);
 		var s = clamp((w1 - w2 * upDp) / (1 - upDp * upDp), 0, H);
-		var t = dot_product_3d(xup * s - dx, yup * s - dy, zup * s - dz, _xup, _yup, _zup);
-		t = clamp(t, 0, height);
-		ret[0] = _x + _xup * t;
-		ret[1] = _y + _yup * t;
-		ret[2] = _z + _zup * t;
+		var t = dot_product_3d(xup * s - dx, yup * s - dy, zup * s - dz, o_xup, o_yup, o_zup);
+		t = clamp(t, 0, o_height);
+		ret[0] = ox + o_xup * t;
+		ret[1] = oy + o_yup * t;
+		ret[2] = oz + o_zup * t;
 		return ret;
 	}
 	
 	/// @function cast_ray(ox, oy, oz)
-	static cast_ray = function(ox, oy, oz)
-	{
-		/*
-			A supplementary function, not meant to be used by itself.
-			Used by Colmesh.cast_ray
-			Changes the global array CM_RAY if the ray intersects the shape
-		*/
-		/*	Algorithm created by TheSnidr	*/
-		var _x = CM_RAY[0],	_y = CM_RAY[1],	_z = CM_RAY[2];
-		var dx = _x - ox;
-		var dy = _y - oy;
-		var dz = _z - oz;
+	/// @description Changes the global array CM_RAY if the ray intersects the shape. Used by Colmesh.cast_ray. A supplementary function, not meant to be used by itself.
+	static cast_ray = function(ox, oy, oz){
+		var rx = CM_RAY[0], ry = CM_RAY[1], rz = CM_RAY[2];
+		var dx = rx - ox;
+		var dy = ry - oy;
+		var dz = rz - oz;
 		
-		//Transform the ray into the cylinder's local space, and do a 2D ray-circle intersection check
+		// Transform the ray into the cylinder's local space, and do a 2D ray-circle intersection check
 		var lox = dot_product_3d(ox - x, oy - y, oz - z, inv0, inv4, inv8);
 		var loy = dot_product_3d(ox - x, oy - y, oz - z, inv1, inv5, inv9);
 		var ldx = dot_product_3d(dx, dy, dz, inv0, inv4, inv8);
@@ -1025,7 +987,7 @@ function ColmeshCapsule(x, y, z, _xup, _yup, _zup, radius, height) : ColmeshShap
 		var t = (b - k) / a;
 		if (t > 1 or t < 0) return false;
 		
-		//Find the 3D intersection
+		// Find the 3D intersection
 		var itsX = ox + dx * t;
 		var itsY = oy + dy * t;
 		var itsZ = oz + dz * t;
@@ -1034,9 +996,9 @@ function ColmeshCapsule(x, y, z, _xup, _yup, _zup, radius, height) : ColmeshShap
 		var tx = x + xup * _d;
 		var ty = y + yup * _d;
 		var tz = z + zup * _d;
-		if (d < 0 or d > H)
-		{	//The intersection is outside the end of the capsule. Do a spherical ray cast at the nearest endpoint
-			var ray = colmesh_cast_ray_sphere(tx, ty, tz, R, ox, oy, oz, _x, _y, _z);
+		if (d < 0 or d > H){
+			// The intersection is outside the end of the capsule. Do a spherical ray cast at the nearest endpoint
+			var ray = colmesh_cast_ray_sphere(tx, ty, tz, R, ox, oy, oz, rx, ry, rz);
 			if (!is_array(ray)){return false;}
 			itsX = ray[0];
 			itsY = ray[1];
@@ -1057,8 +1019,7 @@ function ColmeshCapsule(x, y, z, _xup, _yup, _zup, radius, height) : ColmeshShap
 	}
 	
 	/// @function get_closest_point(x, y, z)
-	static get_closest_point = function(_x, _y, _z)
-	{
+	static get_closest_point = function(_x, _y, _z){
 		/*
 			A supplementary function, not meant to be used by itself.
 			Used by Colmesh.getClosestPoint
@@ -1074,8 +1035,7 @@ function ColmeshCapsule(x, y, z, _xup, _yup, _zup, radius, height) : ColmeshShap
 		var dy = _y - ty;
 		var dz = _z - tz;
 		var d = sqrt(dot_product_3d(dx, dy, dz, dx, dy, dz));
-		if (d > 0)
-		{
+		if (d > 0){
 			var r = R / d;
 			ret[@ 0] = tx + dx * r;
 			ret[@ 1] = ty + dy * r;
@@ -1089,8 +1049,7 @@ function ColmeshCapsule(x, y, z, _xup, _yup, _zup, radius, height) : ColmeshShap
 	}
 	
 	/// @function displace_sphere(x, y, z, xup, yup, zup, height, radius, slope, fast)
-	static displace_sphere = function(_x, _y, _z, _xup, _yup, _zup, height, radius, slope, fast)
-	{
+	static displace_sphere = function(_x, _y, _z, _xup, _yup, _zup, height, radius, slope, fast){
 		/*
 			A supplementary function, not meant to be used by itself.
 			Pushes a sphere out of the shape by changing the global array CM_COL
@@ -1116,8 +1075,7 @@ function ColmeshCapsule(x, y, z, _xup, _yup, _zup, radius, height) : ColmeshShap
 	}
 
 	/// @function get_priority(x, y, z, maxR)
-	static get_priority = function(_x, _y, _z, maxR)
-	{
+	static get_priority = function(_x, _y, _z, maxR){
 		/*
 			A supplementary function, not meant to be used by itself.
 			Returns -1 if the shape is too far away
@@ -1135,8 +1093,7 @@ function ColmeshCapsule(x, y, z, _xup, _yup, _zup, radius, height) : ColmeshShap
 	}
 	
 	/// @function intersects_cube(cubeHalfSize, cubeCenterX, cubeCenterY, cubeCenterZ)
-	static intersects_cube = function(hsize, bx, by, bz) 
-	{
+	static intersects_cube = function(hsize, bx, by, bz) {
 		/*
 			A supplementary function, not meant to be used by itself.
 			Returns true if the shape intersects the given axis-aligned cube
@@ -1149,30 +1106,9 @@ function ColmeshCapsule(x, y, z, _xup, _yup, _zup, radius, height) : ColmeshShap
 		return true;
 	}
 	
-	/// @function debug_draw(tex)
-	static debug_draw = function(tex)
-	{
-		static vbuff = global.ColMeshDebugShapes[eColMeshShape.Capsule];
-		if (vbuff < 0)
-		{
-			global.ColMeshDebugShapes[eColMeshShape.Capsule] = colmesh_create_capsule(20, 20, 1, 1);
-			vbuff = global.ColMeshDebugShapes[eColMeshShape.Capsule];
-		}
-		if (is_undefined(tex))
-		{
-			tex = -1;
-		}
-		static matrix = array_create(16);
-		colmesh_matrix_build_from_vector(x, y, z, xup, yup, zup, 1, 1, H, matrix);
-		
-		var sh = shader_current();
-		var W = matrix_get(matrix_world);
-		shader_set_uniform_f(shader_get_uniform(shader_current(), "u_radius"), R);
-		matrix_set(matrix_world, matrix_multiply(matrix, W));
-		vertex_submit(vbuff, pr_trianglelist, tex);
-		
-		//Reset the world matrix
-		matrix_set(matrix_world, W);
+	/// @function debug_draw([tex], [colour], [enable_lighting])
+	static debug_draw = function(tex = -1, colour = c_aqua, enable_lighting = false){
+		colmesh_debug_draw_capsule(x, y, z, xup, yup, zup, R, H, colour, tex, enable_lighting);
 	}
 	
 	#endregion
@@ -1212,24 +1148,18 @@ function ColmeshCylinder(x, y, z, _xup, _yup, _zup, radius, height) : ColmeshSha
 	}
 	
 	/// @function check_aabb(minx, miny, minz, maxx, maxy, maxz)
-	static check_aabb = function(minx, miny, minz, maxx, maxy, maxz)
-	{
-		if (
+	static check_aabb = function(minx, miny, minz, maxx, maxy, maxz){
+		return (
 			x - R + H * min(0, xup) < maxx and 
 			y - R + H * min(0, yup) < maxy and 
 			z - R + H * min(0, zup) < maxz and 
 			x + R + H * max(0, xup) > minx and 
 			y + R + H * max(0, yup) > miny and 
-			z + R + H * max(0, zup) > minz)
-		{
-			return true;
-		}
-		return false;
+			z + R + H * max(0, zup) > minz);
 	}
 	
 	/// @function capsule_get_ref(x, y, z, xup, yup, zup, height)
-	static capsule_get_ref = function(_x, _y, _z, _xup, _yup, _zup, height)
-	{
+	static capsule_get_ref = function(_x, _y, _z, _xup, _yup, _zup, height){
 		/*
 			A supplementary function, not meant to be used by itself.
 			Returns the nearest point along the given capsule to the shape.
@@ -1239,8 +1169,7 @@ function ColmeshCylinder(x, y, z, _xup, _yup, _zup, radius, height) : ColmeshSha
 		var upDp = dot_product_3d(_xup, _yup, _zup, xup, yup, zup);
 		
 		//If the capsules are parallel, finding the nearest point is trivial
-		if (upDp == 1)
-		{
+		if (upDp == 1){
 			var t = clamp(_xup * (x - _x) + _yup * (y - _y) + _zup * (z - _z), 0, height);
 			ret[0] = _x + _xup * t;
 			ret[1] = _y + _yup * t;
@@ -1292,14 +1221,12 @@ function ColmeshCylinder(x, y, z, _xup, _yup, _zup, radius, height) : ColmeshSha
 	}
 	
 	/// @function cast_ray(ox, oy, oz)
-	static cast_ray = function(ox, oy, oz)
-	{
+	static cast_ray = function(ox, oy, oz){
 		/*
 			A supplementary function, not meant to be used by itself.
 			Used by Colmesh.cast_ray
 			Changes the global array CM_RAY if the ray intersects the shape
 		*/
-		/*	Algorithm created by TheSnidr	*/
 		gml_pragma("forceinline");
 		var _x = CM_RAY[0],	_y = CM_RAY[1],	_z = CM_RAY[2];
 		var dx = _x - ox,	dy = _y - oy,	dz = _z - oz;
@@ -1377,8 +1304,7 @@ function ColmeshCylinder(x, y, z, _xup, _yup, _zup, radius, height) : ColmeshSha
 	}
 	
 	/// @function get_closest_point(x, y, z)
-	static get_closest_point = function(_x, _y, _z)
-	{
+	static get_closest_point = function(_x, _y, _z){
 		/*
 			A supplementary function, not meant to be used by itself.
 			Used by Colmesh.getClosestPoint
@@ -1422,8 +1348,7 @@ function ColmeshCylinder(x, y, z, _xup, _yup, _zup, radius, height) : ColmeshSha
 	}
 	
 	/// @function displace_sphere(x, y, z, xup, yup, zup, height, radius, slope, fast)
-	static displace_sphere = function(_x, _y, _z, _xup, _yup, _zup, height, radius, slope, fast)
-	{
+	static displace_sphere = function(_x, _y, _z, _xup, _yup, _zup, height, radius, slope, fast){
 		/*
 			A supplementary function, not meant to be used by itself.
 			Pushes a sphere out of the shape by changing the global array CM_COL
@@ -1468,8 +1393,7 @@ function ColmeshCylinder(x, y, z, _xup, _yup, _zup, radius, height) : ColmeshSha
 	}
 
 	/// @function get_priority(x, y, z, maxR)
-	static get_priority = function(_x, _y, _z, maxR)
-	{
+	static get_priority = function(_x, _y, _z, maxR){
 		/*
 			A supplementary function, not meant to be used by itself.
 			Returns -1 if the shape is too far away
@@ -1510,8 +1434,7 @@ function ColmeshCylinder(x, y, z, _xup, _yup, _zup, radius, height) : ColmeshSha
 	}
 	
 	/// @function intersects_cube(cubeHalfSize, cubeCenterX, cubeCenterY, cubeCenterZ)
-	static intersects_cube = function(hsize, bx, by, bz) 
-	{
+	static intersects_cube = function(hsize, bx, by, bz) {
 		/*
 			A supplementary function, not meant to be used by itself.
 			Returns true if the shape intersects the given axis-aligned cube
@@ -1524,38 +1447,16 @@ function ColmeshCylinder(x, y, z, _xup, _yup, _zup, radius, height) : ColmeshSha
 		return true;
 	}
 	
-	/// @function debug_draw(tex)
-	static debug_draw = function(tex)
-	{
-		static vbuff = global.ColMeshDebugShapes[eColMeshShape.Cylinder];
-		if (vbuff < 0)
-		{
-			global.ColMeshDebugShapes[eColMeshShape.Cylinder] = colmesh_create_cylinder(20, 1, 1);
-			vbuff = global.ColMeshDebugShapes[eColMeshShape.Cylinder];
-		}
-		if (is_undefined(tex))
-		{
-			tex = -1;
-		}
-		static matrix = array_create(16);
-		colmesh_matrix_build_from_vector(x, y, z, xup, yup, zup, R, R, H, matrix);
-		
-		var sh = shader_current();
-		var W = matrix_get(matrix_world);
-		shader_set_uniform_f(shader_get_uniform(shader_current(), "u_radius"), 0);
-		matrix_set(matrix_world, matrix_multiply(matrix, W));
-		vertex_submit(vbuff, pr_trianglelist, tex);
-		
-		//Reset the world matrix
-		matrix_set(matrix_world, W);
+	/// @function debug_draw([tex], [colour], [enable_lighting])
+	static debug_draw = function(tex = -1, colour = c_aqua, enable_lighting = false){
+		colmesh_debug_draw_cylinder(x, y, z, xup, yup, zup, R, H, colour, tex, enable_lighting);
 	}
 	
 	#endregion
 }
 
 /// @function ColmeshCone(x, y, z, xup, yup, zup, radius, height)
-function colmesh_unfinished_cone(_x, _y, _z, _xup, _yup, _zup, radius, height) : ColmeshShape() constructor
-{
+function colmesh_unfinished_cone(_x, _y, _z, _xup, _yup, _zup, radius, height) : ColmeshShape() constructor {
 	type = eColMeshShape.Cone;
 	x = _x;
 	y = _y;
@@ -1881,8 +1782,8 @@ function colmesh_unfinished_cone(_x, _y, _z, _xup, _yup, _zup, radius, height) :
 	#endregion
 }
 
-/// @function colmesh_torus(x, y, z, xup, yup, zup, R, r)
-function colmesh_torus(_x, _y, _z, _xup, _yup, _zup, _R, _r) : ColmeshShape() constructor {
+/// @function ColmeshTorus(x, y, z, xup, yup, zup, R, r)
+function ColmeshTorus(_x, _y, _z, _xup, _yup, _zup, _R, _r) : ColmeshShape() constructor {
 	type = eColMeshShape.Torus;
 	x = _x;
 	y = _y;
@@ -1891,8 +1792,8 @@ function colmesh_torus(_x, _y, _z, _xup, _yup, _zup, _R, _r) : ColmeshShape() co
 	xup = _xup / l;
 	yup = _yup / l;
 	zup = _zup / l;
-	R = _R;
-	r = _r;
+	R = _R; // exterior radius
+	r = _r; // interior radius (hole)
 	var matrix = colmesh_matrix_build_from_vector(x, y, z, xup, yup, zup, R, R, R);
 	var inv = colmesh_matrix_invert_fast(matrix, matrix);
 	inv0 = inv[0];	inv1 = inv[1];	inv2 = inv[2];
@@ -1916,19 +1817,13 @@ function colmesh_torus(_x, _y, _z, _xup, _yup, _zup, _R, _r) : ColmeshShape() co
 	}
 	
 	/// @function check_aabb(minx, miny, minz, maxx, maxy, maxz)
-	static check_aabb = function(minx, miny, minz, maxx, maxy, maxz)
-	{
+	static check_aabb = function(minx, miny, minz, maxx, maxy, maxz){
 		var rr = R + r;
-		if (x - rr < maxx and y - rr < maxy and z - rr < maxz and x + rr > minx and y + rr > miny and z + rr > minz)
-		{
-			return true;
-		}
-		return false;
+		return (x - rr < maxx and y - rr < maxy and z - rr < maxz and x + rr > minx and y + rr > miny and z + rr > minz);
 	}
 	
 	/// @function capsule_get_ref(x, y, z, xup, yup, zup, height)
-	static capsule_get_ref = function(_x, _y, _z, _xup, _yup, _zup, height)
-	{
+	static capsule_get_ref = function(_x, _y, _z, _xup, _yup, _zup, height){
 		/*
 			A supplementary function, not meant to be used by itself.
 			Returns the nearest point along the given capsule to the shape.
@@ -1958,8 +1853,7 @@ function colmesh_torus(_x, _y, _z, _xup, _yup, _zup, _R, _r) : ColmeshShape() co
 	}
 	
 	/// @function _getRingCoord(x, y, z)
-	static _getRingCoord = function(_x, _y, _z)
-	{
+	static _getRingCoord = function(_x, _y, _z){
 		gml_pragma("forceinline");
 		static ret = array_create(3);
 		var dx = _x - x;
@@ -1985,8 +1879,7 @@ function colmesh_torus(_x, _y, _z, _xup, _yup, _zup, _R, _r) : ColmeshShape() co
 	}
 	
 	/// @function cast_ray(ox, oy, oz)
-	static cast_ray = function(ox, oy, oz)
-	{
+	static cast_ray = function(ox, oy, oz){
 		/*
 			A supplementary function, not meant to be used by itself.
 			Used by Colmesh.cast_ray
@@ -2051,8 +1944,7 @@ function colmesh_torus(_x, _y, _z, _xup, _yup, _zup, _R, _r) : ColmeshShape() co
 	}
 	
 	/// @function get_closest_point(x, y, z)
-	static get_closest_point = function(_x, _y, _z)
-	{
+	static get_closest_point = function(_x, _y, _z){
 		/*
 			A supplementary function, not meant to be used by itself.
 			Used by Colmesh.getClosestPoint
@@ -2081,8 +1973,7 @@ function colmesh_torus(_x, _y, _z, _xup, _yup, _zup, _R, _r) : ColmeshShape() co
 	}
 	
 	/// @function displace_sphere(x, y, z, xup, yup, zup, height, radius, slope, fast)
-	static displace_sphere = function(_x, _y, _z, _xup, _yup, _zup, height, radius, slope, fast)
-	{
+	static displace_sphere = function(_x, _y, _z, _xup, _yup, _zup, height, radius, slope, fast){
 		/*
 			A supplementary function, not meant to be used by itself.
 			Pushes a sphere out of the shape by changing the global array CM_COL
@@ -2105,8 +1996,7 @@ function colmesh_torus(_x, _y, _z, _xup, _yup, _zup, _R, _r) : ColmeshShape() co
 	}
 
 	/// @function get_priority(x, y, z, maxR)
-	static get_priority = function(_x, _y, _z, maxR)
-	{
+	static get_priority = function(_x, _y, _z, maxR){
 		/*
 			A supplementary function, not meant to be used by itself.
 			Returns -1 if the shape is too far away
@@ -2123,8 +2013,7 @@ function colmesh_torus(_x, _y, _z, _xup, _yup, _zup, _R, _r) : ColmeshShape() co
 	}
 	
 	/// @function intersects_cube(cubeHalfSize, cubeCenterX, cubeCenterY, cubeCenterZ)
-	static intersects_cube = function(hsize, bx, by, bz) 
-	{
+	static intersects_cube = function(hsize, bx, by, bz) {
 		/*
 			A supplementary function, not meant to be used by itself.
 			Returns true if the shape intersects the given axis-aligned cube
@@ -2137,30 +2026,9 @@ function colmesh_torus(_x, _y, _z, _xup, _yup, _zup, _R, _r) : ColmeshShape() co
 		return true;
 	}
 	
-	/// @function debug_draw(tex)
-	static debug_draw = function(tex)
-	{
-		static vbuff = global.ColMeshDebugShapes[eColMeshShape.Torus];
-		if (vbuff < 0)
-		{
-			global.ColMeshDebugShapes[eColMeshShape.Torus] = colmesh_create_torus(32, 20, 1, 1);
-			vbuff = global.ColMeshDebugShapes[eColMeshShape.Torus];
-		}
-		if (is_undefined(tex))
-		{
-			tex = -1;
-		}
-		static matrix = array_create(16);
-		colmesh_matrix_build_from_vector(x, y, z, xup, yup, zup, R, R, R, matrix);
-		
-		var sh = shader_current();
-		var W = matrix_get(matrix_world);
-		shader_set_uniform_f(shader_get_uniform(shader_current(), "u_radius"), r);
-		matrix_set(matrix_world, matrix_multiply(matrix, W));
-		vertex_submit(vbuff, pr_trianglelist, tex);
-		
-		//Reset the world matrix
-		matrix_set(matrix_world, W);
+	/// @function debug_draw([tex], [colour], [enable_lighting])
+	static debug_draw = function(tex = -1, colour = c_aqua, enable_lighting = false){
+		colmesh_debug_draw_torus(x, y, z, xup, yup, zup, R, r, colour, tex, enable_lighting);
 	}
 	
 	#endregion
@@ -2201,19 +2069,13 @@ function ColmeshDisk(_x, _y, _z, _xup, _yup, _zup, _R, _r) : ColmeshShape() cons
 	}
 	
 	/// @function check_aabb(minx, miny, minz, maxx, maxy, maxz)
-	static check_aabb = function(minx, miny, minz, maxx, maxy, maxz)
-	{
+	static check_aabb = function(minx, miny, minz, maxx, maxy, maxz){
 		var rr = R + r;
-		if (x - rr < maxx and y - rr < maxy and z - rr < maxz and x + rr > minx and y + rr > miny and z + rr > minz)
-		{
-			return true;
-		}
-		return false;
+		return (x - rr < maxx and y - rr < maxy and z - rr < maxz and x + rr > minx and y + rr > miny and z + rr > minz);
 	}
 	
 	/// @function capsule_get_ref(x, y, z, xup, yup, zup, height)
-	static capsule_get_ref = function(_x, _y, _z, _xup, _yup, _zup, height)
-	{
+	static capsule_get_ref = function(_x, _y, _z, _xup, _yup, _zup, height){
 		/*
 			A supplementary function, not meant to be used by itself.
 			Returns the nearest point along the given capsule to the shape.
@@ -2221,14 +2083,11 @@ function ColmeshDisk(_x, _y, _z, _xup, _yup, _zup, _R, _r) : ColmeshShape() cons
 		gml_pragma("forceinline");
 		static ret = array_create(3);
 		var d = dot_product_3d(_xup, _yup, _zup, xup, yup, zup);
-		if (d != 0)
-		{
+		if (d != 0){
 			var d = dot_product_3d(x - _x, y - _y, z - _z, xup, yup, zup) / d;
 			var p = _getDiskCoord(_x + _xup * d, _y + _yup * d, _z + _zup * d);
 			d = dot_product_3d(p[0] - _x, p[1] - _y, p[2] - _z, _xup, _yup, _zup);
-		}
-		else
-		{
+		} else {
 			d = dot_product_3d(x - _x, y - _y, z - _z, _xup, _yup, _zup);
 		}
 		d = clamp(d, 0, height);
@@ -2239,8 +2098,7 @@ function ColmeshDisk(_x, _y, _z, _xup, _yup, _zup, _R, _r) : ColmeshShape() cons
 	}
 	
 	/// @function _getDiskCoord(x, y, z)
-	static _getDiskCoord = function(_x, _y, _z)
-	{
+	static _getDiskCoord = function(_x, _y, _z){
 		gml_pragma("forceinline");
 		static ret = array_create(3);
 		var dx = _x - x;
@@ -2251,8 +2109,7 @@ function ColmeshDisk(_x, _y, _z, _xup, _yup, _zup, _R, _r) : ColmeshShape() cons
 		dy -= yup * dp;
 		dz -= zup * dp;
 		var l = dot_product_3d(dx, dy, dz, dx, dy, dz);
-		if (l <= R * R)
-		{
+		if (l <= R * R){
 			ret[0] = x + dx;
 			ret[1] = y + dy;
 			ret[2] = z + dz;
@@ -2266,16 +2123,11 @@ function ColmeshDisk(_x, _y, _z, _xup, _yup, _zup, _R, _r) : ColmeshShape() cons
 	}
 	
 	/// @function cast_ray(ox, oy, oz)
-	static cast_ray = function(ox, oy, oz)
-	{
+	static cast_ray = function(ox, oy, oz){
 		/*
 			A supplementary function, not meant to be used by itself.
 			Used by Colmesh.cast_ray
 			Changes the global array CM_RAY if the ray intersects the shape
-		*/
-		/*
-			Algorithm created by TheSnidr
-			This is an approximation using the same principle as ray marching
 		*/
 		var repetitions = 15;
 		
@@ -2334,8 +2186,7 @@ function ColmeshDisk(_x, _y, _z, _xup, _yup, _zup, _R, _r) : ColmeshShape() cons
 	}
 	
 	/// @function get_closest_point(x, y, z)
-	static get_closest_point = function(_x, _y, _z)
-	{
+	static get_closest_point = function(_x, _y, _z){
 		/*
 			A supplementary function, not meant to be used by itself.
 			Used by Colmesh.getClosestPoint
@@ -2347,8 +2198,7 @@ function ColmeshDisk(_x, _y, _z, _xup, _yup, _zup, _R, _r) : ColmeshShape() cons
 		var dy = _y - p[1];
 		var dz = _z - p[2];
 		var d = sqrt(dot_product_3d(dx, dy, dz, dx, dy, dz));
-		if (d > 0)
-		{
+		if (d > 0){
 			dx /= d;
 			dy /= d;
 			dz /= d;
@@ -2364,8 +2214,7 @@ function ColmeshDisk(_x, _y, _z, _xup, _yup, _zup, _R, _r) : ColmeshShape() cons
 	}
 	
 	/// @function displace_sphere(x, y, z, xup, yup, zup, height, radius, slope, fast)
-	static displace_sphere = function(_x, _y, _z, _xup, _yup, _zup, height, radius, slope, fast)
-	{
+	static displace_sphere = function(_x, _y, _z, _xup, _yup, _zup, height, radius, slope, fast){
 		/*
 			A supplementary function, not meant to be used by itself.
 			Pushes a sphere out of the shape by changing the global array CM_COL
@@ -2380,16 +2229,14 @@ function ColmeshDisk(_x, _y, _z, _xup, _yup, _zup, _R, _r) : ColmeshShape() cons
 		var d = dot_product_3d(dx, dy, dz, dx, dy, dz);
 		if (d > _r * _r) return false;
 		d = sqrt(d);
-		if (d > 0)
-		{
+		if (d > 0){
 			colmesh_displace(dx / d, dy / d, dz / d, _xup, _yup, _zup, _r - d, slope);
 		}
 		return true;
 	}
 
 	/// @function get_priority(x, y, z, maxR)
-	static get_priority = function(_x, _y, _z, maxR)
-	{
+	static get_priority = function(_x, _y, _z, maxR){
 		/*
 			A supplementary function, not meant to be used by itself.
 			Returns -1 if the shape is too far away
@@ -2406,8 +2253,7 @@ function ColmeshDisk(_x, _y, _z, _xup, _yup, _zup, _R, _r) : ColmeshShape() cons
 	}
 	
 	/// @function intersects_cube(cubeHalfSize, cubeCenterX, cubeCenterY, cubeCenterZ)
-	static intersects_cube = function(hsize, bx, by, bz) 
-	{
+	static intersects_cube = function(hsize, bx, by, bz) {
 		/*
 			A supplementary function, not meant to be used by itself.
 			Returns true if the shape intersects the given axis-aligned cube
@@ -2420,44 +2266,23 @@ function ColmeshDisk(_x, _y, _z, _xup, _yup, _zup, _R, _r) : ColmeshShape() cons
 		return true;
 	}
 	
-	/// @function debug_draw(tex)
-	static debug_draw = function(tex)
-	{
-		static vbuff = global.ColMeshDebugShapes[eColMeshShape.Disk];
-		if (vbuff < 0)
-		{
-			global.ColMeshDebugShapes[eColMeshShape.Disk] = colmesh_create_disk(32, 20, 1, 1);
-			vbuff = global.ColMeshDebugShapes[eColMeshShape.Disk];
-		}
-		if (is_undefined(tex))
-		{
-			tex = -1;
-		}
-		static matrix = array_create(16);
-		colmesh_matrix_build_from_vector(x, y, z, xup, yup, zup, R, R, R, matrix);
-		
-		var sh = shader_current();
-		var W = matrix_get(matrix_world);
-		shader_set_uniform_f(shader_get_uniform(shader_current(), "u_radius"), r);
-		matrix_set(matrix_world, matrix_multiply(matrix, W));
-		vertex_submit(vbuff, pr_trianglelist, tex);
-		
-		//Reset the world matrix
-		matrix_set(matrix_world, W);
+	/// @function debug_draw([tex], [colour], [enable_lighting])
+	static debug_draw = function(tex = -1, colour = c_aqua, enable_lighting = false){
+		colmesh_debug_draw_disk(x, y, z, xup, yup, zup, radius, colour, tex, enable_lighting);
 	}
 	
 	#endregion
 }
 
 /// @function ColmeshCube(x, y, z, xsize, ysize, zsize)
-function ColmeshCube(_x, _y, _z, xsize, ysize, zsize) : ColmeshShape() constructor {
+function ColmeshCube(x, y, z, xsize, ysize, zsize) : ColmeshShape() constructor {
 	type = eColMeshShape.Cube;
-	x = _x;
-	y = _y;
-	z = _z;
-	halfX = xsize / 2;
-	halfY = ysize / 2;
-	halfZ = zsize / 2;
+	self.x = x;
+	self.y = y;
+	self.z = z;
+	halfX = xsize * 0.5;
+	halfY = ysize * 0.5;
+	halfZ = zsize * 0.5;
 	
 	#region functions
 	
@@ -2475,18 +2300,12 @@ function ColmeshCube(_x, _y, _z, xsize, ysize, zsize) : ColmeshShape() construct
 	}
 	
 	/// @function check_aabb(minx, miny, minz, maxx, maxy, maxz)
-	static check_aabb = function(minx, miny, minz, maxx, maxy, maxz)
-	{
-		if (x - halfX < maxx and y - halfY < maxy and z - halfZ < maxz and x + halfX > minx and y + halfY > miny and z + halfZ > minz)
-		{
-			return true;
-		}
-		return false;
+	static check_aabb = function(minx, miny, minz, maxx, maxy, maxz){
+		return (x - halfX < maxx and y - halfY < maxy and z - halfZ < maxz and x + halfX > minx and y + halfY > miny and z + halfZ > minz);
 	}
 	
 	/// @function capsule_get_ref(x, y, z, xup, yup, zup, height)
-	static capsule_get_ref = function(_x, _y, _z, xup, yup, zup, height)
-	{
+	static capsule_get_ref = function(_x, _y, _z, xup, yup, zup, height){
 		/*
 			A supplementary function, not meant to be used by itself.
 			Returns the nearest point along the given capsule to the shape.
@@ -2541,8 +2360,7 @@ function ColmeshCube(_x, _y, _z, xsize, ysize, zsize) : ColmeshShape() construct
 	}
 	
 	/// @function cast_ray(ox, oy, oz)
-	static cast_ray = function(ox, oy, oz)
-	{
+	static cast_ray = function(ox, oy, oz){
 		/*
 			A supplementary function, not meant to be used by itself.
 			Used by Colmesh.cast_ray
@@ -2637,8 +2455,7 @@ function ColmeshCube(_x, _y, _z, xsize, ysize, zsize) : ColmeshShape() construct
 	}
 		
 	/// @function get_closest_point(x, y, z)
-	static get_closest_point = function(_x, _y, _z)
-	{
+	static get_closest_point = function(_x, _y, _z){
 		/*
 			A supplementary function, not meant to be used by itself.
 			Used by Colmesh.getClosestPoint
@@ -2684,8 +2501,7 @@ function ColmeshCube(_x, _y, _z, xsize, ysize, zsize) : ColmeshShape() construct
 	}
 	
 	/// @function displace_sphere(x, y, z, xup, yup, zup, height, radius, slope, fast)
-	static displace_sphere = function(_x, _y, _z, _xup, _yup, _zup, height, radius, slope, fast)
-	{
+	static displace_sphere = function(_x, _y, _z, _xup, _yup, _zup, height, radius, slope, fast){
 		/*
 			A supplementary function, not meant to be used by itself.
 			Pushes a sphere out of the shape by changing the global array CM_COL
@@ -2747,8 +2563,7 @@ function ColmeshCube(_x, _y, _z, xsize, ysize, zsize) : ColmeshShape() construct
 	}
 	
 	/// @function get_priority(x, y, z, maxR)
-	static get_priority = function(_x, _y, _z, maxR)
-	{
+	static get_priority = function(_x, _y, _z, maxR){
 		/*
 			A supplementary function, not meant to be used by itself.
 			Returns -1 if the shape is too far away
@@ -2779,8 +2594,7 @@ function ColmeshCube(_x, _y, _z, xsize, ysize, zsize) : ColmeshShape() construct
 	}
 	
 	/// @function intersects_cube(cubeHalfSize, cubeCenterX, cubeCenterY, cubeCenterZ)
-	static intersects_cube = function(hsize, bx, by, bz) 
-	{
+	static intersects_cube = function(hsize, bx, by, bz) {
 		/*
 			A supplementary function, not meant to be used by itself.
 			Returns true if the shape intersects the given axis-aligned cube
@@ -2791,12 +2605,12 @@ function ColmeshCube(_x, _y, _z, xsize, ysize, zsize) : ColmeshShape() construct
 		return true;
 	}
 	
-	/// @function debug_draw(tex)
-	static debug_draw = function(tex){
-		static vbuff = global.ColMeshDebugShapes[eColMeshShape.Cube];
+	/// @function debug_draw([tex], [colour], [enable_lighting])
+	static debug_draw = function(tex = -1, colour = c_aqua, enable_lighting = false){
+		static vbuff = global.colmesh_debug_shapes[eColMeshShape.Cube];
 		if (vbuff < 0){
-			global.ColMeshDebugShapes[eColMeshShape.Cube] = colmesh_create_block(1, 1);
-			vbuff = global.ColMeshDebugShapes[eColMeshShape.Cube];
+			global.colmesh_debug_shapes[eColMeshShape.Cube] = colmesh_create_block(1, 1);
+			vbuff = global.colmesh_debug_shapes[eColMeshShape.Cube];
 		}
 		if (is_undefined(tex)){
 			tex = -1;
@@ -3180,10 +2994,10 @@ function ColmeshBlock(matrix) : ColmeshShape() constructor {
 	
 	/// @function debug_draw(tex)
 	static debug_draw = function(tex = -1){
-		static vbuff = global.ColMeshDebugShapes[eColMeshShape.Block];
+		static vbuff = global.colmesh_debug_shapes[eColMeshShape.Block];
 		if (vbuff < 0){
-			global.ColMeshDebugShapes[eColMeshShape.Block] = colmesh_create_block(1, 1);
-			vbuff = global.ColMeshDebugShapes[eColMeshShape.Block];
+			global.colmesh_debug_shapes[eColMeshShape.Block] = colmesh_create_block(1, 1);
+			vbuff = global.colmesh_debug_shapes[eColMeshShape.Block];
 		}
 		static matrix = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1];
 		matrix[0]  = xto;
