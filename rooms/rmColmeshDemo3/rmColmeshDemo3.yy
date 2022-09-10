@@ -47,7 +47,7 @@
   },
   "parent": {
     "name": "Demo 3 - Combining mesh and primitives",
-    "path": "folders/Demo/Demo 3 - Combining mesh and primitives.yy",
+    "path": "folders/ColMesh/Demo/Demo 3 - Combining mesh and primitives.yy",
   },
   "resourceVersion": "1.0",
   "name": "rmColmeshDemo3",

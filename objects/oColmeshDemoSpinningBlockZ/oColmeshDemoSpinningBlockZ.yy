@@ -29,7 +29,7 @@
   "overriddenProperties": [],
   "parent": {
     "name": "Primitive objects",
-    "path": "folders/Demo/Primitive objects.yy",
+    "path": "folders/ColMesh/Demo/Primitive objects.yy",
   },
   "resourceVersion": "1.0",
   "name": "oColmeshDemoSpinningBlockZ",

@@ -12,7 +12,7 @@ prevZ = z;
 jump = keyboard_check_pressed(vk_space);
 var h = keyboard_check(ord("D")) - keyboard_check(ord("A"));
 var v = keyboard_check(ord("W")) - keyboard_check(ord("S"));
-if (h != 0 and v != 0)
+if (h != 0 && v != 0)
 {	//If walking diagonally, divide the input vector by its own length
 	var s = 1 / sqrt(2);
 	h *= s;
@@ -28,21 +28,17 @@ spdX += camMat[0] * v + camMat[4] * h - xup * g;
 spdY += camMat[1] * v + camMat[5] * h - yup * g;
 spdZ += camMat[2] * v + camMat[6] * h - zup * g;
 
-// Apply speed to position
+//Apply speed to position
 x += spdX;
 y += spdY;
 z += spdZ;
 
-// Avoid ground
-var col = global.room_colmesh.displace_capsule(x, y, z, 0, 0, 1, radius, height, 40, false, true);
-if (col.is_collision) {
-	x = col.x;
-	y = col.y;
-	z = col.z;
-	ground = col.is_on_ground;
-} else {
-	ground = false;
-}
+//Avoid ground
+var col = levelColmesh.displaceCapsule(x, y, z, xup, yup, zup, radius, height, 40, false);
+x = col.x;
+y = col.y;
+z = col.z;
+ground = col.ground;
 
 //Update up-direction so that it always points away from (0, 0, 0)
 var l = point_distance_3d(0, 0, 0, x, y, z);

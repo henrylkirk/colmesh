@@ -1,21 +1,21 @@
 /// @description
 event_inherited();
 
-global.demo_text = "There is one more type of shape you can add - the \"dynamic\"."
+global.demoText = "There is one more type of shape you can add - the \"dynamic\"."
 	+ "\nA dynamic shape can be moved in real time. It can contain any of the primitives,"
-	+ "\nor even a whole different Colmesh! Yes, that's right, you can put a Colmesh inside a Colmesh!"
-	+ "\nThe red boxes in the distance are part of a separate Colmesh inside the level Colmesh."
-	+ "\nThe small red box in the middle is moving within its parent Colmesh, while that Colmesh is moving"
-	+ "\naround in the level Colmesh. In short - we've got some pretty complex movement going on!";
+	+ "\nor even a whole different ColMesh! Yes, that's right, you can put a ColMesh inside a ColMesh!"
+	+ "\nThe red boxes in the distance are part of a separate ColMesh inside the level ColMesh."
+	+ "\nThe small red box in the middle is moving within its parent ColMesh, while that ColMesh is moving"
+	+ "\naround in the level ColMesh. In short - we've got some pretty complex movement going on!";
 
 /*
-	global.room_colmesh is a global variable in these demos.
-	Instead of deleting and creating it over and over, the global.room_colmesh is simply cleared
+	levelColmesh is a global variable in these demos.
+	Instead of deleting and creating it over and over, the levelColmesh is simply cleared
 	whenever you switch rooms.
-	oColmeshParent controls the global.room_colmesh, and makes sure it's cleared.
+	oColmeshParent controls the levelColmesh, and makes sure it's cleared.
 */
 
-//I want to wait one step with subdividing the Colmesh, since we need to be sure all the objects
+//I want to wait one step with subdividing the colmesh, since we need to be sure all the objects
 //have added their primitives to it first.
 alarm[0] = 1;
 

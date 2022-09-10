@@ -2,11 +2,11 @@
   "isDnD": false,
   "isCompatibility": false,
   "parent": {
-    "name": "structs",
-    "path": "folders/Collision/Colmesh/structs.yy",
+    "name": "ColMesh Scripts",
+    "path": "folders/ColMesh/ColMesh Scripts.yy",
   },
   "resourceVersion": "1.0",
-  "name": "Colmesh",
+  "name": "colmesh",
   "tags": [],
   "resourceType": "GMScript",
 }

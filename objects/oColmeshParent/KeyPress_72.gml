@@ -1,2 +1,2 @@
-/// @description Toggle text drawing
+/// @description
 global.drawText ^= 1;
