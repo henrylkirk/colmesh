@@ -12,6 +12,14 @@ function colmesh_vector_square(x, y, z)
 	return dot_product_3d(x, y, z, x, y, z);
 }
 
+function colmesh_matrix_transpose(M)
+{
+	return [M[0], M[4], M[8],  M[12],
+			M[1], M[5], M[9],  M[13],
+			M[2], M[6], M[10], M[14],
+			M[3], M[7], M[11], M[15]];
+}
+
 /// @func colmesh_matrix_invert_fast(M, targetM*)
 function colmesh_matrix_invert_fast(M, I = array_create(16)) 
 {
@@ -21,7 +29,7 @@ function colmesh_matrix_invert_fast(M, I = array_create(16))
 	var i0  =   m5 * m10 -  m9 * m6;
 	var i4  =   m8 * m6  -  m4 * m10;
 	var i8  =   m4 * m9  -  m8 * m5;
-	var det =   m0 * i0  +  m1 * i4 + m2 * i8;
+	var det =   dot_product_3d(m0, m1, m2, i0, i4, i8);
 	if (det == 0)
 	{
 		show_debug_message("Error in function colmesh_matrix_invert_fast: The determinant is zero.");
@@ -52,51 +60,50 @@ function colmesh_matrix_invert(M, I = array_create(16))
 {
 	//Proper matrix inversion
 	var m0 = M[0], m1 = M[1], m2 = M[2], m3 = M[3], m4 = M[4], m5 = M[5], m6 = M[6], m7 = M[7], m8 = M[8], m9 = M[9], m10 = M[10], m11 = M[11], m12 = M[12], m13 = M[13], m14 = M[14], m15 = M[15];
-	var a   =   m5 * m10 - m9 * m6;
-	var d   =   m8 * m6  - m4 * m10;
-	var g   =   m4 * m9  - m8 * m5;
-	var j   =   m6 * m11 - m7 * m10;
-	var m   =   m9 * m7  - m5 * m11;
-	var p   =   m4 * m11 - m8 * m7;
-	var i0  =   dot_product_3d(m13,  m14,  m15,  j,  m,  a);
-	var i4  =   dot_product_3d(m12,  m14,  m15, -j,  p,  d);
-	var i8  =   dot_product_3d(m12,  m13,  m15, -m, -p,  g);
-	var i12 = - dot_product_3d(m12,  m13,  m14,  a,  d,  g);
+	var a   = m5 * m10 - m9 * m6;
+	var d   = m8 * m6  - m4 * m10;
+	var g   = m4 * m9  - m8 * m5;
+	var j   = m6 * m11 - m7 * m10;
+	var m   = m9 * m7  - m5 * m11;
+	var p   = m4 * m11 - m8 * m7;
+	var i0  = dot_product_3d(m13,  m14,  m15,  j,  m,  a);
+	var i4  = dot_product_3d(m12,  m14,  m15, -j,  p,  d);
+	var i8  = dot_product_3d(m12,  m13,  m15, -m, -p,  g);
+	var i12 = dot_product_3d(m12,  m13,  m14, -a, -d, -g);
 	var det =   m0 * i0 + m1 * i4 + m2 * i8 + m3 * i12;
-	if (det == 0)
-	{
+	if (det == 0){
 		show_debug_message("Error in function colmesh_matrix_invert: The determinant is zero.");
 		return M;
 	}
-	var b   =   m9 * m2  - m1 * m10;
-	var c   =   m1 * m6  - m5 * m2;
-	var e   =   m0 * m10 - m8 * m2;
-	var f   =   m4 * m2  - m0 * m6;
-	var h   =   m8 * m1  - m0 * m9;
-	var i   =   m0 * m5  - m4 * m1;
-	var k   =   m3 * m10 - m2 * m11;
-	var l   =   m2 * m7  - m3 * m6;
-	var n   =   m1 * m11 - m9 * m3;
-	var o   =   m5 * m3  - m1 * m7;
-	var q   =   m8 * m3  - m0 * m11;
-	var r   =   m0 * m7  - m4 * m3;
+	var b   = m9 * m2  - m1 * m10;
+	var c   = m1 * m6  - m5 * m2;
+	var e   = m0 * m10 - m8 * m2;
+	var f   = m4 * m2  - m0 * m6;
+	var h   = m8 * m1  - m0 * m9;
+	var i   = m0 * m5  - m4 * m1;
+	var k   = m3 * m10 - m2 * m11;
+	var l   = m2 * m7  - m3 * m6;
+	var n   = m1 * m11 - m9 * m3;
+	var o   = m5 * m3  - m1 * m7;
+	var q   = m8 * m3  - m0 * m11;
+	var r   = m0 * m7  - m4 * m3;
 	var invDet = 1 / det;
-	I[@ 0]  =   invDet * i0;
-	I[@ 1]  =   invDet * dot_product_3d(m13,  m14,  m15,  k,  n,  b);
-	I[@ 2]  =   invDet * dot_product_3d(m13,  m14,  m15,  l,  o,  c);
-	I[@ 3]  = - invDet * dot_product_3d(m3,   m7,   m11,  a,  b,  c);
-	I[@ 4]  =   invDet * i4;
-	I[@ 5]  =   invDet * dot_product_3d(m12,  m14,  m15, -k,  q,  e);
-	I[@ 6]  =   invDet * dot_product_3d(m12,  m14,  m15, -l,  r,  f);
-	I[@ 7]  = - invDet * dot_product_3d(m3,   m7,   m11,  d,  e,  f);
-	I[@ 8]  =   invDet * i8;
-	I[@ 9]  =   invDet * dot_product_3d(m12,  m13,  m15, -n, -q,  h);
-	I[@ 10] =   invDet * dot_product_3d(m12,  m13,  m15, -o, -r,  i);
-	I[@ 11] = - invDet * dot_product_3d(m3,   m7,   m11,  g,  h,  i);
-	I[@ 12] =   invDet * i12;
-	I[@ 13] = - invDet * dot_product_3d(m12,  m13,  m14,  b,  e,  h);
-	I[@ 14] = - invDet * dot_product_3d(m12,  m13,  m14,  c,  f,  i);
-	I[@ 15] =   invDet * dot_product_3d(m0,   m4,   m8,   a,  b,  c);
+	I[@ 0]  = invDet * i0;
+	I[@ 1]  = invDet * dot_product_3d(m13, m14, m15,  k,  n,  b);
+	I[@ 2]  = invDet * dot_product_3d(m13, m14, m15,  l,  o,  c);
+	I[@ 3]  = invDet * dot_product_3d(m3,  m7,  m11, -a, -b, -c);
+	I[@ 4]  = invDet * i4;
+	I[@ 5]  = invDet * dot_product_3d(m12, m14, m15, -k,  q,  e);
+	I[@ 6]  = invDet * dot_product_3d(m12, m14, m15, -l,  r,  f);
+	I[@ 7]  = invDet * dot_product_3d(m3,  m7,  m11, -d, -e, -f);
+	I[@ 8]  = invDet * i8;
+	I[@ 9]  = invDet * dot_product_3d(m12, m13, m15, -n, -q,  h);
+	I[@ 10] = invDet * dot_product_3d(m12, m13, m15, -o, -r,  i);
+	I[@ 11] = invDet * dot_product_3d(m3,  m7,  m11, -g, -h, -i);
+	I[@ 12] = invDet * i12;
+	I[@ 13] = invDet * dot_product_3d(m12, m13, m14, -b, -e, -h);
+	I[@ 14] = invDet * dot_product_3d(m12, m13, m14, -c, -f, -i);
+	I[@ 15] = invDet * dot_product_3d(m0,  m4,  m8,   a,  b,  c);
 	return I;
 }
 
@@ -121,7 +128,7 @@ function colmesh_matrix_orthogonalize(M)
 		as the up direction, but this vector is not used directly for creating the view matrix; rather, 
 		it's being used as reference, and the entire view matrix is being orthogonalized to the looking direction.
 	*/
-	var l = sqrt(dot_product_3d(M[8], M[9], M[10], M[8], M[9], M[10]));
+	var l = point_distance_3d(0, 0, 0, M[8], M[9], M[10]);
 	if (l != 0)
 	{
 		l = 1 / l;
@@ -137,7 +144,7 @@ function colmesh_matrix_orthogonalize(M)
 	M[@ 4] = M[9]  * M[2] - M[10] * M[1];
 	M[@ 5] = M[10] * M[0] - M[8]  * M[2];
 	M[@ 6] = M[8]  * M[1] - M[9]  * M[0];
-	var l = sqrt(dot_product_3d(M[4], M[5], M[6], M[4], M[5], M[6]));
+	var l = point_distance_3d(0, 0, 0, M[4], M[5], M[6]);
 	if (l != 0)
 	{
 		l = 1 / l;
@@ -265,14 +272,14 @@ function colmesh_matrix_transform_vector(M, x, y, z)
 	/*
 		Transforms a vector using the given matrix
 	*/
-	static ret = array_create(3);
-	ret[@ 0] = dot_product_3d(x, y, z, M[0], M[4], M[8]);
-	ret[@ 1] = dot_product_3d(x, y, z, M[1], M[5], M[9]);
-	ret[@ 2] = dot_product_3d(x, y, z, M[2], M[6], M[10]);
+	var ret = matrix_transform_vertex(M, x, y, z);
+	ret[0] -= M[12];
+	ret[1] -= M[13];
+	ret[2] -= M[14];
 	return ret;
 }
 
-function colmesh_cast_ray_sphere(sx, sy, sz, r, x1, y1, z1, x2, y2, z2) 
+function colmesh_cast_ray_sphere(sx, sy, sz, r, x1, y1, z1, x2, y2, z2, doublesided = false) 
 {	
 	/*	
 		Finds the intersection between a line segment going from [x1, y1, z1] to [x2, y2, z2], and a sphere centered at (sx,sy,sz) with radius r.
@@ -298,20 +305,24 @@ function colmesh_cast_ray_sphere(sx, sy, sz, r, x1, y1, z1, x2, y2, z2)
 	var u = t * t + v * (r * r - d);
 
 	//If u is less than 0, there is no intersection
-	if (u < 0 || is_nan(u))
+	if (u < 0)
 	{
-		return true;
+		return -1;
 	}
 	
 	u = sqrt(max(u, 0));
 	if (t < u)
 	{
+		if (!doublesided)
+		{
+			return -1;
+		}
 		//Project to the inside of the sphere
 		t += u; 
 		if (t < 0)
 		{
 			//The sphere is behind the ray
-			return true;
+			return -1;
 		}
 	}
 	else
@@ -321,11 +332,13 @@ function colmesh_cast_ray_sphere(sx, sy, sz, r, x1, y1, z1, x2, y2, z2)
 		if (t > v)
 		{
 			//The sphere is too far away
-			return false;
+			return -1;
 		}
 	}
 
 	//Find the point of intersection
+	return t / v;
+	
 	t /= v;
 	static ret = array_create(3);
 	ret[0] = x1 + vx * t;

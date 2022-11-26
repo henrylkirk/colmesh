@@ -1,92 +1,80 @@
 // Script assets have changed for v2.3.0 see
 // https://help.yoyogames.com/hc/en-us/articles/360005277377 for more information
-function colmesh_collision_result(x, y, z, nx, ny, nz) constructor
+function colmesh_sphere_intersects_cube(x, y, z, R, hsize, bX, bY, bZ)
 {
-	static reset = function(_x, _y, _z, _nx, _ny, _nz)
+	var distSqr = R * R;
+	var d = x - bX + hsize;
+	if (d < 0)
 	{
-		x = _x;
-		y = _y;
-		z = _z;
-		nx = _nx;
-		ny = _ny;
-		nz = _nz;
-		maxdp = -1;
-		struct = -1;
-		ground = false;
-		collision = false;
+		distSqr -= d * d;
 	}
-	static clearTransforms = function()
+	else
 	{
-		transformQueue = [];
-	}
-	
-	reset(x, y, z, nx, ny, nz);
-	clearTransforms();
-	
-	static getDeltaMatrix = function()
-	{
-		//This is useful for getting the change in orientation in those cases where the player is standing on a dynamic shape.
-		//If the player stands on a dynamic shape, its matrix and the inverse of its previous matrix are saved to that queue. This is done in colmesh_dynamic._displaceSphere.
-		//If the dynamic shape is inside multiple layers of colmeshes, their matrices and inverse previous matrices are also added to the queue.
-		//These matrices are all multiplied together in this function, resulting in their combined movements gathered in a single matrix.
-			
-		//Typical usage for making the player move:
-		//	var D = levelColmesh.getDeltaMatrix();
-		//	if (is_array(D))
-		//	{
-		//		var p = matrix_transform_vertex(D, x, y, z);
-		//		x = p[0];
-		//		y = p[1];
-		//		z = p[2];
-		//	}
-				
-		//And for transforming a vector:
-		//	var D = levelColmesh.getDeltaMatrix();
-		//	if (is_array(D))
-		//	{
-		//		var p = matrix_transform_vector(D, xto, yto, zto);
-		//		xto = p[0];
-		//		yto = p[1];
-		//		zto = p[2];
-		//	}
-			
-		//And for transforming a matrix:
-		//	var D = levelColmesh.getDeltaMatrix();
-		//	if (is_array(D))
-		//	{
-		//		colmesh_matrix_multiply_fast(D, targetMatrix, targetMatrix);
-		//	}
-		var num = array_length(transformQueue);
-		var i = 0;
-		if (num > 1)
+		d = x - bX - hsize;
+		if (d > 0)
 		{
-			//The first two matrices can simply be multiplied together
-			var M = transformQueue[i++]; //The current world matrix
-			var pI = transformQueue[i++]; //The inverse of the previous world matrix
-			var m = matrix_multiply(pI, M);
-			repeat (num / 2 - 1)
-			{
-				//The subsequent matrices need to be multiplied with the target matrix in the correct order
-				M = transformQueue[i++]; //The current world matrix
-				pI = transformQueue[i++]; //The inverse of the previous world matrix
-				m = matrix_multiply(matrix_multiply(pI, m), M);
-			}
-			return m;
+			distSqr -= d * d;
 		}
-		return false;
 	}
+	d = y - bY + hsize;
+	if (d < 0)
+	{
+		distSqr -= d * d;
+	}
+	else
+	{
+		d = y - bY - hsize;
+		if (d > 0)
+		{
+			distSqr -= d * d;
+		}
+	}
+	d = z - bZ + hsize;
+	if (d < 0)
+	{
+		distSqr -= d * d;
+	}
+	else
+	{
+		d = z - bZ - hsize;
+		if (d > 0)
+		{
+			distSqr -= d * d;
+		}
+	}
+	return (distSqr > 0);
 }
 
-function colmesh_raycast_result(x, y, z, nx, ny, nz, hit, struct) constructor
+function colmesh_block_intersects_AABB(M, minx, miny, minz, maxx, maxy, maxz)
 {
-	self.x = x;
-	self.y = y;
-	self.z = z;
-	self.nx = nx;
-	self.ny = ny;
-	self.nz = nz;
-	self.hit = hit;
-	self.struct = struct;
+	static I = array_create(16);
+	colmesh_matrix_invert_fast(M, I);
+	
+	//Find normalized block space position
+	var b = matrix_transform_vertex(I, 
+				clamp(M[12], minx, maxx),
+				clamp(M[13], miny, maxy),
+				clamp(M[14], minz, maxz));
+	
+	if (max(abs(b[0]), abs(b[1]), abs(b[2])) <= 1) return true;
+		
+	//Then check if the nearest point in the cube is inside the AABB
+	var bX = (minx + maxx) * .5;
+	var bY = (miny + maxy) * .5;
+	var bZ = (minz + maxz) * .5;
+	var sX = maxx - bX;
+	var sY = maxy - bY;
+	var sZ = maxz - bZ;
+	var b = matrix_transform_vertex(I, bX, bY, bZ);
+	var p = matrix_transform_vertex(M, 
+				clamp(b[0], -1, 1), 
+				clamp(b[1], -1, 1), 
+				clamp(b[2], -1, 1));
+				
+	colmesh_debug_draw_sphere(p[0], p[1], p[2], 5, c_blue);
+	if (max(abs(p[0] - bX) / sX, abs(p[1] - bY) / sY, abs(p[2] - bZ) / sZ) <= 1) return true;
+	
+	return false;
 }
 
 function colmesh_capsule_get_AABB(x, y, z, xup, yup, zup, radius, height)
@@ -230,9 +218,8 @@ function colmesh_load_obj_to_buffer(filename)
 
 	//Loop through the loaded information and generate a model
 	var vnt, vertNum, mbuff, vbuff, v, n, t;
-	var bytesPerVert = 3 * 4 + 3 * 4 + 2 * 4 + 4 * 1;
 	vertNum = ds_list_size(F);
-	mbuff = buffer_create(vertNum * bytesPerVert, buffer_fixed, 1);
+	mbuff = buffer_create(vertNum * cmBytesPerVert, buffer_fixed, 1);
 	for (var f = 0; f < vertNum; f ++)
 	{
 		vnt = F[| f];
@@ -299,9 +286,11 @@ function colmesh_convert_smf(model)
 	buffer_resize(newBuff, size);
 	return newBuff;
 }
-	
+
 function colmesh_get_key(x, y, z)
 {
+	return string(x) + "," + string(y) + "," + string(z);
+	
 	//Returns a unique hash for any 3D integer position
 	//Based on the algorithm described here:
 	//	https://dmauro.com/post/77011214305/a-hashing-function-for-x-y-z-coordinates
@@ -310,7 +299,7 @@ function colmesh_get_key(x, y, z)
     z = (z >= 0) ? 2 * z : - 2 * z - 1;
 	
     var m = max(x, y, z)
-    var hash = m * m * m + 2 * m * z + z
+    var hash = m * m * m + 2 * m * z + z;
     if (m == z)
 	{
         hash += sqr(max(x, y));
@@ -323,222 +312,15 @@ function colmesh_get_key(x, y, z)
 	{
         hash += y;
 	}
-    return hash
+    return hash;
 }
-	
-/// @func colmesh__displace(nx, ny, nz, xup, yup, zup, r, slope)
-function colmesh__displace(nx, ny, nz, xup, yup, zup, _r, slope)
-{
-	/*
-		A supplementary function, not meant to be used by itself.
-		Displaces a sphere.
-	*/
-	gml_pragma("forceinline");
-	var dp = nx * xup + ny * yup + nz * zup;
-	if (dp > cmCol.maxdp)
-	{
-		cmCol.nx = nx;
-		cmCol.ny = ny;
-		cmCol.nz = nz;
-		cmCol.maxdp = dp;
-	}
-	if (dp >= slope)
-	{ 
-		//Prevent sliding
-		_r /= dp;
-		cmCol.x += xup * _r;
-		cmCol.y += yup * _r;
-		cmCol.z += zup * _r;
-		cmCol.ground = true;
-	}
-	else
-	{
-		cmCol.x += nx * _r;
-		cmCol.y += ny * _r;
-		cmCol.z += nz * _r;
-	}
-}
-
-/// @func colmesh__triangle_displace_sphere(triangle, x, y, z, xup, yup, zup, height, radius, slope, fast)
-function colmesh__triangle_displace_sphere(triangle, x, y, z, xup, yup, zup, height, radius, slope, fast)
-{
-	/*
-		A supplementary function, not meant to be used by itself.
-		Pushes a sphere out of the shape by changing the global array cmCol
-		Returns true if there was a collision.
-	*/
-	gml_pragma("forceinline");
-		
-	//Check first edge
-	var nx = triangle[9];
-	var ny = triangle[10];
-	var nz = triangle[11];
-	var v1x = triangle[0];
-	var v1y = triangle[1];
-	var v1z = triangle[2];
-	var t0 = x - v1x;
-	var t1 = y - v1y;
-	var t2 = z - v1z;
-	var D = cmDot(t0, t1, t2, nx, ny, nz);
-	if (abs(D) > radius)
-	{
-		return false;
-	}
-	var v2x = triangle[3];
-	var v2y = triangle[4];
-	var v2z = triangle[5];
-	var u0 = v2x - v1x;
-	var u1 = v2y - v1y;
-	var u2 = v2z - v1z;
-	var cx = t2 * u1 - t1 * u2;
-	var cy = t0 * u2 - t2 * u0;
-	var cz = t1 * u0 - t0 * u1;
-	var dp = cmDot(cx, cy, cz, nx, ny, nz);
-	if (dp < 0)
-	{
-		var a = clamp(cmDot(u0, u1, u2, t0, t1, t2) / cmDot(u0, u1, u2, u0, u1, u2), 0, 1);
-		var _nx = t0 - u0 * a;
-		var _ny = t1 - u1 * a;
-		var _nz = t2 - u2 * a;
-		var d = cmDist(0, 0, 0, _nx, _ny, _nz);
-		if (d <= 0 || d > radius){return false;}
-		colmesh__displace(_nx / d, _ny / d, _nz / d, xup, yup, zup, radius - d, slope);
-		return true;
-	}
-	else
-	{
-		//Check second edge
-		var v3x = triangle[6];
-		var v3y = triangle[7];
-		var v3z = triangle[8];
-		var t0 = x - v2x;
-		var t1 = y - v2y;
-		var t2 = z - v2z;
-		var u0 = v3x - v2x;
-		var u1 = v3y - v2y;
-		var u2 = v3z - v2z;
-		var cx = t2 * u1 - t1 * u2;
-		var cy = t0 * u2 - t2 * u0;
-		var cz = t1 * u0 - t0 * u1;
-		var dp = cmDot(cx, cy, cz, nx, ny, nz);
-		if (dp < 0)
-		{
-			var a = clamp(cmDot(u0, u1, u2, t0, t1, t2) / cmDot(u0, u1, u2, u0, u1, u2), 0, 1);
-			var _nx = t0 - u0 * a;
-			var _ny = t1 - u1 * a;
-			var _nz = t2 - u2 * a;
-			var d = cmDist(0, 0, 0, _nx, _ny, _nz);
-			if (d <= 0 || d > radius){return false;}
-			colmesh__displace(_nx / d, _ny / d, _nz / d, xup, yup, zup, radius - d, slope);
-			return true;
-		}
-		else
-		{
-			//Check third edge
-			var t0 = x - v3x;
-			var t1 = y - v3y;
-			var t2 = z - v3z;
-			var u0 = v1x - v3x;
-			var u1 = v1y - v3y;
-			var u2 = v1z - v3z;
-			var cx = t2 * u1 - t1 * u2;
-			var cy = t0 * u2 - t2 * u0;
-			var cz = t1 * u0 - t0 * u1;
-			var dp = cmDot(cx, cy, cz, nx, ny, nz);
-			if (dp < 0)
-			{
-				var a = clamp(cmDot(u0, u1, u2, t0, t1, t2) / cmDot(u0, u1, u2, u0, u1, u2), 0, 1);
-				var _nx = t0 - u0 * a;
-				var _ny = t1 - u1 * a;
-				var _nz = t2 - u2 * a;
-				var d = cmDist(0, 0, 0, _nx, _ny, _nz);
-				if (d <= 0 || d > radius){return false;}
-				colmesh__displace(_nx / d, _ny / d, _nz / d, xup, yup, zup, radius - d, slope);
-				return true;
-			}
-		}
-	}
-	var s = sign(D);
-	colmesh__displace(nx * s, ny * s, nz * s, xup, yup, zup, radius - abs(D), slope);
-	return true;
-}
-
-
-function colmesh__region_cast_ray(region, ray, executeRayFunc = false)
-{
-	//This ray casting script is faster than the regular colmesh raycasting script.
-	//However, it will only cast a ray onto the shapes in the current region, and is as such a "short-range" ray.
-	//If there was an intersection, it returns an array with the following format:
-	//	[x, y, z, nX, nY, nZ, success]
-	//Returns false if there was no intersection.
-	var success = false;
-	if (is_undefined(region) || (ray[0] == ray[3] && ray[1] == ray[4] && ray[2] == ray[5]))
-	{
-		return false;
-	}
-	if (cmRecursion >= cmMaxRecursion)
-	{
-		//Exit the script if we've reached the recursive limit
-		return false;
-	}
-	if (cmRecursion == 0 && cmCallingObject < 0)
-	{
-		cmCallingObject = other;
-	}
-		
-	//Loop through the shapes in the region
-	var firstHit = -1;
-	var i = ds_list_size(region);
-	repeat i
-	{
-		var shape = _getShape(region[| -- i])
-		static temp = array_create(7);
-		++ cmRecursion;
-		var hit = shape._castRay(ray);
-		-- cmRecursion;
-		if (is_struct(hit))
-		{
-			if (shape.type == eColMeshShape.Trigger)
-			{
-				if (executeRayFunc && is_method(shape.rayFunc))
-				{
-					shape.rayFunc();
-				}
-			}
-			if (!shape.solid)
-			{
-				//This shape is not solid. The ray should continue!
-				continue;
-			}
-			ray[3] = hit.x;
-			ray[4] = hit.y;
-			ray[5] = hit.z;
-			firstHit = hit;
-			success = true;
-		}
-	}
-	if (cmRecursion == 0)
-	{
-		cmCallingObject = -1;
-	}
-	if (is_struct(firstHit))
-	{
-		return firstHit;
-	}
-	return false;
-}
-
 
 function colmesh__region_capsule_collision(region, x, y, z, xup, yup, zup, radius, height)
 {
 	//Returns whether or not the given capsule collides with the given region
 	if (is_undefined(region))
 	{
-		cmCol[0] = x;
-		cmCol[1] = y;
-		cmCol[2] = z;
-		cmCol[6] = false;
-		return cmCol;
+		return false;
 	}
 	if (cmRecursion >= cmMaxRecursion)
 	{

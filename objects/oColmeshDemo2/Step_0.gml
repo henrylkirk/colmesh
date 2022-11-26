@@ -9,7 +9,6 @@ prevX = x;
 prevY = y;
 prevZ = z;
 
-
 //Controls
 var jump = keyboard_check_pressed(vk_space);
 var h = keyboard_check(ord("D")) - keyboard_check(ord("A"));
@@ -28,7 +27,7 @@ y += spdY - acc * v;
 z += spdZ - 1 + jump * ground * 15; //Apply gravity in z-direction
 
 //Avoid ground
-var col = levelColmesh.displaceCapsule(x, y, z, xup, yup, zup, radius, height, 46, false);
+var col = levelColmesh.displaceCapsule(x, y, z, xup, yup, zup, radius, height, 55, false);
 x = col.x;
 y = col.y;
 z = col.z;

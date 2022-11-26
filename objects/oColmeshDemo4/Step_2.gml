@@ -35,7 +35,7 @@ if (point_distance_3d(x, y, z, prevX, prevY, prevZ) > radius)
 	var dy = yup * d;
 	var dz = zup * d;
 	var ray = levelColmesh.castRay(prevX + dx, prevY + dy, prevZ + dz, x + dx, y + dy, z + dz);
-	if is_struct(ray)
+	if (ray.hit)
 	{
 		x = ray.x - dx - (x - prevX) * .1;
 		y = ray.y - dy - (y - prevY) * .1;
@@ -44,7 +44,7 @@ if (point_distance_3d(x, y, z, prevX, prevY, prevZ) > radius)
 }
 
 //Avoid ground
-var col = levelColmesh.displaceCapsule(x, y, z, xup, yup, zup, radius, height, 46, false, true);
+var col = levelColmesh.displaceCapsule(x, y, z, xup, yup, zup, radius, height, 46, false, false);
 x = col.x;
 y = col.y;
 z = col.z;

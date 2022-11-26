@@ -17,20 +17,23 @@ buffer_delete(mbuffLevel);
 	oColmeshSystem controls the levelColmesh, and makes sure it's cleared.
 */
 //First check if a cached ColMesh exists
-if (!levelColmesh.load("Demo1Cache.cm"))
+if true//(!levelColmesh.load("Demo1Cache.cm"))
 {
 	//If a cache does not exist, generate a colmesh from an OBJ file, subdivide it, and save a cache
-	levelColmesh.addMesh("ColMesh Demo/Demo1Level.obj"); //Notice how I supply a path to an OBJ file. I could have instead used the mbuffLevel that I created earlier in this event
+	var mesh = levelColmesh.addMesh("ColMesh Demo/Demo1Level.obj"); //Notice how I supply a path to an OBJ file. I could have instead used the mbuffLevel that I created earlier in this event
 	levelColmesh.subdivide(100); //<-- You need to define the size of the subdivision regions. Play around with it and see what value fits your model best. This is a list that stores all the triangles in a region in space. A larger value makes colmesh generation faster, but slows down collision detection. A too low value increases memory usage and generation time.
-	levelColmesh.save("Demo1Cache.cm"); //Save a cache, so that loading it the next time will be quicker
+	levelColmesh.save("Demo1Cache.cm", false); //Save a cache, so that loading it the next time will be quicker
 }
 
 //Player variables
-agent = new colmesh_agent(0, 0, 300, 0, 0, 1, 15, 20, 40, false, true);
-agent.setGravity(0, 0, -1);
-agent.setRaycast(true);
-agent.setFriction(.65, .95);
-agent.setMaxspeed(30);
+z = 200;
+radius = 15;
+height = 30;
+spdX = 0;
+spdY = 0;
+spdZ = 0;
+ground = false;
+collider = new colmesh_collider_capsule(x, y, z, 0, 0, 1, radius, height, 40, 3, cmGroupSolid | cmGroupColTrigger);
 
 //Create a bunch of coins around the level
 repeat 30

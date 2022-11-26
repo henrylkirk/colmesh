@@ -9,6 +9,25 @@ vertex_format_add_texcoord();
 vertex_format_add_color();
 global.ColMeshFormat = vertex_format_end();
 
+// @func colmesh_debug_draw_block(M, colour)
+function colmesh_debug_draw_block(M, colour)
+{
+	static vbuff = global.ColMeshDebugShapes[eColMeshShape.Block];
+	if (vbuff < 0)
+	{
+		global.ColMeshDebugShapes[eColMeshShape.Block] = colmesh_create_block(1, 1);
+		vbuff = global.ColMeshDebugShapes[eColMeshShape.Block];
+	}
+	shader_set(sh_colmesh_debug);
+	shader_set_uniform_f(shader_get_uniform(sh_colmesh_debug, "u_color"), color_get_red(colour) / 255, color_get_green(colour) / 255, color_get_blue(colour) / 255, 1);
+	shader_set_uniform_f(shader_get_uniform(sh_colmesh_debug, "u_radius"), 0);
+	var W = matrix_get(matrix_world);
+	matrix_set(matrix_world, M);
+	vertex_submit(vbuff, pr_trianglelist, -1);
+	shader_reset();
+	matrix_set(matrix_world, matrix_build_identity());
+}
+	
 function colmesh_debug_draw_capsule(x, y, z, xup, yup, zup, radius, height, colour)
 {
 	var type = eColMeshShape.Capsule;

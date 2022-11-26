@@ -14,11 +14,10 @@ global.demoText = "There is one more type of shape you can add - the \"dynamic\"
 	whenever you switch rooms.
 	oColmeshParent controls the levelColmesh, and makes sure it's cleared.
 */
+var regionSize = 300; //<-- You need to define the size of the subdivision regions. Play around with it and see what value fits your model best. This is a list that stores all the triangles in a region in space. A larger value makes colmesh generation faster, but slows down collision detection. A too low value increases memory usage and generation time.
+levelColmesh.subdivide(regionSize);
 
-//I want to wait one step with subdividing the colmesh, since we need to be sure all the objects
-//have added their primitives to it first.
-alarm[0] = 1;
-
+col = -1;
 //Player variables
 z = 200;
 radius = 15;
@@ -44,3 +43,5 @@ gpu_set_zwriteenable(true);
 camera_set_proj_mat(view_camera[0], matrix_build_projection_perspective_fov(-80, -window_get_width() / window_get_height(), 1, 32000));
 yaw = 90;
 pitch = 45;
+
+col = -1;

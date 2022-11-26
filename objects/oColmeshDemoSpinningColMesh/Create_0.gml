@@ -12,4 +12,4 @@ subMesh.addShape(new colmesh_disk(0, 0, 0, 0, 0, 1, 300, 50));
 
 
 cube = subMesh.addDynamic(new colmesh_cube(45, 0, 100, 100, 100, 100), matrix_build_identity());
-subMesh.subdivide(150);
+//subMesh.subdivide(300);

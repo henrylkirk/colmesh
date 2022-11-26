@@ -13,8 +13,9 @@ z = ray.z + radius;
 zstart = z;
 
 //Create a collision function for the coin, telling it to destroy itself and remove its shape from the level ColMesh
-colFunc = function()
+colFunc = function(o)
 {
+	show_debug_message("Other obj: " + string(o.object_index));
 	global.coins ++;					 //Increment the global variable "coins"
 	instance_destroy();					 //This will destroy the current instance of oCoin
 	levelColmesh.removeShape(shape);	 //"shape" is oCoin's shape variable. Remove it from the ColMesh
@@ -24,4 +25,4 @@ colFunc = function()
 //Create a spherical collision shape for the coin
 //Give the coin the collision function we created. 
 //The collision function will be executed if the player collides with the coin, using colmesh.displaceCapsule.
-shape = levelColmesh.addTrigger(new colmesh_sphere(x, y, z, radius), false, colFunc);
+shape = levelColmesh.addTrigger(new colmesh_sphere(x, y, z, radius), true, colFunc);

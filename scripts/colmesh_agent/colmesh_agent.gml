@@ -34,6 +34,8 @@ function colmesh_agent(_x, _y, _z, _xup, _yup, _zup, _radius, _height, _slopeAng
 	gravityY = 0;
 	gravityZ = -1;
 	
+	collider = new colmesh_collider_capsule(x, y, z, xup, yup, zup, radius, height, slopeAngle, !fast);
+	
 	static setGravity = function(gx, gy, gz)
 	{
 		gravityX = gx;
@@ -102,6 +104,7 @@ function colmesh_agent(_x, _y, _z, _xup, _yup, _zup, _radius, _height, _slopeAng
 		//Reset ground variable
 		ground = false;
 	}
+	
 	static avoid = function(colMesh)
 	{
 		if (raycast && spd >= radius)
@@ -112,20 +115,29 @@ function colmesh_agent(_x, _y, _z, _xup, _yup, _zup, _radius, _height, _slopeAng
 			var dy = yup * d;
 			var dz = zup * d;
 			var ray = colMesh.castRay(prevX + dx, prevY + dy, prevZ + dz, x + dx, y + dy, z + dz);
-			if (is_struct(ray))
+			if (ray.hit)
 			{
 				x = ray.x - dx - spdX * .1;
 				y = ray.y - dy - spdY * .1;
 				z = ray.z - dz - spdZ * .1;
 			}
 		}
-		var col = colMesh.displaceCapsule(x, y, z, xup, yup, zup, radius, height, slopeAngle, fast, executeColFunc);
-		if (col.collision)
+		collider.x = x;
+		collider.y = y;
+		collider.z = z;
+		collider.xup = xup;
+		collider.yup = yup;
+		collider.zup = zup;
+		if (collider.avoid(colMesh))
 		{
-			x = col.x;
-			y = col.y;
-			z = col.z;
-			ground = col.ground;
+			x = collider.x;
+			y = collider.y;
+			z = collider.z;
+			ground = collider.ground;
+		}
+		if (executeColFunc)
+		{
+			collider.executeColFunc();
 		}
 	}
 }

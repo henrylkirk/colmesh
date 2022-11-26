@@ -19,7 +19,7 @@ buffer_delete(mbuffLevel);
 */
 
 //First check if a cached ColMesh exists
-if (!levelColmesh.load("Demo3Cache.cm"))
+if true//(!levelColmesh.load("Demo3Cache.cm"))
 {
 	//If a cache does not exist, generate a colmesh from an OBJ file, subdivide it, and save a cache
 	levelColmesh.addMesh("ColMesh Demo/CoronaColmesh.obj"); //Notice how I supply a path to an OBJ file. I could have instead used the mbuffLevel that I created earlier in this event

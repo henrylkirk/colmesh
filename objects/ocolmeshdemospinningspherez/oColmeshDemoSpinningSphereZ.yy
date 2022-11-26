@@ -32,7 +32,7 @@
     "path": "folders/ColMesh/Demo/Primitive objects.yy",
   },
   "resourceVersion": "1.0",
-  "name": "oColmeshDemoSpinningCubeZ",
+  "name": "oColmeshDemoSpinningSphereZ",
   "tags": [],
   "resourceType": "GMObject",
 }

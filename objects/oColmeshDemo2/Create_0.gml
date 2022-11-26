@@ -18,7 +18,7 @@ var regionSize = 120; //<-- You need to define the size of the subdivision regio
 levelColmesh.subdivide(regionSize); //You can subdivide your colmesh and still add more objects to it! Any objects added after subdividing will still be added in the same way as if you had added them before subdividing.
 
 //Create base platform
-block = levelColmesh.addShape(new colmesh_block(matrix_build(room_width / 2, room_height / 2, -50, 0, 0, 0, room_width / 2, room_height / 2, 50)));
+block = levelColmesh.addShape(new colmesh_block(matrix_build(room_width / 2, room_height / 2, -50, 0, 0, 0, room_width, room_height, 50)));
 
 //Player variables
 z = 200;
