@@ -71,7 +71,6 @@ function colmesh_block_intersects_AABB(M, minx, miny, minz, maxx, maxy, maxz)
 				clamp(b[1], -1, 1), 
 				clamp(b[2], -1, 1));
 				
-	colmesh_debug_draw_sphere(p[0], p[1], p[2], 5, c_blue);
 	if (max(abs(p[0] - bX) / sX, abs(p[1] - bY) / sY, abs(p[2] - bZ) / sZ) <= 1) return true;
 	
 	return false;
@@ -294,6 +293,7 @@ function colmesh_get_key(x, y, z)
 	//Returns a unique hash for any 3D integer position
 	//Based on the algorithm described here:
 	//	https://dmauro.com/post/77011214305/a-hashing-function-for-x-y-z-coordinates
+	
     x = (x >= 0) ? 2 * x : - 2 * x - 1;
     y = (y >= 0) ? 2 * y : - 2 * y - 1;
     z = (z >= 0) ? 2 * z : - 2 * z - 1;

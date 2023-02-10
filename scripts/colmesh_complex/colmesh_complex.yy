@@ -1,12 +1,11 @@
 {
-  "isDnD": false,
+  "resourceType": "GMScript",
+  "resourceVersion": "1.0",
+  "name": "colmesh_complex",
   "isCompatibility": false,
+  "isDnD": false,
   "parent": {
     "name": "WIP",
     "path": "folders/ColMesh/ColMesh Scripts/Supplementary scripts/WIP.yy",
   },
-  "resourceVersion": "1.0",
-  "name": "colmesh_complex",
-  "tags": [],
-  "resourceType": "GMScript",
 }

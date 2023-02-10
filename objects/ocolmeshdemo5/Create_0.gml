@@ -30,15 +30,13 @@ levelColmesh.treeColMesh.subdivide(regionSize / 30);
 
 
 //Add trees to the level colmesh
-repeat 40
+repeat 20
 {
-	var xx = random(9900);
-	var yy = random(9900);
+	var xx = random(1000);
+	var yy = random(1000);
 	
 	instance_create_depth(xx, yy, 0, oColmeshDemo5Tree);
 }
-
-levelColmesh.addTriangle([0, 0, 0, 100, 100, 100, 100, -100, 100]);
 
 col = -1;
 //Player variables

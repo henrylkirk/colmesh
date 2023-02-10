@@ -38,10 +38,10 @@
 
 global.ColMeshCallingObject = -1;
 global.ColMeshRecursionCounter = 0;
+global.ColMeshRayMap = ds_map_create();
 global.ColMeshMeshMap = ds_map_create();
-global.ColMeshDebugShapes = array_create(eColMeshShape.Num, -1);
-
 global.ColMeshDefaultParent = new colmesh_mesh();
+global.ColMeshDebugShapes = array_create(eColMeshShape.Num, -1);
 
 /// @func colmesh()
 function colmesh() : colmesh_mesh() constructor
@@ -1255,9 +1255,9 @@ function colmesh() : colmesh_mesh() constructor
 		ret[0] = floor((minMax[0] - originX) / regionSize) - 1;
 		ret[1] = floor((minMax[1] - originY) / regionSize) - 1;
 		ret[2] = floor((minMax[2] - originZ) / regionSize) - 1;
-		ret[3] = ceil((minMax[3] - originX) / regionSize);
-		ret[4] = ceil((minMax[4] - originY) / regionSize);
-		ret[5] = ceil((minMax[5] - originZ) / regionSize);
+		ret[3] =  ceil((minMax[3] - originX) / regionSize);
+		ret[4] =  ceil((minMax[4] - originY) / regionSize);
+		ret[5] =  ceil((minMax[5] - originZ) / regionSize);
 		return ret;
 	}
 	

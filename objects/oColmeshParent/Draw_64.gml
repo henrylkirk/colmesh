@@ -11,8 +11,6 @@ var str = "Move with WASD + space"
 	+ "\nR: Disable drawing"
 	+ "\nH: Hide text"
 	+ "\nCoins: " + string(global.coins)
-	+ "\nIs on ground: " + (ground ? "TRUE" : "FALSE")
-	+ "\nIs collider on ground: " + (variable_instance_exists(id, "collider") ? (collider.ground ? "TRUE" : "FALSE") : "No collider")
 	+ "\n" + global.demoText;
 draw_set_color(c_black);
 draw_text(9, 9, str);

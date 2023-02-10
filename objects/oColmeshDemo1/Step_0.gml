@@ -33,7 +33,7 @@ collider.avoid(levelColmesh);
 ground = collider.ground;
 
 //Execute collision functions
-collider.executeColFunc(id);
+collider.executeColFunc();
 
 //Find speed vector
 spdX = collider.x - x;

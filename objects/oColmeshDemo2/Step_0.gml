@@ -27,7 +27,7 @@ y += spdY - acc * v;
 z += spdZ - 1 + jump * ground * 15; //Apply gravity in z-direction
 
 //Avoid ground
-var col = levelColmesh.displaceCapsule(x, y, z, xup, yup, zup, radius, height, 55, false);
+var col = levelColmesh.displaceCapsule(x, y, z, xup, yup, zup, radius, height, 46, false);
 x = col.x;
 y = col.y;
 z = col.z;

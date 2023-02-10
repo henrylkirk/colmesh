@@ -130,14 +130,10 @@ function colmesh_colliders(x, y, z, xup, yup, zup, slopeAngle, precision, mask) 
 	}
 }
 
-function colmesh_collider_capsule(x, y, z, xup, yup, zup, radius, height, slopeAngle = 0, precision = 0, mask = 1) : colmesh_colliders(x, y, z, xup, yup, zup, slopeAngle, precision, mask) constructor
+function colmesh_collider_capsule(x, y, z, xup, yup, zup, radius, height, slopeAngle = 40, precision = 0, mask = 1) : colmesh_colliders(x, y, z, xup, yup, zup, slopeAngle, precision, mask) constructor
 {
 	self.radius = radius;
 	self.height = height;
-	prevX = x;
-	prevY = y;
-	prevZ = z;
-	charMat = matrix_build(x, y, z, 0, 0, 0, 1, 1, height);
 	
 	/// @func checkForCollision(colMesh)
 	static checkForCollision = function(colMesh)
