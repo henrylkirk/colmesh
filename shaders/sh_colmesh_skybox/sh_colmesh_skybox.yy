@@ -1,11 +1,10 @@
 {
-  "type": 1,
+  "resourceType": "GMShader",
+  "resourceVersion": "1.0",
+  "name": "sh_colmesh_skybox",
   "parent": {
     "name": "Shaders",
     "path": "folders/Demo/Shaders.yy",
   },
-  "resourceVersion": "1.0",
-  "name": "sh_colmesh_skybox",
-  "tags": [],
-  "resourceType": "GMShader",
+  "type": 1,
 }
