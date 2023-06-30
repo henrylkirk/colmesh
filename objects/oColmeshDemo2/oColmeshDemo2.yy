@@ -13,7 +13,7 @@
   "overriddenProperties": [],
   "parent": {
     "name": "Demo 2 - Primitives",
-    "path": "folders/Demo/Demo 2 - Primitives.yy",
+    "path": "folders/ColMesh/Demo/Demo 2 - Primitives.yy",
   },
   "parentObjectId": {
     "name": "oColmeshParent",

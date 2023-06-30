@@ -1,33 +1,34 @@
 /// @description
 event_inherited();
 
-global.demo_text = "You can combine triangle meshes and primitives into one Colmesh."
+global.demoText = "You can combine triangle meshes and primitives into one ColMesh."
 	+ "\nUse this to your advantage! In this demo, for example, the red shapes are"
 	+ "\npart of a triangle mesh, while the central sphere is a primitive"
 	+ "\nCollision checking against a primitive is much faster than against a triangle mesh!";
 
 //Load the level model as a buffer, and convert it to a vertex buffer
-var mbuffLevel = colmesh_load_obj_to_buffer("Corona.obj");
+var mbuffLevel = colmesh_load_obj_to_buffer("ColMesh Demo/Corona.obj");
 modLevel = vertex_create_buffer_from_buffer(mbuffLevel, global.ColMeshFormat);
 buffer_delete(mbuffLevel);
 
 /*
-	global.room_colmesh is a global variable in these demos.
-	Instead of deleting and creating it over and over, the global.room_colmesh is simply cleared
+	levelColmesh is a global variable in these demos.
+	Instead of deleting and creating it over and over, the levelColmesh is simply cleared
 	whenever you switch rooms.
-	oColmeshSystem controls the global.room_colmesh, and makes sure it's cleared.
+	oColmeshSystem controls the levelColmesh, and makes sure it's cleared.
 */
 
-// First check if a cached Colmesh exists
-if (!global.room_colmesh.load("Demo3Cache.cm")) {
-	//If a cache does not exist, generate a Colmesh from an OBJ file, subdivide it, and save a cache
-	global.room_colmesh.add_mesh("CoronaColmesh.obj"); //Notice how I supply a path to an OBJ file. I could have instead used the mbuffLevel that I created earlier in this event
-	global.room_colmesh.add_shape(new ColmeshSphere(0, 0, 0, 400));
-	global.room_colmesh.subdivide(100);
-	global.room_colmesh.save("Demo3Cache.cm"); //Save a cache, so that loading it the next time will be quicker
+//First check if a cached ColMesh exists
+if true//(!levelColmesh.load("Demo3Cache.cm"))
+{
+	//If a cache does not exist, generate a colmesh from an OBJ file, subdivide it, and save a cache
+	levelColmesh.addMesh("ColMesh Demo/CoronaColmesh.obj"); //Notice how I supply a path to an OBJ file. I could have instead used the mbuffLevel that I created earlier in this event
+	levelColmesh.addShape(new colmesh_sphere(0, 0, 0, 400));
+	levelColmesh.subdivide(100);
+	levelColmesh.save("Demo3Cache.cm"); //Save a cache, so that loading it the next time will be quicker
 }
 
-// Player variables
+//Player variables
 x = 0;
 y = 0;
 z = 500;

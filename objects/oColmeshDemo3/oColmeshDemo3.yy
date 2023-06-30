@@ -8,12 +8,13 @@
     {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":0,"eventType":8,"isDnD":false,},
     {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":0,"eventType":3,"isDnD":false,},
     {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":73,"eventType":8,"isDnD":false,},
+    {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":5,"eventType":7,"isDnD":false,},
   ],
   "managed": true,
   "overriddenProperties": [],
   "parent": {
     "name": "Demo 3 - Combining mesh and primitives",
-    "path": "folders/Demo/Demo 3 - Combining mesh and primitives.yy",
+    "path": "folders/ColMesh/Demo/Demo 3 - Combining mesh and primitives.yy",
   },
   "parentObjectId": {
     "name": "oColmeshParent",

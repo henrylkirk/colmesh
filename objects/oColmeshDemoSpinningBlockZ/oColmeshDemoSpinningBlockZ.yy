@@ -11,7 +11,7 @@
   "overriddenProperties": [],
   "parent": {
     "name": "Primitive objects",
-    "path": "folders/Demo/Primitive objects.yy",
+    "path": "folders/ColMesh/Demo/Primitive objects.yy",
   },
   "parentObjectId": null,
   "persistent": false,

@@ -18,7 +18,7 @@
   ],
   "parent": {
     "name": "Demo 3 - Combining mesh and primitives",
-    "path": "folders/Demo/Demo 3 - Combining mesh and primitives.yy",
+    "path": "folders/ColMesh/Demo/Demo 3 - Combining mesh and primitives.yy",
   },
   "parentRoom": null,
   "physicsSettings": {

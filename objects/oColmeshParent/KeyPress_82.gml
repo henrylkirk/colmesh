@@ -1,2 +1,2 @@
-/// @description Toggle draw
+/// @description
 global.disableDraw ^= 1;

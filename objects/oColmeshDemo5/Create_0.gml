@@ -1,63 +1,68 @@
 /// @description
 event_inherited();
 
-global.demo_text = "This demo shows how you can create a Colmesh from an OBJ file!"
-	+ "\nIt also shows how you can push the player out of the Colmesh,"
-	+ "\nand how you can use the collision system to collect coins";
-	
-//Load the level model to a vertex buffer
-//var mbuffLevel = colmesh_load_obj_to_buffer("Demo1Level.obj");
-//modLevel = vertex_create_buffer_from_buffer(mbuffLevel, global.ColMeshFormat);
-//buffer_delete(mbuffLevel);
+global.demoText =	"You can also use dynamics to add multiple copies of a single mesh to a colmesh."
+					+"\nMeshes added this way are added by reference, instead of being copied triangle by triangle."
+					+"\nThese can then be translated, rotated and scaled (uniformly) to your liking";
 
 /*
-	global.room_colmesh is a global variable in these demos.
-	Instead of deleting and creating it over and over, the global.room_colmesh is simply cleared
+	levelColmesh is a global variable in these demos.
+	Instead of deleting and creating it over and over, the levelColmesh is simply cleared
 	whenever you switch rooms.
-	oColmeshSystem controls the global.room_colmesh, and makes sure it's cleared.
+	oColmeshParent controls the levelColmesh, and makes sure it's cleared.
 */
+var regionSize = 100; //<-- You need to define the size of the subdivision regions. Play around with it and see what value fits your model best. This is a list that stores all the triangles in a region in space. A larger value makes colmesh generation faster, but slows down collision detection. A too low value increases memory usage and generation time.
+levelColmesh.subdivide(100);
 
-gpu_set_cullmode(cull_noculling);
-gpu_set_texfilter(true);
+//Create base platform
+//block = levelColmesh.addShape(new colmesh_block(matrix_build(99000 / 2, 99000 / 2, -50, 0, 0, 0, 99000 / 2, 99000 / 2, 50)));
 
-//Load the level model to a vertex buffer
-var mbuffLevel = colmesh_load_obj_to_buffer("house.obj");
-house = vertex_create_buffer_from_buffer(mbuffLevel, global.ColMeshFormat);
-buffer_delete(mbuffLevel);
+//Load high-poly tree model
+var mbuff = colmesh_load_obj_to_buffer("ColMesh Demo/SmallTreeHighPoly.obj");
+global.modTree = vertex_create_buffer_from_buffer(mbuff, global.ColMeshFormat);
+buffer_delete(mbuff);
 
-#macro ONE_OVER_SQRT_TWO 0.70710678118
-#macro TILE_SIZE 16
+//Load low-poly tree model for collisions
+levelColmesh.treeMesh = new colmesh_mesh("SmallTree", "ColMesh Demo/SmallTreeLowPoly.obj", undefined, cmGroupSolid);
+levelColmesh.treeColMesh = new colmesh();
+levelColmesh.treeColMesh.addMesh(levelColmesh.treeMesh);
+levelColmesh.treeColMesh.subdivide(regionSize / 30);
 
-var hw = room_width * 0.5;
-var hh = room_height * 0.5;
 
-//First check if a cached Colmesh exists
-//if (!global.room_colmesh.load("Demo5Cache.cm")){
-	// No cache found, add flat ground to Colmesh
-	global.room_colmesh.add_shape(
-		new ColmeshBlock(colmesh_matrix_build(hw, hh, -16, 0, 0, 0, hw, hh, 16))
-	);
-//	global.room_colmesh.save("Demo5Cache.cm"); //Save a cache, so that loading it the next time will be quicker
-//}
+//Add trees to the level colmesh
+repeat 20
+{
+	var xx = random(1000);
+	var yy = random(1000);
+	
+	instance_create_depth(xx, yy, 0, oColmeshDemo5Tree);
+}
 
-house_x = hw;
-house_y = hh;
-house_z = 1;
-house_mesh = global.room_colmesh.add_mesh(
-	"house.obj",
-	colmesh_matrix_build(house_x, house_y, house_z, 0, 0, 0, 10, 10, 10)
-);
+col = -1;
+//Player variables
+z = 200;
+radius = 15;
+height = 40;
+spdX = 0;
+spdY = 0;
+spdZ = 0;
+prevX = x;
+prevY = y;
+prevZ = z;
+xup = 0;
+yup = 0;
+zup = 1;
+ground = false;
+charMat = matrix_build(x, y, z, 0, 0, 0, 1, 1, height);
 
-// Add tile shapes to Colmesh
-tile_manager = new TileManager(TILE_SIZE);
-tile_manager.tile_layer_to_colmesh(global.room_colmesh, "tiles_collision");
-
-// Enable 3D projection
+//Enable 3D projection
 view_enabled = true;
 view_visible[0] = true;
-view_camera[0] = camera_create();
+view_set_camera(0, camera_create());
 gpu_set_ztestenable(true);
 gpu_set_zwriteenable(true);
-camera_set_proj_mat(view_camera[0], matrix_build_projection_perspective_fov(-90, -window_get_width() / window_get_height(), 1, 32000));
+camera_set_proj_mat(view_camera[0], matrix_build_projection_perspective_fov(-80, -window_get_width() / window_get_height(), 1, 32000));
 yaw = 90;
-pitch = 45;
+pitch = 30;
+
+col = -1;

@@ -18,7 +18,7 @@
   ],
   "parent": {
     "name": "Demo 1 - Simple mesh",
-    "path": "folders/Demo/Demo 1 - Simple mesh.yy",
+    "path": "folders/ColMesh/Demo/Demo 1 - Simple mesh.yy",
   },
   "parentRoom": null,
   "physicsSettings": {

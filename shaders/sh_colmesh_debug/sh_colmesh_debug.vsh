@@ -8,6 +8,8 @@ attribute vec4 in_Colour;              // (u,v)
 
 varying vec2 v_vTexcoord;
 varying float v_vShade;
+varying vec4 v_vPos;
+varying vec4 v_vColour;
 
 uniform float u_radius;
 
@@ -33,6 +35,9 @@ void main()
     gl_Position = gm_Matrices[MATRIX_PROJECTION] * viewSpacePos;
     
     v_vTexcoord = in_TextureCoord;
+	v_vColour = in_Colour;
 	
 	v_vShade = .7 - .5 * dot(worldNormal, normalize(vec3(.2, -.3, -.5)));
+	
+	v_vPos = gl_Position;
 }

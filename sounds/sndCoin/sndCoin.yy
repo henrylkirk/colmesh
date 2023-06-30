@@ -13,7 +13,7 @@
   "duration": 1.154388,
   "parent": {
     "name": "Demo",
-    "path": "folders/Demo.yy",
+    "path": "folders/ColMesh/Demo.yy",
   },
   "preload": false,
   "sampleRate": 44100,

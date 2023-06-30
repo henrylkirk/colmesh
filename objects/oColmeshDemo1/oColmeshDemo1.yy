@@ -8,12 +8,13 @@
     {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":0,"eventType":8,"isDnD":false,},
     {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":0,"eventType":3,"isDnD":false,},
     {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":73,"eventType":8,"isDnD":false,},
+    {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":5,"eventType":7,"isDnD":false,},
   ],
   "managed": true,
   "overriddenProperties": [],
   "parent": {
     "name": "Demo 1 - Simple mesh",
-    "path": "folders/Demo/Demo 1 - Simple mesh.yy",
+    "path": "folders/ColMesh/Demo/Demo 1 - Simple mesh.yy",
   },
   "parentObjectId": {
     "name": "oColmeshParent",

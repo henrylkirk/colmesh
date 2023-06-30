@@ -21,7 +21,7 @@
   "overriddenProperties": [],
   "parent": {
     "name": "Demo",
-    "path": "folders/Demo.yy",
+    "path": "folders/ColMesh/Demo.yy",
   },
   "parentObjectId": null,
   "persistent": false,
