@@ -18,22 +18,113 @@
   "physicsKinematic": false,
   "physicsShapePoints": [],
   "eventList": [
-    {"isDnD":false,"eventNum":0,"eventType":0,"collisionObjectId":null,"parent":{"name":"oColmeshDemo2","path":"objects/oColmeshDemo2/oColmeshDemo2.yy",},"resourceVersion":"1.0","name":"","tags":[],"resourceType":"GMEvent",},
-    {"isDnD":false,"eventNum":64,"eventType":8,"collisionObjectId":null,"parent":{"name":"oColmeshDemo2","path":"objects/oColmeshDemo2/oColmeshDemo2.yy",},"resourceVersion":"1.0","name":"","tags":[],"resourceType":"GMEvent",},
-    {"isDnD":false,"eventNum":27,"eventType":9,"collisionObjectId":null,"parent":{"name":"oColmeshDemo2","path":"objects/oColmeshDemo2/oColmeshDemo2.yy",},"resourceVersion":"1.0","name":"","tags":[],"resourceType":"GMEvent",},
-    {"isDnD":false,"eventNum":0,"eventType":8,"collisionObjectId":null,"parent":{"name":"oColmeshDemo2","path":"objects/oColmeshDemo2/oColmeshDemo2.yy",},"resourceVersion":"1.0","name":"","tags":[],"resourceType":"GMEvent",},
-    {"isDnD":false,"eventNum":0,"eventType":3,"collisionObjectId":null,"parent":{"name":"oColmeshDemo2","path":"objects/oColmeshDemo2/oColmeshDemo2.yy",},"resourceVersion":"1.0","name":"","tags":[],"resourceType":"GMEvent",},
-    {"isDnD":false,"eventNum":73,"eventType":8,"collisionObjectId":null,"parent":{"name":"oColmeshDemo2","path":"objects/oColmeshDemo2/oColmeshDemo2.yy",},"resourceVersion":"1.0","name":"","tags":[],"resourceType":"GMEvent",},
-    {"isDnD":false,"eventNum":0,"eventType":2,"collisionObjectId":null,"parent":{"name":"oColmeshDemo2","path":"objects/oColmeshDemo2/oColmeshDemo2.yy",},"resourceVersion":"1.0","name":"","tags":[],"resourceType":"GMEvent",},
+    {
+      "isDnD": false,
+      "eventNum": 0,
+      "eventType": 0,
+      "collisionObjectId": null,
+      "parent": {
+        "name": "oColmeshDemo2",
+        "path": "objects/oColmeshDemo2/oColmeshDemo2.yy"
+      },
+      "resourceVersion": "1.0",
+      "name": "",
+      "tags": [],
+      "resourceType": "GMEvent"
+    },
+    {
+      "isDnD": false,
+      "eventNum": 64,
+      "eventType": 8,
+      "collisionObjectId": null,
+      "parent": {
+        "name": "oColmeshDemo2",
+        "path": "objects/oColmeshDemo2/oColmeshDemo2.yy"
+      },
+      "resourceVersion": "1.0",
+      "name": "",
+      "tags": [],
+      "resourceType": "GMEvent"
+    },
+    {
+      "isDnD": false,
+      "eventNum": 27,
+      "eventType": 9,
+      "collisionObjectId": null,
+      "parent": {
+        "name": "oColmeshDemo2",
+        "path": "objects/oColmeshDemo2/oColmeshDemo2.yy"
+      },
+      "resourceVersion": "1.0",
+      "name": "",
+      "tags": [],
+      "resourceType": "GMEvent"
+    },
+    {
+      "isDnD": false,
+      "eventNum": 0,
+      "eventType": 8,
+      "collisionObjectId": null,
+      "parent": {
+        "name": "oColmeshDemo2",
+        "path": "objects/oColmeshDemo2/oColmeshDemo2.yy"
+      },
+      "resourceVersion": "1.0",
+      "name": "",
+      "tags": [],
+      "resourceType": "GMEvent"
+    },
+    {
+      "isDnD": false,
+      "eventNum": 0,
+      "eventType": 3,
+      "collisionObjectId": null,
+      "parent": {
+        "name": "oColmeshDemo2",
+        "path": "objects/oColmeshDemo2/oColmeshDemo2.yy"
+      },
+      "resourceVersion": "1.0",
+      "name": "",
+      "tags": [],
+      "resourceType": "GMEvent"
+    },
+    {
+      "isDnD": false,
+      "eventNum": 73,
+      "eventType": 8,
+      "collisionObjectId": null,
+      "parent": {
+        "name": "oColmeshDemo2",
+        "path": "objects/oColmeshDemo2/oColmeshDemo2.yy"
+      },
+      "resourceVersion": "1.0",
+      "name": "",
+      "tags": [],
+      "resourceType": "GMEvent"
+    },
+    {
+      "isDnD": false,
+      "eventNum": 0,
+      "eventType": 2,
+      "collisionObjectId": null,
+      "parent": {
+        "name": "oColmeshDemo2",
+        "path": "objects/oColmeshDemo2/oColmeshDemo2.yy"
+      },
+      "resourceVersion": "1.0",
+      "name": "",
+      "tags": [],
+      "resourceType": "GMEvent"
+    }
   ],
   "properties": [],
   "overriddenProperties": [],
   "parent": {
     "name": "Demo 2 - Primitives",
-    "path": "folders/ColMesh/Demo/Demo 2 - Primitives.yy",
+    "path": "folders/ColMesh/Demo/Demo 2 - Primitives.yy"
   },
   "resourceVersion": "1.0",
   "name": "oColmeshDemo2",
   "tags": [],
-  "resourceType": "GMObject",
+  "resourceType": "GMObject"
 }

@@ -3,14 +3,30 @@
   "resourceVersion": "1.0",
   "name": "oCoin",
   "eventList": [
-    {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":0,"eventType":8,"isDnD":false,},
-    {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,},
+    {
+      "resourceType": "GMEvent",
+      "resourceVersion": "1.0",
+      "name": "",
+      "collisionObjectId": null,
+      "eventNum": 0,
+      "eventType": 8,
+      "isDnD": false
+    },
+    {
+      "resourceType": "GMEvent",
+      "resourceVersion": "1.0",
+      "name": "",
+      "collisionObjectId": null,
+      "eventNum": 0,
+      "eventType": 0,
+      "isDnD": false
+    }
   ],
   "managed": true,
   "overriddenProperties": [],
   "parent": {
     "name": "Demo 1 - Simple mesh",
-    "path": "folders/ColMesh/Demo/Demo 1 - Simple mesh.yy",
+    "path": "folders/ColMesh/Demo/Demo 1 - Simple mesh.yy"
   },
   "parentObjectId": null,
   "persistent": false,
@@ -30,5 +46,5 @@
   "solid": false,
   "spriteId": null,
   "spriteMaskId": null,
-  "visible": true,
+  "visible": true
 }

@@ -6,6 +6,6 @@
   "isDnD": false,
   "parent": {
     "name": "WIP",
-    "path": "folders/ColMesh/ColMesh Scripts/Supplementary scripts/WIP.yy",
-  },
+    "path": "folders/ColMesh/ColMesh Scripts/Supplementary scripts/WIP.yy"
+  }
 }

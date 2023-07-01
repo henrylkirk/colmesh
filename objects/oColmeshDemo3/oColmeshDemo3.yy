@@ -3,22 +3,70 @@
   "resourceVersion": "1.0",
   "name": "oColmeshDemo3",
   "eventList": [
-    {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,},
-    {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":27,"eventType":9,"isDnD":false,},
-    {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":0,"eventType":8,"isDnD":false,},
-    {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":0,"eventType":3,"isDnD":false,},
-    {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":73,"eventType":8,"isDnD":false,},
-    {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":5,"eventType":7,"isDnD":false,},
+    {
+      "resourceType": "GMEvent",
+      "resourceVersion": "1.0",
+      "name": "",
+      "collisionObjectId": null,
+      "eventNum": 0,
+      "eventType": 0,
+      "isDnD": false
+    },
+    {
+      "resourceType": "GMEvent",
+      "resourceVersion": "1.0",
+      "name": "",
+      "collisionObjectId": null,
+      "eventNum": 27,
+      "eventType": 9,
+      "isDnD": false
+    },
+    {
+      "resourceType": "GMEvent",
+      "resourceVersion": "1.0",
+      "name": "",
+      "collisionObjectId": null,
+      "eventNum": 0,
+      "eventType": 8,
+      "isDnD": false
+    },
+    {
+      "resourceType": "GMEvent",
+      "resourceVersion": "1.0",
+      "name": "",
+      "collisionObjectId": null,
+      "eventNum": 0,
+      "eventType": 3,
+      "isDnD": false
+    },
+    {
+      "resourceType": "GMEvent",
+      "resourceVersion": "1.0",
+      "name": "",
+      "collisionObjectId": null,
+      "eventNum": 73,
+      "eventType": 8,
+      "isDnD": false
+    },
+    {
+      "resourceType": "GMEvent",
+      "resourceVersion": "1.0",
+      "name": "",
+      "collisionObjectId": null,
+      "eventNum": 5,
+      "eventType": 7,
+      "isDnD": false
+    }
   ],
   "managed": true,
   "overriddenProperties": [],
   "parent": {
     "name": "Demo 3 - Combining mesh and primitives",
-    "path": "folders/ColMesh/Demo/Demo 3 - Combining mesh and primitives.yy",
+    "path": "folders/ColMesh/Demo/Demo 3 - Combining mesh and primitives.yy"
   },
   "parentObjectId": {
     "name": "oColmeshParent",
-    "path": "objects/oColmeshParent/oColmeshParent.yy",
+    "path": "objects/oColmeshParent/oColmeshParent.yy"
   },
   "persistent": false,
   "physicsAngularDamping": 0.1,
@@ -37,5 +85,5 @@
   "solid": false,
   "spriteId": null,
   "spriteMaskId": null,
-  "visible": true,
+  "visible": true
 }

@@ -1,7 +1,7 @@
 {
   "spriteId": {
     "name": "sCylinder",
-    "path": "sprites/sCylinder/sCylinder.yy",
+    "path": "sprites/sCylinder/sCylinder.yy"
   },
   "solid": false,
   "visible": true,
@@ -21,17 +21,43 @@
   "physicsKinematic": false,
   "physicsShapePoints": [],
   "eventList": [
-    {"isDnD":false,"eventNum":0,"eventType":0,"collisionObjectId":null,"parent":{"name":"oColmeshDemoCylinder","path":"objects/oColmeshDemoCylinder/oColmeshDemoCylinder.yy",},"resourceVersion":"1.0","name":"","tags":[],"resourceType":"GMEvent",},
-    {"isDnD":false,"eventNum":0,"eventType":8,"collisionObjectId":null,"parent":{"name":"oColmeshDemoCylinder","path":"objects/oColmeshDemoCylinder/oColmeshDemoCylinder.yy",},"resourceVersion":"1.0","name":"","tags":[],"resourceType":"GMEvent",},
+    {
+      "isDnD": false,
+      "eventNum": 0,
+      "eventType": 0,
+      "collisionObjectId": null,
+      "parent": {
+        "name": "oColmeshDemoCylinder",
+        "path": "objects/oColmeshDemoCylinder/oColmeshDemoCylinder.yy"
+      },
+      "resourceVersion": "1.0",
+      "name": "",
+      "tags": [],
+      "resourceType": "GMEvent"
+    },
+    {
+      "isDnD": false,
+      "eventNum": 0,
+      "eventType": 8,
+      "collisionObjectId": null,
+      "parent": {
+        "name": "oColmeshDemoCylinder",
+        "path": "objects/oColmeshDemoCylinder/oColmeshDemoCylinder.yy"
+      },
+      "resourceVersion": "1.0",
+      "name": "",
+      "tags": [],
+      "resourceType": "GMEvent"
+    }
   ],
   "properties": [],
   "overriddenProperties": [],
   "parent": {
     "name": "Demo",
-    "path": "folders/ColMesh/Demo.yy",
+    "path": "folders/ColMesh/Demo.yy"
   },
   "resourceVersion": "1.0",
   "name": "oColmeshDemoCylinder",
   "tags": [],
-  "resourceType": "GMObject",
+  "resourceType": "GMObject"
 }

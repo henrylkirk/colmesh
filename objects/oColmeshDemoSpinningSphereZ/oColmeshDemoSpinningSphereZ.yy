@@ -3,15 +3,39 @@
   "resourceVersion": "1.0",
   "name": "oColmeshDemoSpinningSphereZ",
   "eventList": [
-    {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,},
-    {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":0,"eventType":8,"isDnD":false,},
-    {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":0,"eventType":3,"isDnD":false,},
+    {
+      "resourceType": "GMEvent",
+      "resourceVersion": "1.0",
+      "name": "",
+      "collisionObjectId": null,
+      "eventNum": 0,
+      "eventType": 0,
+      "isDnD": false
+    },
+    {
+      "resourceType": "GMEvent",
+      "resourceVersion": "1.0",
+      "name": "",
+      "collisionObjectId": null,
+      "eventNum": 0,
+      "eventType": 8,
+      "isDnD": false
+    },
+    {
+      "resourceType": "GMEvent",
+      "resourceVersion": "1.0",
+      "name": "",
+      "collisionObjectId": null,
+      "eventNum": 0,
+      "eventType": 3,
+      "isDnD": false
+    }
   ],
   "managed": true,
   "overriddenProperties": [],
   "parent": {
     "name": "Primitive objects",
-    "path": "folders/ColMesh/Demo/Primitive objects.yy",
+    "path": "folders/ColMesh/Demo/Primitive objects.yy"
   },
   "parentObjectId": null,
   "persistent": false,
@@ -31,8 +55,8 @@
   "solid": false,
   "spriteId": {
     "name": "sSpinningCube",
-    "path": "sprites/sSpinningCube/sSpinningCube.yy",
+    "path": "sprites/sSpinningCube/sSpinningCube.yy"
   },
   "spriteMaskId": null,
-  "visible": true,
+  "visible": true
 }

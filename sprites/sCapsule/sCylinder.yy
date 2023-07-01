@@ -18,18 +18,55 @@
   "height": 64,
   "textureGroupId": {
     "name": "Default",
-    "path": "texturegroups/Default",
+    "path": "texturegroups/Default"
   },
   "swatchColours": null,
   "gridX": 0,
   "gridY": 0,
   "frames": [
-    {"compositeImage":{"FrameId":{"name":"6093266c-1f33-432f-8c85-617e5d457cd9","path":"sprites/sCylinder/sCylinder.yy",},"LayerId":null,"resourceVersion":"1.0","name":"","tags":[],"resourceType":"GMSpriteBitmap",},"images":[
-        {"FrameId":{"name":"6093266c-1f33-432f-8c85-617e5d457cd9","path":"sprites/sCylinder/sCylinder.yy",},"LayerId":{"name":"d129e906-29f9-4842-813b-a48311d7c9de","path":"sprites/sCylinder/sCylinder.yy",},"resourceVersion":"1.0","name":"","tags":[],"resourceType":"GMSpriteBitmap",},
-      ],"parent":{"name":"sCylinder","path":"sprites/sCylinder/sCylinder.yy",},"resourceVersion":"1.0","name":"6093266c-1f33-432f-8c85-617e5d457cd9","tags":[],"resourceType":"GMSpriteFrame",},
+    {
+      "compositeImage": {
+        "FrameId": {
+          "name": "6093266c-1f33-432f-8c85-617e5d457cd9",
+          "path": "sprites/sCylinder/sCylinder.yy"
+        },
+        "LayerId": null,
+        "resourceVersion": "1.0",
+        "name": "",
+        "tags": [],
+        "resourceType": "GMSpriteBitmap"
+      },
+      "images": [
+        {
+          "FrameId": {
+            "name": "6093266c-1f33-432f-8c85-617e5d457cd9",
+            "path": "sprites/sCylinder/sCylinder.yy"
+          },
+          "LayerId": {
+            "name": "d129e906-29f9-4842-813b-a48311d7c9de",
+            "path": "sprites/sCylinder/sCylinder.yy"
+          },
+          "resourceVersion": "1.0",
+          "name": "",
+          "tags": [],
+          "resourceType": "GMSpriteBitmap"
+        }
+      ],
+      "parent": {
+        "name": "sCylinder",
+        "path": "sprites/sCylinder/sCylinder.yy"
+      },
+      "resourceVersion": "1.0",
+      "name": "6093266c-1f33-432f-8c85-617e5d457cd9",
+      "tags": [],
+      "resourceType": "GMSpriteFrame"
+    }
   ],
   "sequence": {
-    "spriteId": {"name":"sCylinder","path":"sprites/sCylinder/sCylinder.yy",},
+    "spriteId": {
+      "name": "sCylinder",
+      "path": "sprites/sCylinder/sCylinder.yy"
+    },
     "timeUnits": 1,
     "playback": 1,
     "playbackSpeed": 30.0,
@@ -37,12 +74,59 @@
     "autoRecord": true,
     "volume": 1.0,
     "length": 1.0,
-    "events": {"Keyframes":[],"resourceVersion":"1.0","resourceType":"KeyframeStore<MessageEventKeyframe>",},
-    "moments": {"Keyframes":[],"resourceVersion":"1.0","resourceType":"KeyframeStore<MomentsEventKeyframe>",},
+    "events": {
+      "Keyframes": [],
+      "resourceVersion": "1.0",
+      "resourceType": "KeyframeStore<MessageEventKeyframe>"
+    },
+    "moments": {
+      "Keyframes": [],
+      "resourceVersion": "1.0",
+      "resourceType": "KeyframeStore<MomentsEventKeyframe>"
+    },
     "tracks": [
-      {"name":"frames","spriteId":null,"keyframes":{"Keyframes":[
-            {"id":"a7fbb7e8-4ef6-4122-b8a9-834aed39f0d4","Key":0.0,"Length":1.0,"Stretch":false,"Disabled":false,"IsCreationKey":false,"Channels":{"0":{"Id":{"name":"6093266c-1f33-432f-8c85-617e5d457cd9","path":"sprites/sCylinder/sCylinder.yy",},"resourceVersion":"1.0","resourceType":"SpriteFrameKeyframe",},},"resourceVersion":"1.0","resourceType":"Keyframe<SpriteFrameKeyframe>",},
-          ],"resourceVersion":"1.0","resourceType":"KeyframeStore<SpriteFrameKeyframe>",},"trackColour":0,"inheritsTrackColour":true,"builtinName":0,"traits":0,"interpolation":1,"tracks":[],"events":[],"modifiers":[],"isCreationTrack":false,"resourceVersion":"1.0","tags":[],"resourceType":"GMSpriteFramesTrack",},
+      {
+        "name": "frames",
+        "spriteId": null,
+        "keyframes": {
+          "Keyframes": [
+            {
+              "id": "a7fbb7e8-4ef6-4122-b8a9-834aed39f0d4",
+              "Key": 0.0,
+              "Length": 1.0,
+              "Stretch": false,
+              "Disabled": false,
+              "IsCreationKey": false,
+              "Channels": {
+                "0": {
+                  "Id": {
+                    "name": "6093266c-1f33-432f-8c85-617e5d457cd9",
+                    "path": "sprites/sCylinder/sCylinder.yy"
+                  },
+                  "resourceVersion": "1.0",
+                  "resourceType": "SpriteFrameKeyframe"
+                }
+              },
+              "resourceVersion": "1.0",
+              "resourceType": "Keyframe<SpriteFrameKeyframe>"
+            }
+          ],
+          "resourceVersion": "1.0",
+          "resourceType": "KeyframeStore<SpriteFrameKeyframe>"
+        },
+        "trackColour": 0,
+        "inheritsTrackColour": true,
+        "builtinName": 0,
+        "traits": 0,
+        "interpolation": 1,
+        "tracks": [],
+        "events": [],
+        "modifiers": [],
+        "isCreationTrack": false,
+        "resourceVersion": "1.0",
+        "tags": [],
+        "resourceType": "GMSpriteFramesTrack"
+      }
     ],
     "visibleRange": null,
     "lockOrigin": false,
@@ -58,21 +142,31 @@
     "yorigin": 32,
     "eventToFunction": {},
     "eventStubScript": null,
-    "parent": {"name":"sCylinder","path":"sprites/sCylinder/sCylinder.yy",},
+    "parent": { "name": "sCylinder", "path": "sprites/sCylinder/sCylinder.yy" },
     "resourceVersion": "1.3",
     "name": "sCylinder",
     "tags": [],
-    "resourceType": "GMSequence",
+    "resourceType": "GMSequence"
   },
   "layers": [
-    {"visible":true,"isLocked":false,"blendMode":0,"opacity":100.0,"displayName":"default","resourceVersion":"1.0","name":"d129e906-29f9-4842-813b-a48311d7c9de","tags":[],"resourceType":"GMImageLayer",},
+    {
+      "visible": true,
+      "isLocked": false,
+      "blendMode": 0,
+      "opacity": 100.0,
+      "displayName": "default",
+      "resourceVersion": "1.0",
+      "name": "d129e906-29f9-4842-813b-a48311d7c9de",
+      "tags": [],
+      "resourceType": "GMImageLayer"
+    }
   ],
   "parent": {
     "name": "Sprites",
-    "path": "folders/ColMesh/Demo/Sprites.yy",
+    "path": "folders/ColMesh/Demo/Sprites.yy"
   },
   "resourceVersion": "1.0",
   "name": "sCylinder",
   "tags": [],
-  "resourceType": "GMSprite",
+  "resourceType": "GMSprite"
 }

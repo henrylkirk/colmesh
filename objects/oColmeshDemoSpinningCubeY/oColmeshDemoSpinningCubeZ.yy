@@ -1,7 +1,7 @@
 {
   "spriteId": {
     "name": "sSpinningCube",
-    "path": "sprites/sSpinningCube/sSpinningCube.yy",
+    "path": "sprites/sSpinningCube/sSpinningCube.yy"
   },
   "solid": false,
   "visible": true,
@@ -21,18 +21,57 @@
   "physicsKinematic": false,
   "physicsShapePoints": [],
   "eventList": [
-    {"isDnD":false,"eventNum":0,"eventType":0,"collisionObjectId":null,"parent":{"name":"oColmeshDemoSpinningCubeZ","path":"objects/oColmeshDemoSpinningCubeZ/oColmeshDemoSpinningCubeZ.yy",},"resourceVersion":"1.0","name":"","tags":[],"resourceType":"GMEvent",},
-    {"isDnD":false,"eventNum":0,"eventType":8,"collisionObjectId":null,"parent":{"name":"oColmeshDemoSpinningCubeZ","path":"objects/oColmeshDemoSpinningCubeZ/oColmeshDemoSpinningCubeZ.yy",},"resourceVersion":"1.0","name":"","tags":[],"resourceType":"GMEvent",},
-    {"isDnD":false,"eventNum":0,"eventType":3,"collisionObjectId":null,"parent":{"name":"oColmeshDemoSpinningCubeZ","path":"objects/oColmeshDemoSpinningCubeZ/oColmeshDemoSpinningCubeZ.yy",},"resourceVersion":"1.0","name":"","tags":[],"resourceType":"GMEvent",},
+    {
+      "isDnD": false,
+      "eventNum": 0,
+      "eventType": 0,
+      "collisionObjectId": null,
+      "parent": {
+        "name": "oColmeshDemoSpinningCubeZ",
+        "path": "objects/oColmeshDemoSpinningCubeZ/oColmeshDemoSpinningCubeZ.yy"
+      },
+      "resourceVersion": "1.0",
+      "name": "",
+      "tags": [],
+      "resourceType": "GMEvent"
+    },
+    {
+      "isDnD": false,
+      "eventNum": 0,
+      "eventType": 8,
+      "collisionObjectId": null,
+      "parent": {
+        "name": "oColmeshDemoSpinningCubeZ",
+        "path": "objects/oColmeshDemoSpinningCubeZ/oColmeshDemoSpinningCubeZ.yy"
+      },
+      "resourceVersion": "1.0",
+      "name": "",
+      "tags": [],
+      "resourceType": "GMEvent"
+    },
+    {
+      "isDnD": false,
+      "eventNum": 0,
+      "eventType": 3,
+      "collisionObjectId": null,
+      "parent": {
+        "name": "oColmeshDemoSpinningCubeZ",
+        "path": "objects/oColmeshDemoSpinningCubeZ/oColmeshDemoSpinningCubeZ.yy"
+      },
+      "resourceVersion": "1.0",
+      "name": "",
+      "tags": [],
+      "resourceType": "GMEvent"
+    }
   ],
   "properties": [],
   "overriddenProperties": [],
   "parent": {
     "name": "Primitive objects",
-    "path": "folders/ColMesh/Demo/Primitive objects.yy",
+    "path": "folders/ColMesh/Demo/Primitive objects.yy"
   },
   "resourceVersion": "1.0",
   "name": "oColmeshDemoSpinningCubeZ",
   "tags": [],
-  "resourceType": "GMObject",
+  "resourceType": "GMObject"
 }
