@@ -1,6 +1,7 @@
 /*
 	ColMesh - 3D Collisions Made Easy!
 	TheSnidr 2021
+	v1.0.79
 	
 	License
 	The ColMesh system is licensed under a CreativeCommons Attribution 4.0 International License.
