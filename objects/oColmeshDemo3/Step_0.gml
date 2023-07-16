@@ -12,6 +12,7 @@ prevZ = z;
 jump = keyboard_check_pressed(vk_space);
 var h = keyboard_check(ord("D")) - keyboard_check(ord("A"));
 var v = keyboard_check(ord("W")) - keyboard_check(ord("S"));
+
 if (h != 0 && v != 0) {
   //If walking diagonally, divide the input vector by its own length
   var s = 1 / sqrt(2);

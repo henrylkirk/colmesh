@@ -2,6 +2,7 @@
 
 //Cast a ray from high above to the ground so that the coin is placed onto the ground
 var ray = levelColmesh.castRay(x, y, 1000, x, y, -100);
+
 if (!is_struct(ray)) {
   //The ray didn't hit anything, for some reason. Destroy this coin.
   instance_destroy();

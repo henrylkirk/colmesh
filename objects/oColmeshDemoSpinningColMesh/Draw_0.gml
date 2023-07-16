@@ -1,9 +1,11 @@
 /// @description
+
 if global.disableDraw{exit;}
 gpu_set_texrepeat(true);
 shader_set(sh_colmesh_collider);
 shape.debugDraw(sprite_get_texture(texCollider, 0));
 shader_reset();
+
 
 /*
 var mm = shape.getMinMax();

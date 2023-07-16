@@ -3,6 +3,7 @@
 jump = keyboard_check_pressed(vk_space);
 var h = keyboard_check(ord("D")) - keyboard_check(ord("A"));
 var v = keyboard_check(ord("W")) - keyboard_check(ord("S"));
+
 if (h != 0 && v != 0) {
   //If walking diagonally, make sure the total length of the vector is still 1
   var s = 0.707107; //This is approximately equal to 1 / sqrt(2);
@@ -28,6 +29,7 @@ var ray = levelColmesh.castRay(
   collider.y,
   collider.z + dz
 );
+
 if (ray.hit) {
   collider.x = ray.x + ray.nx;
   collider.y = ray.y + ray.ny;
@@ -48,6 +50,7 @@ spdZ = collider.z - z;
 spd = point_distance_3d(0, 0, 0, spdX, spdY, spdZ);
 
 //Put player in the middle of the map if he falls off
+
 if (collider.z < -400) {
   collider.x = room_width / 2;
   collider.y = room_height / 2;

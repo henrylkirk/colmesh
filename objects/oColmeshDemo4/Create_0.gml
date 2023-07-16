@@ -1,7 +1,8 @@
 /// @description
 event_inherited();
 
-global.demoText = "There is one more type of shape you can add - the \"dynamic\"." +
+global.demoText =
+  'There is one more type of shape you can add - the "dynamic".' +
   "\nA dynamic shape can be moved in real time. It can contain any of the primitives," +
   "\nor even a whole different ColMesh! Yes, that's right, you can put a ColMesh inside a ColMesh!" +
   "\nThe red boxes in the distance are part of a separate ColMesh inside the level ColMesh." +
