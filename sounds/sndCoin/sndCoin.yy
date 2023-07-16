@@ -4,7 +4,7 @@
   "name": "sndCoin",
   "audioGroupId": {
     "name": "audiogroup_default",
-    "path": "audiogroups/audiogroup_default",
+    "path": "audiogroups/audiogroup_default"
   },
   "bitDepth": 1,
   "bitRate": 128,
@@ -13,11 +13,11 @@
   "duration": 1.154388,
   "parent": {
     "name": "Demo",
-    "path": "folders/Demo.yy",
+    "path": "folders/ColMesh/Demo.yy"
   },
   "preload": false,
   "sampleRate": 44100,
   "soundFile": "sndCoin.mp3",
   "type": 0,
-  "volume": 1.0,
+  "volume": 1.0
 }

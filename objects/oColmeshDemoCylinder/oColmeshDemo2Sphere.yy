@@ -1,7 +1,7 @@
 {
   "spriteId": {
     "name": "sSphere",
-    "path": "sprites/sSphere/sSphere.yy",
+    "path": "sprites/sSphere/sSphere.yy"
   },
   "solid": false,
   "visible": true,
@@ -21,17 +21,43 @@
   "physicsKinematic": false,
   "physicsShapePoints": [],
   "eventList": [
-    {"isDnD":false,"eventNum":0,"eventType":0,"collisionObjectId":null,"parent":{"name":"oColmeshDemo2Sphere","path":"objects/oColmeshDemo2Sphere/oColmeshDemo2Sphere.yy",},"resourceVersion":"1.0","name":"","tags":[],"resourceType":"GMEvent",},
-    {"isDnD":false,"eventNum":0,"eventType":8,"collisionObjectId":null,"parent":{"name":"oColmeshDemo2Sphere","path":"objects/oColmeshDemo2Sphere/oColmeshDemo2Sphere.yy",},"resourceVersion":"1.0","name":"","tags":[],"resourceType":"GMEvent",},
+    {
+      "isDnD": false,
+      "eventNum": 0,
+      "eventType": 0,
+      "collisionObjectId": null,
+      "parent": {
+        "name": "oColmeshDemo2Sphere",
+        "path": "objects/oColmeshDemo2Sphere/oColmeshDemo2Sphere.yy"
+      },
+      "resourceVersion": "1.0",
+      "name": "",
+      "tags": [],
+      "resourceType": "GMEvent"
+    },
+    {
+      "isDnD": false,
+      "eventNum": 0,
+      "eventType": 8,
+      "collisionObjectId": null,
+      "parent": {
+        "name": "oColmeshDemo2Sphere",
+        "path": "objects/oColmeshDemo2Sphere/oColmeshDemo2Sphere.yy"
+      },
+      "resourceVersion": "1.0",
+      "name": "",
+      "tags": [],
+      "resourceType": "GMEvent"
+    }
   ],
   "properties": [],
   "overriddenProperties": [],
   "parent": {
     "name": "Demo 2 - Primitives",
-    "path": "folders/ColMesh/Demo/Demo 2 - Primitives.yy",
+    "path": "folders/ColMesh/Demo/Demo 2 - Primitives.yy"
   },
   "resourceVersion": "1.0",
   "name": "oColmeshDemo2Sphere",
   "tags": [],
-  "resourceType": "GMObject",
+  "resourceType": "GMObject"
 }

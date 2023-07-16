@@ -1,2 +1,2 @@
-/// @description Toggle debug mode
+/// @description
 global.drawDebug ^= 1;

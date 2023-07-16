@@ -4,7 +4,7 @@
   "name": "sh_colmesh_shadow",
   "parent": {
     "name": "Shaders",
-    "path": "folders/Demo/Shaders.yy",
+    "path": "folders/ColMesh/Demo/Shaders.yy"
   },
-  "type": 1,
+  "type": 1
 }

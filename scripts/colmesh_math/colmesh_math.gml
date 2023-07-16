@@ -1,236 +1,290 @@
 /*
-	Some math scripts that are used by the Colmesh system.
+	Some math scripts that are used by the ColMesh system.
 */
+#macro cmDot dot_product_3d
+#macro cmSqr colmesh_vector_square
+#macro cmDist point_distance_3d
 
-/// @function colmesh_vector_magnitude(x, y, z)
-/// @description Returns the magnitude of the given vector
-function colmesh_vector_magnitude(x, y, z) {
-	return sqrt(dot_product_3d(x, y, z, x, y, z));
-}
-
-/// @function colmesh_vector_square(x, y, z)
-/// @description Returns the square of the magnitude of the given vector
-function colmesh_vector_square(x, y, z) {
+/// @func colmesh_vector_square(x, y, z)
+function colmesh_vector_square(x, y, z)
+{
+	//Returns the square of the magnitude of the given vector
 	return dot_product_3d(x, y, z, x, y, z);
 }
 
-/// @function colmesh_matrix_invert_fast
-/// @description Returns the inverse of a 4x4 matrix. Assumes indices 3, 7 and 11 are 0, and index 15 is 1
-function colmesh_matrix_invert_fast(matrix, targetM) {
+function colmesh_matrix_transpose(M)
+{
+	return [M[0], M[4], M[8],  M[12],
+			M[1], M[5], M[9],  M[13],
+			M[2], M[6], M[10], M[14],
+			M[3], M[7], M[11], M[15]];
+}
 
-	var m0 = matrix[0], m1 = matrix[1], m2 = matrix[2], m4 = matrix[4], m5 = matrix[5], m6 = matrix[6], m8 = matrix[8], m9 = matrix[9], m10 = matrix[10], m12 = matrix[12], m13 = matrix[13], m14 = matrix[14];
-	var inv = targetM;
-	inv[@ 0]  = m5 * m10 - m9 * m6;
-	inv[@ 1]  = -m1 * m10 + m9 * m2;
-	inv[@ 2]  = m1 * m6 - m5 * m2;
-	inv[@ 3]  = 0;
-	inv[@ 4]  = -m4 * m10 + m8 * m6;
-	inv[@ 5]  = m0 * m10 - m8 * m2;
-	inv[@ 6]  = -m0 * m6 + m4 * m2;
-	inv[@ 7]  = 0;
-	inv[@ 8]  = m4 * m9 - m8 * m5;
-	inv[@ 9]  = -m0 * m9 + m8 * m1;
-	inv[@ 10] = m0 * m5 - m4 * m1;
-	inv[@ 11] = 0;
-	inv[@ 12] = -m4 * m9 * m14 + m4 * m10 * m13 +m8 * m5 * m14 - m8 * m6 * m13 - m12 * m5 * m10 + m12 * m6 * m9;
-	inv[@ 13] = m0 * m9 * m14 - m0 * m10 * m13 - m8 * m1 * m14 + m8 * m2 * m13 + m12 * m1 * m10 - m12 * m2 * m9;
-	inv[@ 14] = -m0 * m5 * m14 + m0 * m6 * m13 + m4 * m1 * m14 - m4 * m2 * m13 - m12 * m1 * m6 + m12 * m2 * m5;
-	inv[@ 15] = 1;
-	var _det = m0 * inv[0] + m1 * inv[4] + m2 * inv[8];
-	if (_det == 0){
-		show_debug_message( "The determinant is zero.");
-		return inv;
+/// @func colmesh_matrix_invert_fast(M, targetM*)
+function colmesh_matrix_invert_fast(M, I = array_create(16)) 
+{
+	//Returns the inverse of a 4x4 matrix. Assumes indices 3, 7 and 11 are 0, and index 15 is 1
+	//With this assumption a lot of factors cancel out
+	var m0 = M[0], m1 = M[1], m2 = M[2], m4 = M[4], m5 = M[5], m6 = M[6], m8 = M[8], m9 = M[9], m10 = M[10], m12 = M[12], m13 = M[13], m14 = M[14];
+	var i0  =   m5 * m10 -  m9 * m6;
+	var i4  =   m8 * m6  -  m4 * m10;
+	var i8  =   m4 * m9  -  m8 * m5;
+	var det =   dot_product_3d(m0, m1, m2, i0, i4, i8);
+	if (det == 0)
+	{
+		show_debug_message("Error in function colmesh_matrix_invert_fast: The determinant is zero.");
+		return M;
 	}
-	_det = 1 / _det;
-	
-	for(var i = 0; i < 16; i++){
-		inv[@ i] *= _det;
+	var invDet = 1 / det;
+	I[@ 0]  =   invDet * i0;
+	I[@ 1]  =   invDet * (m9 * m2  - m1 * m10);
+	I[@ 2]  =   invDet * (m1 * m6  - m5 * m2);
+	I[@ 3]  =   0;
+	I[@ 4]  =   invDet * i4;
+	I[@ 5]  =   invDet * (m0 * m10 - m8 * m2);
+	I[@ 6]  =   invDet * (m4 * m2  - m0 * m6);
+	I[@ 7]  =   0;
+	I[@ 8]  =   invDet * i8;
+	I[@ 9]  =   invDet * (m8 * m1  - m0 * m9);
+	I[@ 10] =   invDet * (m0 * m5  - m4 * m1);
+	I[@ 11] =   0;
+	I[@ 12] = - dot_product_3d(m12, m13, m14, I[0], I[4], I[8]);
+	I[@ 13] = - dot_product_3d(m12, m13, m14, I[1], I[5], I[9]);
+	I[@ 14] = - dot_product_3d(m12, m13, m14, I[2], I[6], I[10]);
+	I[@ 15] =   dot_product_3d(m8,  m9,  m10, I[2], I[6], I[10]);
+	return I;
+}
+
+/// @func colmesh_matrix_invert(M, targetM*)
+function colmesh_matrix_invert(M, I = array_create(16))
+{
+	//Proper matrix inversion
+	var m0 = M[0], m1 = M[1], m2 = M[2], m3 = M[3], m4 = M[4], m5 = M[5], m6 = M[6], m7 = M[7], m8 = M[8], m9 = M[9], m10 = M[10], m11 = M[11], m12 = M[12], m13 = M[13], m14 = M[14], m15 = M[15];
+	var a   = m5 * m10 - m9 * m6;
+	var d   = m8 * m6  - m4 * m10;
+	var g   = m4 * m9  - m8 * m5;
+	var j   = m6 * m11 - m7 * m10;
+	var m   = m9 * m7  - m5 * m11;
+	var p   = m4 * m11 - m8 * m7;
+	var i0  = dot_product_3d(m13,  m14,  m15,  j,  m,  a);
+	var i4  = dot_product_3d(m12,  m14,  m15, -j,  p,  d);
+	var i8  = dot_product_3d(m12,  m13,  m15, -m, -p,  g);
+	var i12 = dot_product_3d(m12,  m13,  m14, -a, -d, -g);
+	var det =   m0 * i0 + m1 * i4 + m2 * i8 + m3 * i12;
+	if (det == 0){
+		show_debug_message("Error in function colmesh_matrix_invert: The determinant is zero.");
+		return M;
 	}
-	return inv;
+	var b   = m9 * m2  - m1 * m10;
+	var c   = m1 * m6  - m5 * m2;
+	var e   = m0 * m10 - m8 * m2;
+	var f   = m4 * m2  - m0 * m6;
+	var h   = m8 * m1  - m0 * m9;
+	var i   = m0 * m5  - m4 * m1;
+	var k   = m3 * m10 - m2 * m11;
+	var l   = m2 * m7  - m3 * m6;
+	var n   = m1 * m11 - m9 * m3;
+	var o   = m5 * m3  - m1 * m7;
+	var q   = m8 * m3  - m0 * m11;
+	var r   = m0 * m7  - m4 * m3;
+	var invDet = 1 / det;
+	I[@ 0]  = invDet * i0;
+	I[@ 1]  = invDet * dot_product_3d(m13, m14, m15,  k,  n,  b);
+	I[@ 2]  = invDet * dot_product_3d(m13, m14, m15,  l,  o,  c);
+	I[@ 3]  = invDet * dot_product_3d(m3,  m7,  m11, -a, -b, -c);
+	I[@ 4]  = invDet * i4;
+	I[@ 5]  = invDet * dot_product_3d(m12, m14, m15, -k,  q,  e);
+	I[@ 6]  = invDet * dot_product_3d(m12, m14, m15, -l,  r,  f);
+	I[@ 7]  = invDet * dot_product_3d(m3,  m7,  m11, -d, -e, -f);
+	I[@ 8]  = invDet * i8;
+	I[@ 9]  = invDet * dot_product_3d(m12, m13, m15, -n, -q,  h);
+	I[@ 10] = invDet * dot_product_3d(m12, m13, m15, -o, -r,  i);
+	I[@ 11] = invDet * dot_product_3d(m3,  m7,  m11, -g, -h, -i);
+	I[@ 12] = invDet * i12;
+	I[@ 13] = invDet * dot_product_3d(m12, m13, m14, -b, -e, -h);
+	I[@ 14] = invDet * dot_product_3d(m12, m13, m14, -c, -f, -i);
+	I[@ 15] = invDet * dot_product_3d(m0,  m4,  m8,   a,  b,  c);
+	return I;
 }
 
-/// @function colmesh_matrix_invert
-/// @description Proper matrix inversion
-function colmesh_matrix_invert(matrix, targetM){
-	
-	var m0 = matrix[0], m1 = matrix[1], m2 = matrix[2], m3 = matrix[3], m4 = matrix[4], m5 = matrix[5], m6 = matrix[6], m7 = matrix[7], m8 = matrix[8], m9 = matrix[9], m10 = matrix[10], m11 = matrix[11], m12 = matrix[12], m13 = matrix[13], m14 = matrix[14], m15 = matrix[15];
-	var inv = targetM;
-	inv[@ 0]  = m5 * m10 * m15 - m5 * m11 * m14 - m9 * m6 * m15 + m9 * m7 * m14 +m13 * m6 * m11 - m13 * m7 * m10;
-	inv[@ 1]  = -m1 * m10 * m15 + m1 * m11 * m14 + m9 * m2 * m15 - m9 * m3 * m14 - m13 * m2 * m11 + m13 * m3 * m10;
-	inv[@ 2]  = m1 * m6 * m15 - m1 * m7 * m14 - m5 * m2 * m15 + m5 * m3 * m14 + m13 * m2 * m7 - m13 * m3 * m6;
-	inv[@ 3]  = -m1 * m6 * m11 + m1 * m7 * m10 + m5 * m2 * m11 - m5 * m3 * m10 - m9 * m2 * m7 + m9 * m3 * m6;
-	inv[@ 4]  = -m4 * m10 * m15 + m4 * m11 * m14 + m8 * m6 * m15 - m8 * m7 * m14 - m12 * m6 * m11 + m12 * m7 * m10;
-	inv[@ 5]  = m0 * m10 * m15 - m0 * m11 * m14 - m8 * m2 * m15 + m8 * m3 * m14 + m12 * m2 * m11 - m12 * m3 * m10;
-	inv[@ 6]  = -m0 * m6 * m15 + m0 * m7 * m14 + m4 * m2 * m15 - m4 * m3 * m14 - m12 * m2 * m7 + m12 * m3 * m6;
-	inv[@ 7]  = m0 * m6 * m11 - m0 * m7 * m10 - m4 * m2 * m11 + m4 * m3 * m10 + m8 * m2 * m7 - m8 * m3 * m6;
-	inv[@ 8]  = m4 * m9 * m15 - m4 * m11 * m13 - m8 * m5 * m15 + m8 * m7 * m13 + m12 * m5 * m11 - m12 * m7 * m9;
-	inv[@ 9]  = -m0 * m9 * m15 + m0 * m11 * m13 + m8 * m1 * m15 - m8 * m3 * m13 - m12 * m1 * m11 + m12 * m3 * m9;
-	inv[@ 10] = m0 * m5 * m15 - m0 * m7 * m13 - m4 * m1 * m15 + m4 * m3 * m13 + m12 * m1 * m7 - m12 * m3 * m5;
-	inv[@ 11] = -m0 * m5 * m11 + m0 * m7 * m9 + m4 * m1 * m11 - m4 * m3 * m9 - m8 * m1 * m7 + m8 * m3 * m5;
-	inv[@ 12] = -m4 * m9 * m14 + m4 * m10 * m13 +m8 * m5 * m14 - m8 * m6 * m13 - m12 * m5 * m10 + m12 * m6 * m9;
-	inv[@ 13] = m0 * m9 * m14 - m0 * m10 * m13 - m8 * m1 * m14 + m8 * m2 * m13 + m12 * m1 * m10 - m12 * m2 * m9;
-	inv[@ 14] = -m0 * m5 * m14 + m0 * m6 * m13 + m4 * m1 * m14 - m4 * m2 * m13 - m12 * m1 * m6 + m12 * m2 * m5;
-	inv[@ 15] = m0 * m5 * m10 - m0 * m6 * m9 - m4 * m1 * m10 + m4 * m2 * m9 + m8 * m1 * m6 - m8 * m2 * m5;
-	var _det = m0 * inv[0] + m1 * inv[4] + m2 * inv[8] + m3 * inv[12];
-	if (_det == 0){
-		show_debug_message( "The determinant is zero.");
-		return inv;
-	}
-	_det = 1 / _det;
-	for(var i = 0; i < 16; i++){
-		inv[@ i] *= _det;
-	}
-	return inv;
+function colmesh_matrix_build(x, y, z, xrotation, yrotation, zrotation, xscale, yscale, zscale)
+{
+	/*
+		This is an alternative to the regular matrix_build.
+		The regular function will rotate first and then scale, which can result in weird shearing.
+		I have no idea why they did it this way.
+		This script does it properly so that no shearing is applied even if you both rotate and scale non-uniformly.
+	*/
+	var M = matrix_build(x, y, z, xrotation, yrotation, zrotation, 1, 1, 1);
+	return colmesh_matrix_scale(M, xscale, yscale, zscale);
 }
 
-/// @function colmesh_matrix_multiply
-/// @description Multiplies two matrices and outputs the result to targetM
-function colmesh_matrix_multiply(matrix, N, targetM) {
-
-	var m0 = matrix[0], m1 = matrix[1], m2 = matrix[2], m3 = matrix[3], m4 = matrix[4], m5 = matrix[5], m6 = matrix[6], m7 = matrix[7], m8 = matrix[8], m9 = matrix[9], m10 = matrix[10], m11 = matrix[11], m12 = matrix[12], m13 = matrix[13], m14 = matrix[14], m15 = matrix[15];
-	var n0 = N[0], n1 = N[1], n2 = N[2], n3 = N[3], n4 = N[4], n5 = N[5], n6 = N[6], n7 = N[7], n8 = N[8], n9 = N[9], n10 = N[10], n11 = N[11], n12 = N[12], n13 = N[13], n14 = N[14], n15 = N[15];
-	targetM[@ 0]  = m0 * n0 + m4 * n1 + m8 * n2 + m12 * n3;
-	targetM[@ 1]  = m1 * n0 + m5 * n1 + m9 * n2 + m13 * n3;
-	targetM[@ 2]  = m2 * n0 + m6 * n1 + m10 * n2 + m14 * n3;
-	targetM[@ 3]  = m3 * n0 + m7 * n1 + m11 * n2 + m15 * n3;
-	targetM[@ 4]  = m0 * n4 + m4 * n5 + m8 * n6 + m12 * n7;
-	targetM[@ 5]  = m1 * n4 + m5 * n5 + m9 * n6 + m13 * n7;
-	targetM[@ 6]  = m2 * n4 + m6 * n5 + m10 * n6 + m14 * n7;
-	targetM[@ 7]  = m3 * n4 + m7 * n5 + m11 * n6 + m15 * n7;
-	targetM[@ 8]  = m0 * n8 + m4 * n9 + m8 * n10 + m12 * n11;
-	targetM[@ 9]  = m1 * n8 + m5 * n9 + m9 * n10 + m13 * n11;
-	targetM[@ 10] = m2 * n8 + m6 * n9 + m10 * n10 + m14 * n11;
-	targetM[@ 11] = m3 * n8 + m7 * n9 + m11 * n10 + m15 * n11;
-	targetM[@ 12] = m0 * n12 + m4 * n13 + m8 * n14 + m12 * n15;
-	targetM[@ 13] = m1 * n12 + m5 * n13 + m9 * n14 + m13 * n15;
-	targetM[@ 14] = m2 * n12 + m6 * n13 + m10 * n14 + m14 * n15;
-	targetM[@ 15] = m3 * n12 + m7 * n13 + m11 * n14 + m15 * n15;
-	return targetM;
-}
-
-/// @function colmesh_matrix_multiply_fast
-/// @description Multiplies two matrices and outputs the result to targetM. Assumes indices 3, 7 and 11 are 0, and 15 is 1
-function colmesh_matrix_multiply_fast(matrix, N, targetM) {
-
-	var m0 = matrix[0], m1 = matrix[1], m2 = matrix[2], m4 = matrix[4], m5 = matrix[5], m6 = matrix[6], m8 = matrix[8], m9 = matrix[9], m10 = matrix[10], m12 = matrix[12], m13 = matrix[13], m14 = matrix[14];
-	var n0 = N[0], n1 = N[1], n2 = N[2], n4 = N[4], n5 = N[5], n6 = N[6], n8 = N[8], n9 = N[9], n10 = N[10], n12 = N[12], n13 = N[13], n14 = N[14];
-	targetM[@ 0]  = m0 * n0 + m4 * n1 + m8 * n2;
-	targetM[@ 1]  = m1 * n0 + m5 * n1 + m9 * n2;
-	targetM[@ 2]  = m2 * n0 + m6 * n1 + m10 * n2;
-	targetM[@ 3]  = 0;
-	targetM[@ 4]  = m0 * n4 + m4 * n5 + m8 * n6;
-	targetM[@ 5]  = m1 * n4 + m5 * n5 + m9 * n6;
-	targetM[@ 6]  = m2 * n4 + m6 * n5 + m10 * n6;
-	targetM[@ 7]  = 0;
-	targetM[@ 8]  = m0 * n8 + m4 * n9 + m8 * n10;
-	targetM[@ 9]  = m1 * n8 + m5 * n9 + m9 * n10;
-	targetM[@ 10] = m2 * n8 + m6 * n9 + m10 * n10;
-	targetM[@ 11] = 0;
-	targetM[@ 12] = m0 * n12 + m4 * n13 + m8 * n14 + m12;
-	targetM[@ 13] = m1 * n12 + m5 * n13 + m9 * n14 + m13;
-	targetM[@ 14] = m2 * n12 + m6 * n13 + m10 * n14 + m14;
-	targetM[@ 15] = 1;
-	return targetM;
-}
-
-/// @function colmesh_matrix_build
-/// @description This is an alternative to the regular matrix_build properly so that no shearing is applied even if you both rotate and scale non-uniformly
-function colmesh_matrix_build(x, y, z, xrotation, yrotation, zrotation, xscale, yscale, zscale){
-	var matrix = matrix_build(x, y, z, xrotation, yrotation, zrotation, 1, 1, 1);
-	return colmesh_matrix_scale(matrix, xscale, yscale, zscale);
-}
-
-/// @function colmesh_matrix_orthogonalize
-function colmesh_matrix_orthogonalize(matrix){
+function colmesh_matrix_orthogonalize(M)
+{
 	/*
 		This makes sure the three vectors of the given matrix are all unit length
-		and perpendicular to each other, using the up direciton as master.
+		and perpendicular to each other, using the up direction as master.
 		GameMaker does something similar when creating a lookat matrix. People often use [0, 0, 1]
 		as the up direction, but this vector is not used directly for creating the view matrix; rather, 
 		it's being used as reference, and the entire view matrix is being orthogonalized to the looking direction.
 	*/
-	var l = matrix[8] * matrix[8] + matrix[9] * matrix[9] + matrix[10] * matrix[10];
-	if (l == 0){exit;}
-	l = 1 / sqrt(l);
-	matrix[@ 8] *= l;
-	matrix[@ 9] *= l;
-	matrix[@ 10]*= l;
+	var l = point_distance_3d(0, 0, 0, M[8], M[9], M[10]);
+	if (l != 0)
+	{
+		l = 1 / l;
+		M[@ 8]  *= l;
+		M[@ 9]  *= l;
+		M[@ 10] *= l;
+	}
+	else
+	{
+		M[10] = 1;
+	}
 	
-	matrix[@ 4] = matrix[9] * matrix[2] - matrix[10]* matrix[1];
-	matrix[@ 5] = matrix[10]* matrix[0] - matrix[8] * matrix[2];
-	matrix[@ 6] = matrix[8] * matrix[1] - matrix[9] * matrix[0];
-	var l = matrix[4] * matrix[4] + matrix[5] * matrix[5] + matrix[6] * matrix[6];
-	if (l == 0){exit;}
-	l = 1 / sqrt(l);
-	matrix[@ 4] *= l;
-	matrix[@ 5] *= l;
-	matrix[@ 6] *= l;
+	M[@ 4] = M[9]  * M[2] - M[10] * M[1];
+	M[@ 5] = M[10] * M[0] - M[8]  * M[2];
+	M[@ 6] = M[8]  * M[1] - M[9]  * M[0];
+	var l = point_distance_3d(0, 0, 0, M[4], M[5], M[6]);
+	if (l != 0)
+	{
+		l = 1 / l;
+		M[@ 4] *= l;
+		M[@ 5] *= l;
+		M[@ 6] *= l;
+	}
+	else
+	{
+		M[5] = 1;
+	}
 	
 	//The last vector is automatically normalized, since the two other vectors now are perpendicular unit vectors
-	matrix[@ 0] = matrix[10]* matrix[5] - matrix[9] * matrix[6];
-	matrix[@ 1] = matrix[8] * matrix[6] - matrix[10]* matrix[4];
-	matrix[@ 2] = matrix[9] * matrix[4] - matrix[8] * matrix[5];
+	M[@ 0] = M[10] * M[5] - M[9]  * M[6];
+	M[@ 1] = M[8]  * M[6] - M[10] * M[4];
+	M[@ 2] = M[9]  * M[4] - M[8]  * M[5];
 	
-	return matrix;
+	return M;
 }
 
-/// @function colmesh_matrix_scale
-/// @description Scaled the given matrix along its own axes
-function colmesh_matrix_scale(matrix, toScale, siScale, upScale){
-	matrix[@ 0] *= toScale;
-	matrix[@ 1] *= toScale;
-	matrix[@ 2] *= toScale;
-	matrix[@ 4] *= siScale;
-	matrix[@ 5] *= siScale;
-	matrix[@ 6] *= siScale;
-	matrix[@ 8] *= upScale;
-	matrix[@ 9] *= upScale;
-	matrix[@ 10]*= upScale;
-	return matrix;
-}
-
-/// @function colmesh_matrix_build_from_vector
-/// @description Creates a matrix based on the vector (vx, vy, vz). The vector will be used as basis for the up-vector of the matrix, ie. indices 8, 9, 10
-function colmesh_matrix_build_from_vector(X, Y, Z, vx, vy, vz, toScale, siScale, upScale){
-
-	var matrix = [0, 1, 1, 0, 0, 0, 0, 0, vx, vy, vz, 0, X, Y, Z, 1];
-	if abs(vx) < abs(vy){
-		matrix[0] = 1;
+function colmesh_matrix_orthogonalize_to(M)
+{
+	/*
+		This makes sure the three vectors of the given matrix are all unit length
+		and perpendicular to each other, using the up direction as master.
+		GameMaker does something similar when creating a lookat matrix. People often use [0, 0, 1]
+		as the up direction, but this vector is not used directly for creating the view matrix; rather, 
+		it's being used as reference, and the entire view matrix is being orthogonalized to the looking direction.
+	*/
+	var l = sqrt(dot_product_3d(M[0], M[1], M[2], M[0], M[1], M[2]));
+	if (l != 0)
+	{
+		l = 1 / l;
+		M[@ 0]  *= l;
+		M[@ 1]  *= l;
+		M[@ 2] *= l;
 	}
-	colmesh_matrix_orthogonalize(matrix);
-	return colmesh_matrix_scale(matrix, toScale, siScale, upScale);
+	else
+	{
+		M[0] = 1;
+	}
+	
+	M[@ 4] = M[9]  * M[2] - M[10] * M[1];
+	M[@ 5] = M[10] * M[0] - M[8]  * M[2];
+	M[@ 6] = M[8]  * M[1] - M[9]  * M[0];
+	var l = sqrt(dot_product_3d(M[4], M[5], M[6], M[4], M[5], M[6]));
+	if (l != 0)
+	{
+		l = 1 / l;
+		M[@ 4] *= l;
+		M[@ 5] *= l;
+		M[@ 6] *= l;
+	}
+	else
+	{
+		M[5] = 1;
+	}
+	
+	//The last vector is automatically normalized, since the two other vectors now are perpendicular unit vectors
+	M[@ 8]  = M[1] * M[6] - M[2] * M[5];
+	M[@ 9]  = M[2] * M[4] - M[0] * M[6];
+	M[@ 10] = M[0] * M[5] - M[1] * M[4];
+	
+	return M;
 }
 
-/// @function colmesh_matrix_transform_vertex
-/// @description Transforms a vertex using the given matrix
-function colmesh_matrix_transform_vertex(matrix, x, y, z){
+function colmesh_matrix_scale(M, toScale, siScale, upScale)
+{
+	/*
+		Scaled the given matrix along its own axes
+	*/
+	M[@ 0] *= toScale;
+	M[@ 1] *= toScale;
+	M[@ 2] *= toScale;
+	M[@ 4] *= siScale;
+	M[@ 5] *= siScale;
+	M[@ 6] *= siScale;
+	M[@ 8] *= upScale;
+	M[@ 9] *= upScale;
+	M[@ 10]*= upScale;
+	return M;
+}
 
+/// @func colmesh_matrix_build_from_vector(X, Y, Z, vx, vy, vz, toScale, siScale, upScale, targetM*)
+function colmesh_matrix_build_from_vector(X, Y, Z, vx, vy, vz, toScale, siScale, upScale, targetM = [abs(vx) < abs(vy), 1, 1, 0, 0, 0, 0, 0, vx, vy, vz, 0, X, Y, Z, 1])
+{
+	/*
+		Creates a matrix based on the vector (vx, vy, vz).
+		The vector will be used as basis for the up-vector of the matrix, ie. indices 8, 9, 10.
+	*/
+	targetM[@ 0]  = abs(vx) < abs(vy);
+	targetM[@ 1]  = 1;
+	targetM[@ 2]  = 1;
+	targetM[@ 3]  = 0;
+	targetM[@ 4]  = 0;
+	targetM[@ 5]  = 0;
+	targetM[@ 6]  = 0;
+	targetM[@ 7]  = 0;
+	targetM[@ 8]  = vx;
+	targetM[@ 9]  = vy;
+	targetM[@ 10] = vz;
+	targetM[@ 11] = 0;
+	targetM[@ 12] = X;
+	targetM[@ 13] = Y;
+	targetM[@ 14] = Z;
+	targetM[@ 15] = 1;
+	colmesh_matrix_orthogonalize(targetM);
+	return colmesh_matrix_scale(targetM, toScale, siScale, upScale);
+}
+
+function colmesh_matrix_transform_vertex(M, x, y, z)
+{
+	/*
+		Transforms a vertex using the given matrix
+	*/
 	static ret = array_create(3);
-	ret[@ 0] = matrix[0] * x + matrix[4] * y + matrix[8] * z + matrix[12];
-	ret[@ 1] = matrix[1] * x + matrix[5] * y + matrix[9] * z + matrix[13];
-	ret[@ 2] = matrix[2] * x + matrix[6] * y + matrix[10]* z + matrix[14];
+	ret[@ 0] = M[12] + dot_product_3d(x, y, z, M[0], M[4], M[8]);
+	ret[@ 1] = M[13] + dot_product_3d(x, y, z, M[1], M[5], M[9]);
+	ret[@ 2] = M[14] + dot_product_3d(x, y, z, M[2], M[6], M[10]);
 	return ret;
 }
 
-/// @function colmesh_matrix_transform_vector
-/// @description Transforms a vector using the given matrix
-function colmesh_matrix_transform_vector(matrix, x, y, z){
-
-	static ret = array_create(3);
-	ret[@ 0] = matrix[0] * x + matrix[4] * y + matrix[8] * z;
-	ret[@ 1] = matrix[1] * x + matrix[5] * y + matrix[9] * z;
-	ret[@ 2] = matrix[2] * x + matrix[6] * y + matrix[10]* z;
+function colmesh_matrix_transform_vector(M, x, y, z)
+{
+	/*
+		Transforms a vector using the given matrix
+	*/
+	var ret = matrix_transform_vertex(M, x, y, z);
+	ret[0] -= M[12];
+	ret[1] -= M[13];
+	ret[2] -= M[14];
 	return ret;
 }
 
-/// @function colmesh_cast_ray_sphere
-function colmesh_cast_ray_sphere(sx, sy, sz, r, x1, y1, z1, x2, y2, z2) {	
+function colmesh_cast_ray_sphere(sx, sy, sz, r, x1, y1, z1, x2, y2, z2, doublesided = false) 
+{	
 	/*	
 		Finds the intersection between a line segment going from [x1, y1, z1] to [x2, y2, z2], and a sphere centered at (sx,sy,sz) with radius r.
-		Returns false if the ray hits the sphere but the line segment is too short,
-		returns true if the ray misses completely, 
-		returns an array of the following format if there was and intersection between the line segment and the sphere:
-			[x, y, z]
+		Returns -1 if the ray does not hit the sphere
+		Returns a value between 0 and 1 depending on how far along the ray intersects the sphere
 	*/
 	var dx = sx - x1;
 	var dy = sy - y1;
@@ -240,41 +294,67 @@ function colmesh_cast_ray_sphere(sx, sy, sz, r, x1, y1, z1, x2, y2, z2) {
 	var vy = y2 - y1;
 	var vz = z2 - z1;
 
-	//dp is now the distance from the starting point to the plane perpendicular to the ray direction, times the length of dV
-	var v = vx * vx + vy * vy + vz * vz;
-	var d = dx * dx + dy * dy + dz * dz;
-	var t = dx * vx + dy * vy + dz * vz;
-
-	//u is the remaining distance from this plane to the surface of the sphere, times the length of dV
+	var v = dot_product_3d(vx, vy, vz, vx, vy, vz);
+	var d = dot_product_3d(dx, dy, dz, dx, dy, dz);
+	var t = dot_product_3d(vx, vy, vz, dx, dy, dz);
 	var u = t * t + v * (r * r - d);
-
-	//If u is less than 0, there is no intersection
-	if (u < 0){
-		return true;
-	}
 	
-	u = sqrt(u);
-	if (t < u) {
-		// Project to the inside of the sphere
-		t += u; 
-		if (t < 0) {
-			// The sphere is behind the ray
-			return true;
-		}
-	} else {
-		// Project to the outside of the sphere
+	if (u < 0){return -1;}
+	
+	u = sqrt(max(u, 0));
+	if (t < u)
+	{
+		//The ray started inside the sphere
+		if (!doublesided){return -1;} //The ray started inside the sphere, and the sphere is not doublesided. There is no way this ray can intersect the sphere.
+		t += u; //Project to the inside of the sphere
+		if (t < 0){return -1;} //The sphere is behind the ray
+	}
+	else
+	{
+		//Project to the outside of the sphere
 		t -= u;
-		if (t > v) {
-			// The sphere is too far away
-			return false;
+		if (t > v)
+		{
+			//The sphere is too far away
+			return -1;
 		}
 	}
 
-	// Find the point of intersection
-	static ret = array_create(3);
-	t /= v;
-	ret[0] = x1 + vx * t;
-	ret[1] = y1 + vy * t;
-	ret[2] = z1 + vz * t;
+	//Find the point of intersection
+	return t / v;
+}
+
+function colmesh_cast_ray_plane(px, py, pz, nx, ny, nz, x1, y1, z1, x2, y2, z2) 
+{
+	/*
+		Finds the intersection between a line segment going from [x1, y1, z1] to [x2, y2, z2], and a plane at (px, py, pz) with normal (nx, ny, nz).
+
+		Returns the intersection as an array of the following format:
+		[x, y, z, nx, ny, nz, intersection (true or false)]
+
+		Script made by TheSnidr
+
+		www.thesnidr.com
+	*/
+	var vx = x2 - x1;
+	var vy = y2 - y1;
+	var vz = z2 - z1;
+	var dn = dot_product_3d(vx, vy, vz, nx, ny, nz);
+	if (dn == 0)
+	{
+		return [x2, y2, z2, 0, 0, 0, false];
+	}
+	var dp = dot_product_3d(x1 - px, y1 - py, z1 - pz, nx, ny, nz);
+	var t = - dp / dn; 
+	var s = sign(dp);
+	
+	static ret = array_create(6);
+	ret[0] = x1 + t * vx;
+	ret[1] = y1 + t * vy;
+	ret[2] = z1 + t * vz;
+	ret[3] = s * nx;
+	ret[4] = s * ny;
+	ret[5] = s * nz;
+	ret[6]= true;
 	return ret;
 }

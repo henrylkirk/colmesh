@@ -1,39 +1,40 @@
 /// @description
-if global.disableDraw{exit;}
+//Cast a ray along the mouse vector
+var v = colmesh_convert_2d_to_3d(
+  view_camera[0],
+  window_mouse_get_x(),
+  window_mouse_get_y()
+);
+var ray = levelColmesh.castRay(
+  global.camX,
+  global.camY,
+  global.camZ,
+  global.camX + v[0] * 3000,
+  global.camY + v[1] * 3000,
+  global.camZ + v[2] * 3000
+);
+colmesh_debug_draw_sphere(ray.x, ray.y, ray.z, 5, c_red);
+
+//Execute ray functions for the objects the ray hits. In this demo it makes the objects change colour
+ray.executeRayFunc();
+
+if (global.disableDraw) {
+  exit;
+}
 
 event_inherited();
 
 //Draw ground
 shader_set(sh_colmesh_collider);
-global.shader_set_lightdir(sh_colmesh_collider);
+shader_set_lightdir(sh_colmesh_collider);
 shader_reset();
 
 //Draw debug collision shapes
-if global.drawDebug
-{
-	matrix_set(matrix_world, matrix_build_identity());
-	global.room_colmesh.debug_draw(global.room_colmesh.get_region(x, y, z, xup, yup, zup, radius, height));
-}
 
-//Cast a ray in the looking direction of the player
-//var ray = global.room_colmesh.cast_ray(x, y, z + height, x + charMat[0] * 100, y + charMat[1] * 100, z - radius - 50 + charMat[2] * 100);
-/*if (ray[6])
-{
-	shader_set(sh_colmesh_collider);
-	
-	var dx = ray[0] - x;
-	var dy = ray[1] - y;
-	var dz = ray[2] - z - height;
-	shader_set_uniform_f(shader_get_uniform(sh_colmesh_collider, "u_radius"), 1);
-	shader_set_uniform_f(shader_get_uniform(sh_colmesh_collider, "u_color"), 1, 0, 0);
-	matrix_set(matrix_world, colmesh_matrix_build_from_vector(x, y, z + height, dx, dy, dz, 1, 1, sqrt(dx * dx + dy * dy + dz * dz)));
-	vertex_submit(global.modCapsule, pr_trianglelist, -1);
-
-	shader_set_uniform_f(shader_get_uniform(sh_colmesh_collider, "u_radius"), 5);
-	shader_set_uniform_f(shader_get_uniform(sh_colmesh_collider, "u_color"), .8, .3, .2);
-	matrix_set(matrix_world, matrix_build(ray[0], ray[1], ray[2], 0, 0, 0, 1, 1, 1));
-	vertex_submit(global.modSphere, pr_trianglelist, -1);
-		
-	matrix_set(matrix_world, matrix_build_identity());
-	shader_reset();
+if (global.drawDebug) {
+  matrix_set(matrix_world, matrix_build_identity());
+  var r = radius * 1.1;
+  levelColmesh.debugDraw(
+    levelColmesh.getRegion([x - r, y - r, z - r, x + r, y + r, z + height + r])
+  );
 }

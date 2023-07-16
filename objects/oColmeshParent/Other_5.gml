@@ -1,3 +1,6 @@
-/// @description Clear all data contained in the Colmesh
+/// @description
 
-global.room_colmesh.clear();
+/*
+	Clear all data contained in the ColMesh
+*/
+levelColmesh.clear();
