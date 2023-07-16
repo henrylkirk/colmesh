@@ -6,6 +6,6 @@
   "isDnD": false,
   "parent": {
     "name": "ColMesh Scripts",
-    "path": "folders/ColMesh/ColMesh Scripts.yy"
-  }
+    "path": "folders/ColMesh/ColMesh Scripts.yy",
+  },
 }

@@ -917,6 +917,9 @@ function colmesh() : colmesh_mesh() constructor
 			return false;
 		}
 		var success = readFromBuffer(buff);
+		if (success) {
+			show_message("Successfully loaded colmesh from save file");
+		}
 		buffer_delete(buff);
 		return success;
 	}
@@ -1226,34 +1229,35 @@ function colmesh() : colmesh_mesh() constructor
 			}
 		}
 
-		//Read subdivision
+		// Read subdivision
 		var num = buffer_read(tempBuff, buffer_u32);
 		if (num >= 0)
 		{
 			regionSize = buffer_read(tempBuff, buffer_f32);
-			originX	= buffer_read(tempBuff, buffer_f32);
-			originY	= buffer_read(tempBuff, buffer_f32);
-			originZ	= buffer_read(tempBuff, buffer_f32);
-			spHash = ds_map_create();
-			repeat num
-			{
-				var region = ds_list_create();
-				var key = buffer_read(tempBuff, buffer_string);
-				repeat buffer_read(tempBuff, buffer_u32)
-				{
-					var shape = shapeList[| buffer_read(tempBuff, buffer_u32)];
-					if (is_struct(shape))
-					{
-						if (shape.type == eColMeshShape.Dynamic || shape.type == eColMeshShape.None)
-						{
-							continue;
-						}
-					}
-					ds_list_add(region, shape);
-				}
-				spHash[? key] = region;
-			}
+			//originX	= buffer_read(tempBuff, buffer_f32);
+			//originY	= buffer_read(tempBuff, buffer_f32);
+			//originZ	= buffer_read(tempBuff, buffer_f32);
+			//spHash = ds_map_create();
+			//repeat num
+			//{
+			//	var region = ds_list_create();
+			//	var key = buffer_read(tempBuff, buffer_string);
+			//	repeat buffer_read(tempBuff, buffer_u32)
+			//	{
+			//		var shape = shapeList[| buffer_read(tempBuff, buffer_u32)];
+			//		if (is_struct(shape))
+			//		{
+			//			if (shape.type == eColMeshShape.Dynamic || shape.type == eColMeshShape.None)
+			//			{
+			//				continue;
+			//			}
+			//		}
+			//		ds_list_add(region, shape);
+			//	}
+			//	spHash[? key] = region;
+			//}
 		}
+		subdivide(regionSize);
 
 		//Clean up and return result
 		colmesh_debug_message("Script colmesh.readFromBuffer: Read " + string(self) + " from buffer in " + string(current_time - debugTime) + " milliseconds");
