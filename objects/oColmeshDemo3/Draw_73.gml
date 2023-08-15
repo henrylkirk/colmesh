@@ -1,31 +1,21 @@
 /// @description
 
 if (global.disableDraw) {
-  exit;
+    exit;
 }
 
-//Draw player shadow
-colmeshdemo_draw_circular_shadow(
-  x,
-  y,
-  z,
-  charMat[8],
-  charMat[9],
-  charMat[10],
-  radius,
-  200,
-  0.5
-);
+// Draw player shadow
+colmeshdemo_draw_circular_shadow(x, y, z, charMat[8], charMat[9], charMat[10], radius, 200, 0.5);
 
-//Draw player
+// Draw player
 colmesh_debug_draw_capsule(
-  x,
-  y,
-  z,
-  charMat[8],
-  charMat[9],
-  charMat[10],
-  radius,
-  height,
-  make_colour_rgb(110, 127, 200)
+    x,
+    y,
+    z,
+    charMat[8],
+    charMat[9],
+    charMat[10],
+    radius,
+    height,
+    make_colour_rgb(110, 127, 200)
 );

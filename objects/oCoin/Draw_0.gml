@@ -1,9 +1,9 @@
 /// @description
 
 if (global.disableDraw) {
-  exit;
+    exit;
 }
-var angle = current_time / 300 + x + y + z;
+var angle = (((current_time / 300) + x) + y) + z;
 var dx = cos(angle);
 var dy = sin(angle);
 var dz = 0;
